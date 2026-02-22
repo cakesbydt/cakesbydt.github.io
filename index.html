@@ -220,9 +220,12 @@
             </div>
         </div>
 
-        <div id="canvas-container">
-            <div id="info-display" class="info-badge-float">MODEL: 20cm | VÝŠKA: 12cm</div>
-        </div>
+       <div id="canvas-container">
+    <div id="info-display" class="info-badge-float">MODEL: 20cm | VÝŠKA: 12cm</div>
+    <div id="price-display" style="position: absolute; top: 30px; right: 30px; background: var(--gold); color: white; padding: 15px 25px; border-radius: 20px; font-weight: 800; font-size: 18px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 10;">
+        CENA: Počítám...
+    </div>
+</div>
         
         <div class="controls-row">
             <div><label>Rotace</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()"></div>
@@ -234,7 +237,7 @@
             
             <div class="doplnek-item">
                 <label class="check-row">
-                    <input type="checkbox" id="c_flowers">
+                    <input type="checkbox" id="c_flowers"onchange="calculatePrice()">
                     <span class="checkbox-label">Květinová dekorace</span>
                 </label>
                 <div class="extra-input">
@@ -244,7 +247,7 @@
 
             <div class="doplnek-item">
                 <label class="check-row">
-                    <input type="checkbox" id="c1">
+                    <input type="checkbox" id="c1"onchange="calculatePrice()">
                     <span class="checkbox-label">Jedlý papír</span>
                 </label>
                 <div class="extra-input">
@@ -254,7 +257,7 @@
 
             <div class="doplnek-item">
                 <label class="check-row">
-                    <input type="checkbox" id="c2">
+                    <input type="checkbox" id="c2"onchange="calculatePrice()">
                     <span class="checkbox-label">Figurka</span>
                 </label>
                 <div class="extra-input">
@@ -264,7 +267,7 @@
 
             <div class="doplnek-item">
                 <label class="check-row">
-                    <input type="checkbox" id="c3">
+                    <input type="checkbox" id="c3"onchange="calculatePrice()">
                     <span class="checkbox-label">Personalizovaný zápich</span>
                 </label>
                 <div class="extra-input">
@@ -376,7 +379,49 @@
         group.add(mesh);
         return group;
     }
+    
+function calculatePrice() {
+    // 1. ZÍSKÁNÍ HODNOT
+    const diameter = parseInt(document.getElementById('diameter').value);
+    const layers = parseInt(document.getElementById('layers').value);
+    const style = document.getElementById('cakeStyle').value;
+    const fruitT = document.getElementById('fruitTop').value;
+    const fruitC = document.getElementById('fruitCream').value;
+    const topS = document.getElementById('topStyle').value;
+    
+    // Checkboxy doplňků
+    const hasFlowers = document.getElementById('c_flowers').checked;
+    const hasPaper = document.getElementById('c1').checked;
+    const hasFigure = document.getElementById('c2').checked;
+    const hasTopper = document.getElementById('c3').checked;
 
+    // 2. ZÁKLADNÍ CENA (Materiál a práce dle objemu)
+    // Výpočet: (průměr * koeficient) * počet vrstev
+    let base = (diameter * 15) * (layers / 2);
+    
+    // 3. PŘÍPLATKY
+    let extras = 0;
+    
+    if (style === 'wedding') extras += 500; // Náročnější konstrukce patrového dortu
+    if (fruitT !== 'none') extras += 150;    // Ovoce nahoře
+    if (topS === 'full') extras += 200;      // Extra porce ovoce při plném zaplnění
+    if (fruitC !== 'none') extras += 100;    // Ovoce uvnitř krému
+    
+    // Doplňky
+    if (hasFlowers) extras += 350;
+    if (hasPaper) extras += 250;
+    if (hasFigure) extras += 400;
+    if (hasTopper) extras += 150;
+
+    // 4. VÝPOČET ROZMEZÍ (Od - Do)
+    const minPrice = Math.round((base + extras) * 0.9); // -10% pro spodní hranici
+    const maxPrice = Math.round((base + extras) * 1.1); // +10% pro horní hranici
+
+    // 5. ZOBRAZENÍ
+    document.getElementById('price-display').innerHTML = `ODHAD CENA: ${minPrice} – ${maxPrice} Kč`;
+}
+
+    
     /* HLAVNÍ FUNKCE PŘEKRESLENÍ DORTU */
     function updateCake() {
         // Smazat vše, co v dortu aktuálně je
@@ -459,7 +504,9 @@
                     const ang = (j / 12) * Math.PI * 2;
                     f.position.set(Math.cos(ang) * (currentRadius - 0.1), i * h, Math.sin(ang) * (currentRadius - 0.1));
                     cakeGroup.add(f);
-                }
+               
+            }
+                calculatePrice();
             }
 
            
