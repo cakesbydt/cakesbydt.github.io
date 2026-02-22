@@ -76,7 +76,10 @@
                 <div><label>Vrstvy</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
                 <div><label>Korpus</label><select id="flavor" onchange="updateCake()"><option value="0x4e342e">Čokoláda</option><option value="0xf3e5ab">Piškot</option><option value="0xd32f2f">Red Velvet</option></select></div>
                 <div><label>Krém</label><select id="creamColor" onchange="updateCake()"><option value="0xffffff">Bílý</option><option value="0xfce4ec">Růžový</option><option value="0xdcedc8">Pistácie</option><option value="0x6d4c41">Pařížský</option></select></div>
-                <div><label>Ovoce</label><select id="fruit" onchange="updateCake()"><option value="none">Bez</option><option value="strawberries" selected>Jahody</option><option value="blueberries">Borůvky</option><option value="mix">Mix</option></select></div>
+            </div>
+            <div class="flex" style="margin-top: 15px;">
+                <div><label>Ovoce navrchu</label><select id="fruitTop" onchange="updateCake()"><option value="none">Žádné</option><option value="strawberries" selected>Jahody</option><option value="blueberries">Borůvky</option><option value="mix">Mix</option></select></div>
+                <div><label>Ovoce v krému</label><select id="fruitCream" onchange="updateCake()"><option value="none">Žádné</option><option value="strawberries">Jahody</option><option value="blueberries">Borůvky</option><option value="mix" selected>Mix</option></select></div>
             </div>
         </div>
 
@@ -155,7 +158,8 @@
     function updateCake() {
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
         const layerCount = parseInt(document.getElementById('layers').value);
-        const fruitType = document.getElementById('fruit').value;
+        const fruitTop = document.getElementById('fruitTop').value;
+        const fruitCream = document.getElementById('fruitCream').value;
         const flav = parseInt(document.getElementById('flavor').value);
         const cream = parseInt(document.getElementById('creamColor').value);
         const style = document.getElementById('style').value;
@@ -164,50 +168,45 @@
         for (let i = 0; i < layerCount; i++) {
             let r = 3;
             if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
-            
             const isCreamLayer = (i % 2 === 1);
-            // Krém necháme jen o mikroskopický kousek užší, aby ovoce "vykouklo"
             const currentR = isCreamLayer ? r * 0.98 : r;
 
-            const mesh = new THREE.Mesh(
-                new THREE.CylinderGeometry(currentR, currentR, layerH, 45), 
-                new THREE.MeshPhongMaterial({ color: !isCreamLayer ? flav : cream })
-            );
+            const mesh = new THREE.Mesh(new THREE.CylinderGeometry(currentR, currentR, layerH, 45), new THREE.MeshPhongMaterial({ color: !isCreamLayer ? flav : cream }));
             mesh.position.y = i * layerH;
             cakeGroup.add(mesh);
 
-            if (fruitType !== "none") {
-                const isTop = (i === layerCount - 1);
-                const isStep = (style === 'wedding' && isCreamLayer && i < layerCount - 1);
-                const isInCream = isCreamLayer && i < layerCount - 1;
+            const isTop = (i === layerCount - 1);
+            const isStep = (style === 'wedding' && isCreamLayer && i < layerCount - 1);
+            const isInCream = isCreamLayer && i < layerCount - 1;
 
-                if (isTop || isStep || isInCream) {
-                    const count = isInCream && !isStep ? Math.floor(r * 10) : Math.floor(r * 6);
-                    for (let j = 0; j < count; j++) {
-                        let f = (fruitType === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
-                        const ang = (j / count) * Math.PI * 2;
-                        
-                        if (isInCream && !isStep && !isTop) {
-                            // --- TRIK PRO ZAROVNÁNÍ ---
-                            // Ovoce zmenšíme a "zplácneme", aby nevyčnívalo ven
-                            f.scale.set(0.4, 0.4, 0.2); 
-                            // Natočíme ho směrem ke středu dortu
-                            f.rotation.y = ang; 
-                            // Posuneme ho tak, aby bylo vidět jen "čelo" kousku
-                            f.position.set(Math.cos(ang) * (r * 0.97), (i * layerH), Math.sin(ang) * (r * 0.97));
-                        } else {
-                            // Klasické ovoce na vršku (kulaté a velké)
-                            const spread = isTop ? 0.7 : 0.9;
-                            f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.32, Math.sin(ang) * r * spread);
-                        }
-                        
-                        cakeGroup.add(f);
-                    }
+            // Logika pro ovoce navrchu a na schodech
+            if (fruitTop !== "none" && (isTop || isStep)) {
+                const count = Math.floor(r * 6);
+                for (let j = 0; j < count; j++) {
+                    let f = (fruitTop === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitTop === 'strawberries' ? createStrawberry() : createBlueberry());
+                    const ang = (j / count) * Math.PI * 2;
+                    const spread = isTop ? 0.7 : 0.9;
+                    f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.32, Math.sin(ang) * r * spread);
+                    f.rotation.y = Math.random() * Math.PI;
+                    cakeGroup.add(f);
+                }
+            }
+
+            // Logika pro ovoce v krému
+            if (fruitCream !== "none" && isInCream && !isStep) {
+                const count = Math.floor(r * 10);
+                for (let j = 0; j < count; j++) {
+                    let f = (fruitCream === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitCream === 'strawberries' ? createStrawberry() : createBlueberry());
+                    const ang = (j / count) * Math.PI * 2;
+                    f.scale.set(0.4, 0.4, 0.2); 
+                    f.rotation.y = ang; 
+                    f.position.set(Math.cos(ang) * (r * 0.97), (i * layerH), Math.sin(ang) * (r * 0.97));
+                    cakeGroup.add(f);
                 }
             }
         }
     }
-    
+
     const handleMove = (x, y) => {
         if (isDragging) {
             cakeGroup.rotation.y += (x - prevX) * 0.01;
