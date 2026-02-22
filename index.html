@@ -5,67 +5,86 @@
     <title>Dortový konfigurátor</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #fff5f8; display: flex; justify-content: center; padding: 20px; }
-        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 450px; text-align: center; }
+        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 500px; }
         
         /* Box pro náhled dortu */
         .nahled-box { 
-            margin: 20px auto; 
-            padding: 20px; 
-            background: #fafafa; 
-            border: 2px dashed #f9a8d4; 
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column-reverse; /* Vrstvy odspodu */
-            align-items: center;
-            min-height: 150px;
+            margin: 20px auto; padding: 20px; background: #fafafa; border: 2px dashed #f9a8d4; border-radius: 15px;
+            display: flex; flex-direction: column-reverse; align-items: center; min-height: 180px; transition: 0.5s;
         }
 
-        /* Definice vrstev */
-        .v-korpus { height: 20px; background-color: #f3e5ab; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; transition: 0.3s; }
-        .v-krem { height: 15px; background-color: #fffde7; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; transition: 0.3s; }
+        /* Vrstvy dortu - 2cm korpus (20px) + 2cm krém (20px) */
+        .v-korpus { height: 20px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; transition: 0.3s; }
+        .v-krem { height: 20px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; transition: 0.3s; }
 
-        .ovladani { text-align: left; }
-        label { display: block; margin-top: 15px; font-weight: bold; color: #d63384; }
-        select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #d63384; font-size: 14px; }
+        select, input[type="text"], input[type="color"] { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; box-sizing: border-box; }
+        .row { display: flex; gap: 10px; }
+        .row > div { flex: 1; }
+        h1 { color: #ad1457; text-align: center; margin-top: 0; }
+        .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
 
 <div class="karta">
-    <h1>Konfigurátor</h1>
+    <h1>🍰 Objednávka dortu</h1>
 
-    <div class="ovladani">
-        <label>Průměr (šířka)</label>
-        <select id="p" onchange="uprav()">
-            <option value="150">15 cm</option>
-            <option value="220" selected>20 cm</option>
-            <option value="300">25 cm</option>
-        </select>
+    <div class="row">
+        <div>
+            <label>Průměr (15-30 cm)</label>
+            <select id="p" onchange="uprav()">
+                <option value="150">15 cm</option>
+                <option value="200" selected>20 cm</option>
+                <option value="250">25 cm</option>
+                <option value="300">30 cm</option>
+            </select>
+        </div>
+        <div>
+            <label>Vnější krém (barva)</label>
+            <input type="color" id="barva-vnejsi" value="#ffffff" onchange="uprav()">
+        </div>
+    </div>
 
-        <label>Korpus</label>
+    <label>Náplň a korpus</label>
+    <div class="row">
         <select id="k" onchange="uprav()">
             <option value="#f3e5ab">Světlý piškot</option>
             <option value="#4e342e">Čokoládový</option>
             <option value="#d7ccc8">Ořechový</option>
         </select>
-
-        <label>Náplň (krém)</label>
         <select id="n" onchange="uprav()">
-            <option value="#fffde7">Vanilkový</option>
-            <option value="#795548">Pařížský</option>
-            <option value="#f8bbd0">Ovocný</option>
+            <option value="#fffde7">Vanilkový krém</option>
+            <option value="#795548">Pařížský krém</option>
+            <option value="#f8bbd0">Ovocný krém</option>
         </select>
     </div>
 
-    <div class="nahled-box">
-        <div id="k1" class="v-korpus" style="width: 220px;"></div>
-        <div id="n1" class="v-krem" style="width: 210px;"></div>
-        <div id="k2" class="v-korpus" style="width: 220px;"></div>
-        <div id="n2" class="v-krem" style="width: 210px;"></div>
-        <div id="k3" class="v-korpus" style="width: 220px;"></div>
+    <label>Ovoce v krému?</label>
+    <input type="text" id="ovoce" placeholder="Např. jahody, maliny... (nechte prázdné pokud ne)">
+
+    <div class="row">
+        <div>
+            <label>Jedlý papír?</label>
+            <input type="text" id="papir" placeholder="Jaký motiv?">
+        </div>
+        <div>
+            <label>Figurka?</label>
+            <input type="text" id="figurka" placeholder="Jaká figurka?">
+        </div>
+    </div>
+
+    <div class="nahled-box" id="box">
+        <div id="k1" class="v-korpus" style="width: 200px;"></div>
+        <div id="n1" class="v-krem" style="width: 190px;"></div>
+        <div id="k2" class="v-korpus" style="width: 200px;"></div>
+        <div id="n2" class="v-krem" style="width: 190px;"></div>
+        <div id="k3" class="v-korpus" style="width: 200px;"></div>
     </div>
     
-    <p style="color: #999; font-size: 13px;">Náhled vnitřního složení</p>
+    <p style="text-align:center; color: #999; font-size: 12px;">Výška dortu cca 12 cm (3x korpus, 2x krém)</p>
+
+    <button class="btn" onclick="odeslat()">Odeslat objednávku</button>
 </div>
 
 <script>
@@ -73,8 +92,11 @@
         const sirka = document.getElementById('p').value;
         const bKorpus = document.getElementById('k').value;
         const bKrem = document.getElementById('n').value;
+        const bVnejsi = document.getElementById('barva-vnejsi').value;
 
-        // Upravíme šířku a barvu všech vrstev ručně
+        // Upravíme náhled
+        document.getElementById('box').style.backgroundColor = bVnejsi;
+        
         const korpusy = [document.getElementById('k1'), document.getElementById('k2'), document.getElementById('k3')];
         const kremy = [document.getElementById('n1'), document.getElementById('n2')];
 
@@ -88,6 +110,19 @@
             el.style.backgroundColor = bKrem;
         });
     }
+
+    function odeslat() {
+        const prumer = document.getElementById('p').options[document.getElementById('p').selectedIndex].text;
+        const ovoce = document.getElementById('ovoce').value || "ne";
+        const papir = document.getElementById('papir').value || "ne";
+        const figurka = document.getElementById('figurka').value || "ne";
+        
+        const text = `Ahoj, objednávka dortu: %0A- Průměr: ${prumer}%0A- Ovoce uvnitř: ${ovoce}%0A- Jedlý papír: ${papir}%0A- Figurka: ${figurka}`;
+        
+        window.location.href = `mailto:VÁŠ-EMAIL@SEZNAM.CZ?subject=Dort Objednávka&body=${text}`;
+    }
+
+    uprav(); // Inicializace
 </script>
 
 </body>
