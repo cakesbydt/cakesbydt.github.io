@@ -103,7 +103,6 @@
         .slider { -webkit-appearance: none; width: 150px; height: 4px; background: #ccc; border-radius: 2px; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 3px solid white; cursor: pointer; }
 
-        /* --- OPRAVENÉ DOPLŇKY SEKCE 4 --- */
         .doplnek-item { 
             background: #fdfdfd; padding: 25px; border-radius: 25px; margin-bottom: 20px; 
             border: 2px solid transparent; transition: 0.4s;
@@ -171,8 +170,8 @@
                         <option value="wedding">💍 Svatební Luxury Edition</option>
                     </select>
                 </div>
-                <div><label>Průměr dortu</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm (Mini)</option><option value="20" selected>20 cm (Classic)</option><option value="24">24 cm (Grand)</option></select></div>
-                <div><label>Počet pater</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
+                <div><label>Průměr základny</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm (Mini)</option><option value="20" selected>20 cm (Classic)</option><option value="24">24 cm (Grand)</option></select></div>
+                <div><label>Celkový počet vrstev</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
                 <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x3d2b1f">Belgická Čokoláda</option><option value="0xfff4e0">Madagaskarská Vanilka</option></select></div>
             </div>
         </div>
@@ -288,7 +287,7 @@
         });
     }
 
-    function createFruit(type, isTop) {
+    function createFruit(type, isTop, currentRadius) {
         const group = new THREE.Group();
         const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5));
         const geo = new THREE.SphereGeometry(isStrawberry ? (isTop ? 0.22 : 0.16) : (isTop ? 0.12 : 0.08), 16, 16);
@@ -301,6 +300,8 @@
 
     function updateCake() {
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
+        
+        const style = document.getElementById('cakeStyle').value;
         const layers = parseInt(document.getElementById('layers').value);
         const diameter = parseInt(document.getElementById('diameter').value);
         const coat = document.getElementById('coating').value;
@@ -310,41 +311,57 @@
         const flavorColor = parseInt(document.getElementById('flavor').value);
         const innerColor = parseInt(document.getElementById('innerCream').value);
         const outerColor = parseInt(document.getElementById('outerCream').value);
-        const radius = diameter / 6.5;
+        
+        const baseRadius = diameter / 6.5;
         const h = 0.5;
         
-        // Změna textu info badge
-        const type = document.getElementById('cakeStyle').value === 'wedding' ? 'Svatební' : 'Klasický';
-        document.getElementById('info-display').innerHTML = `${type} | ${diameter}cm | ${layers} vrstev`;
+        const typeLabel = style === 'wedding' ? 'Svatební' : 'Klasický';
+        document.getElementById('info-display').innerHTML = `${typeLabel} | ${diameter}cm | ${layers} vrstev`;
 
         for (let i = 0; i < layers; i++) {
+            // LOGIKA PATRA: Pokud je svatební, po každých 4 vrstvách zmenšíme poloměr o 20%
+            let currentRadius = baseRadius;
+            if (style === 'wedding') {
+                if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
+                if (i >= 8) currentRadius = baseRadius * 0.55;
+            }
+
             const isCream = i % 2 === 1;
-            const segment = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, h, 64), new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor }));
+            const segment = new THREE.Mesh(
+                new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
+                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
+            );
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
             if (coat !== 'naked') {
-                const isTopLayer = (i === layers - 1);
-                const coatMesh = new THREE.Mesh(new THREE.CylinderGeometry(radius + 0.03, radius + 0.03, h, 64, 1, !isTopLayer), new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1) }));
+                const isTopLayerOfTier = (style === 'wedding') ? (i === 3 || i === 7 || i === layers - 1) : (i === layers - 1);
+                const coatMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, !isTopLayerOfTier), 
+                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1) })
+                );
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
             }
             
+            // Ovoce v krému (jen pro daný aktuální poloměr)
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 for (let j = 0; j < 12; j++) {
-                    const f = createFruit(fruitC, false);
+                    const f = createFruit(fruitC, false, currentRadius);
                     const ang = (j / 12) * Math.PI * 2;
-                    f.position.set(Math.cos(ang) * (radius - 0.1), i * h, Math.sin(ang) * (radius - 0.1));
+                    f.position.set(Math.cos(ang) * (currentRadius - 0.1), i * h, Math.sin(ang) * (currentRadius - 0.1));
                     cakeGroup.add(f);
                 }
             }
+
+            // Ovoce na úplném vršku dortu
             if (i === layers - 1 && fruitT !== 'none') {
-                let radii = [radius * 0.85];
-                if (topS === 'full') radii = [radius * 0.3, radius * 0.6, radius * 0.85];
+                let radii = [currentRadius * 0.85];
+                if (topS === 'full') radii = [currentRadius * 0.3, currentRadius * 0.6, currentRadius * 0.85];
                 radii.forEach(r => {
                     const count = Math.floor(r * 12) + 1;
                     for(let j=0; j<count; j++) {
-                        const f = createFruit(fruitT, true);
+                        const f = createFruit(fruitT, true, currentRadius);
                         const ang = (j/count) * Math.PI * 2;
                         f.position.set(Math.cos(ang)*r, (i*h)+0.35, Math.sin(ang)*r);
                         cakeGroup.add(f);
