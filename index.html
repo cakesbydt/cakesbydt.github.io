@@ -21,12 +21,14 @@
         /* Víčko */
         .vicko { position: absolute; width: var(--w); height: var(--w); background: var(--topColor); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(90deg) translateZ(20px); transform-style: preserve-3d; }
 
-        /* SKUTEČNÁ 3D JAHODA (Křížová konstrukce) */
+        /* 3D JAHODA - OPRAVENÁ POZICE */
         .strawberry-3d { 
             position: absolute; 
             width: 30px; height: 40px; 
             transform-style: preserve-3d; 
             pointer-events: none;
+            /* rotateX(-90) postaví jahodu, translateZ(20) ji vytáhne nad víčko */
+            transform-origin: center bottom;
         }
         
         .strawberry-face {
@@ -34,11 +36,21 @@
             width: 100%; height: 100%;
             background-size: contain;
             background-repeat: no-repeat;
+            /* Důležité: rotace kolem spodní hrany */
             transform-origin: bottom center;
         }
 
-        /* Druhá plocha jahody otočená o 90 stupňů vytváří 3D efekt */
         .face-2 { transform: rotateY(90deg); }
+
+        /* Stín pod jahodou na víčku */
+        .stin-pod-jahodou {
+            position: absolute;
+            width: 15px; height: 8px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 50%;
+            filter: blur(2px);
+            transform: translateZ(-1px); /* Těsně pod jahodu */
+        }
 
         .tahlo { width: 100%; margin: 30px 0 10px 0; accent-color: var(--primary); cursor: pointer; }
     </style>
@@ -53,7 +65,6 @@
 </div>
 
 <script>
-    // SVG Jahody jako Data URL pro čisté použití v CSS pozadí
     const strawberrySVG = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M50,115 C20,115 5,85 5,55 C5,25 25,10 50,10 C75,10 95,25 95,55 C95,85 80,115 50,115 Z" fill="%23ff4d4d"/><circle cx="30" cy="40" r="3" fill="white" opacity="0.2"/><path d="M50,15 L35,-5 L50,5 L65,-5 Z" fill="%232e7d32"/></svg>')`;
 
     function otoc(v) {
@@ -63,7 +74,7 @@
     function kresli() {
         const plocha = document.getElementById('vizual');
         const sirka = 180;
-        const barvy = ['#4e342e', '#f8bbd0']; // Čokoláda a Krém
+        const barvy = ['#4e342e', '#f8bbd0']; 
         
         plocha.innerHTML = "";
         for (let i = 0; i < 4; i++) {
@@ -80,7 +91,7 @@
                 v.appendChild(s);
             }
 
-            if (i === 3) {
+            if (i === 3) { // Vrchní krém
                 const vicko = document.createElement('div');
                 vicko.className = 'vicko';
                 vicko.style.setProperty('--w', sirka + 'px');
@@ -95,12 +106,19 @@
                     
                     const j3d = document.createElement('div');
                     j3d.className = 'strawberry-3d';
-                    // Umístíme jahodu na víčko a zvedneme ji (rotateX(-90) ji postaví kolmo)
                     j3d.style.left = (stredX - 15) + 'px';
                     j3d.style.top = (stredY - 20) + 'px';
-                    j3d.style.transform = `rotateX(-90deg) translateZ(0px)`;
+                    
+                    // translateZ(1) posune jahodu nad povrch víčka, aby nebyla utopená
+                    j3d.style.transform = `rotateX(-90deg) translateZ(2px)`;
 
-                    // Dvě křížící se plochy pro 3D efekt
+                    // Přidáme stín pod jahodu
+                    const stin = document.createElement('div');
+                    stin.className = 'stin-pod-jahodou';
+                    stin.style.left = '7.5px';
+                    stin.style.bottom = '-2px';
+                    j3d.appendChild(stin);
+
                     const f1 = document.createElement('div');
                     f1.className = 'strawberry-face';
                     f1.style.backgroundImage = strawberrySVG;
