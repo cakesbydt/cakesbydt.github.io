@@ -175,16 +175,16 @@
     <div class="levy-panel">
         <div class="logo-vlevo"><img src="logo.jpg" alt="Logo"></div>
         <div class="kontaktni-form">
-            <div class="input-group"><label>Vaše Jméno</label><input type="text" placeholder="Jan Novák"></div>
+            <div class="input-group"><label>Vaše Jméno a Příjmení</label><input type="text" placeholder="Jan Novák"></div>
             <div class="input-group"><label>E-mailová adresa</label><input type="email" placeholder="jan@luxus.cz"></div>
             <div class="input-group"><label>Mobilní telefon</label><input type="tel" placeholder="+420 ..."></div>
             <div class="input-group"><label>Datum události</label><input type="date"></div>
         </div>
-        <p style="margin-top:auto; font-size: 10px; letter-spacing: 3px; opacity: 0.5;">PREMIUM CAKE CONFIGURATOR v2.0</p>
+        <p style="margin-top:auto; font-size: 20px; letter-spacing: 3px; opacity: 0.5;">Váš sladký sen</p>
     </div>
 
     <div class="obsah">
-        <h1 class="hlavni-motto">Váš sladký sen</h1>
+        <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
         
         <div class="sekce">
             <h3>1. Architektura korpusu</h3>
@@ -192,20 +192,20 @@
                 <div style="flex-basis: 100%; margin-bottom: 20px;">
                     <label>Typ události / Styl dortu</label>
                     <select id="cakeStyle" onchange="updateCake()">
-                        <option value="classic">🎂 Klasický narozeninový / Oslava</option>
-                        <option value="wedding">💍 Svatební Luxury Edition</option>
+                        <option value="classic">🎂 Klasický</option>
+                        <option value="wedding">💍 Svatební</option>
                     </select>
                 </div>
-                <div><label>Průměr základny</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm (Mini)</option><option value="20" selected>20 cm (Classic)</option><option value="24">24 cm (Grand)</option></select></div>
-                <div><label>Výška korpusu</label><select id="layers" onchange="updateCake()"><option value="4">6 cm (4 vrstvy)</option><option value="6">9 cm (6 vrstev)</option><option value="8" selected>12 cm (8 vrstev)</option><option value="12">18 cm (12 vrstev)</option></select></div>
-                <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x3d2b1f">Belgická Čokoláda</option><option value="0xfff4e0">Madagaskarská Vanilka</option></select></div>
+                <div><label>Průměr dortu</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm</option><option value="20" selected>20 cm</option><option value="24">24 cm</option></select></div>
+                <div><label>Počet vrstev</label><select id="layers" onchange="updateCake()"><option value="4">6 cm (4 vrstvy)</option><option value="6">9 cm (6 vrstev)</option><option value="8" selected>12 cm (8 vrstev)</option><option value="12">18 cm (12 vrstev)</option></select></div>
+                <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x3d2b1f">Kakaový</option><option value="0xfff4e0">Vanilkový</option><option value="0xfff4e0">Mrkvový</option><option value="0xfff4e0">Ořechový</option></select></div>
             </div>
         </div>
 
         <div class="sekce">
             <h3>2. Design & Krém</h3>
             <div class="flex">
-                <div><label>Styl povrchu</label><select id="coating" onchange="updateCake()"><option value="naked">Naked Artist</option><option value="semi">Semi-Velvet</option><option value="full" selected>Smooth Couture</option></select></div>
+                <div><label>Styl povrchu</label><select id="coating" onchange="updateCake()"><option value="naked">Naháč</option><option value="semi">Lehce potřený</option><option value="full" selected></option></select></div>
                 <div><label>Vnitřní krém</label><select id="innerCream" onchange="updateCake()"><option value="0xffffff">Smetana / Mascarpone</option><option value="0xf8bbd0">Lesní jahoda</option><option value="0xe8f5e9">Pravá Pistácie</option></select></div>
                 <div><label>Vnější krém</label><select id="outerCream" onchange="updateCake()"><option value="0xffffff">Smetana / Mascarpone</option><option value="0xf8bbd0">Jemná Růžová</option><option value="0xe8f5e9">Pistáciová</option></select></div>
             </div>
@@ -214,8 +214,8 @@
         <div class="sekce">
             <h3>3. Výběr ovoce</h3>
             <div class="flex">
-                <div><label>Ovoce v krému</label><select id="fruitCream" onchange="updateCake()"><option value="none">Bez ovoce</option><option value="strawberries">Jahody</option><option value="blueberries">Borůvky</option><option value="mix" selected>Královský Mix</option></select></div>
-                <div><label>Ovoce nahoře</label><select id="fruitTop" onchange="updateCake()"><option value="none">Bez zdobení</option><option value="strawberries" selected>Čerstvé jahody</option><option value="blueberries">Zahradní borůvky</option><option value="mix">Bohatý Mix</option></select></div>
+                <div><label>Ovoce v krému</label><select id="fruitCream" onchange="updateCake()"><option value="none">Bez ovoce</option><option value="strawberries">Jahody</option><option value="blueberries">Borůvky</option><option value="blueberries">Maliny</option><option value="mix" selected>Královský Mix</option></select></div>
+                <div><label>Ovoce nahoře</label><select id="fruitTop" onchange="updateCake()"><option value="none">Bez zdobení</option><option value="strawberries" selected>Jahody</option><option value="blueberries">Borůvky</option><option value="raspberries">Maliny</option><option value="mix">Bohatý Mix</option></select></div>
                 <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake()"><option value="border">Věneček</option><option value="full" selected>Plné zaplnění</option></select></div>
             </div>
         </div>
@@ -230,7 +230,7 @@
         </div>
 
         <div class="sekce">
-            <h3>4. Signature detaily</h3>
+            <h3>4. Doplňky</h3>
             
             <div class="doplnek-item">
                 <label class="check-row">
@@ -238,27 +238,27 @@
                     <span class="checkbox-label">Květinová dekorace</span>
                 </label>
                 <div class="extra-input">
-                    <input type="text" placeholder="Specifikujte druh květin (např. živé růže, pivoňky, sušené květy)...">
+                    <input type="text" placeholder="Specifikujte druh květin a umístění">
                 </div>
             </div>
 
             <div class="doplnek-item">
                 <label class="check-row">
                     <input type="checkbox" id="c1">
-                    <span class="checkbox-label">Jedlý papír / Fotografie</span>
+                    <span class="checkbox-label">Jedlý papír</span>
                 </label>
                 <div class="extra-input">
-                    <input type="text" placeholder="Jaký motiv nebo fotku si přejete?">
+                    <input type="text" placeholder="Jaký motiv nebo fotku si přejete? Kolem dortu nebo navršek?">
                 </div>
             </div>
 
             <div class="doplnek-item">
                 <label class="check-row">
                     <input type="checkbox" id="c2">
-                    <span class="checkbox-label">Ručně modelovaná figurka</span>
+                    <span class="checkbox-label">Figurka</span>
                 </label>
                 <div class="extra-input">
-                    <input type="text" placeholder="Popište postavičku (např. medvídek, auto)...">
+                    <input type="text" placeholder="Popište postavičku (např. medvídek, auto) marcipán nebo 3D tisk?">
                 </div>
             </div>
 
@@ -268,7 +268,7 @@
                     <span class="checkbox-label">Personalizovaný zápich</span>
                 </label>
                 <div class="extra-input">
-                    <input type="text" placeholder="Text na zápich (např. 'Vše nejlepší')...">
+                    <input type="text" placeholder="Text na zápich (např. 'Vše nejlepší' nebo číslo)...">
                 </div>
             </div>
 
