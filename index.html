@@ -139,18 +139,23 @@
         animate();
     }
 
+    // --- OPRAVENÉ VELIKOSTI OVOCE ---
     function createStrawberry() {
         const s = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), new THREE.MeshPhongMaterial({ color: 0xff1744, shininess: 80 }));
-        body.scale.set(0.8, 1.3, 0.8);
+        // Větší a protaženější jahoda
+        const body = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12), new THREE.MeshPhongMaterial({ color: 0xff1744, shininess: 80 }));
+        body.scale.set(0.85, 1.4, 0.85); 
         s.add(body);
-        const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.12, 6), new THREE.MeshPhongMaterial({ color: 0x2e7d32 }));
-        leaf.position.y = 0.22;
+        const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.15, 6), new THREE.MeshPhongMaterial({ color: 0x2e7d32 }));
+        leaf.position.y = 0.28;
         s.add(leaf);
         return s;
     }
 
-    function createBlueberry() { return new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 16), new THREE.MeshPhongMaterial({ color: 0x1a237e, shininess: 40 })); }
+    function createBlueberry() { 
+        // Výrazně menší borůvka
+        return new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), new THREE.MeshPhongMaterial({ color: 0x1a237e, shininess: 40 })); 
+    }
 
     function updateCake() {
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
@@ -177,13 +182,11 @@
             const isStep = (style === 'wedding' && isCreamLayer && i < layerCount - 1);
             const isInCream = isCreamLayer && i < layerCount - 1;
 
-            // Logika ovoce navrchu / na schodech
             if (fruitTop !== "none" && (isTop || isStep)) {
                 if (topStyle === 'full' && isTop) {
-                    // Plné zaplnění vršku (kruhy)
                     for (let row = 0; row <= r; row += 0.5) {
                         const circleR = row;
-                        const count = circleR === 0 ? 1 : Math.floor(circleR * 8);
+                        const count = circleR === 0 ? 1 : Math.floor(circleR * 9); // Trochu hustší kvůli menším borůvkám
                         for (let j = 0; j < count; j++) {
                             let f = (fruitTop === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitTop === 'strawberries' ? createStrawberry() : createBlueberry());
                             const ang = (j / count) * Math.PI * 2;
@@ -193,8 +196,7 @@
                         }
                     }
                 } else {
-                    // Jen po obvodu
-                    const count = Math.floor(r * 6);
+                    const count = Math.floor(r * 7);
                     for (let j = 0; j < count; j++) {
                         let f = (fruitTop === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitTop === 'strawberries' ? createStrawberry() : createBlueberry());
                         const ang = (j / count) * Math.PI * 2;
@@ -206,15 +208,16 @@
                 }
             }
 
-            // Ovoce v krému
             if (fruitCream !== "none" && isInCream && !isStep) {
-                const count = Math.floor(r * 10);
+                const count = Math.floor(r * 12);
                 for (let j = 0; j < count; j++) {
                     let f = (fruitCream === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitCream === 'strawberries' ? createStrawberry() : createBlueberry());
                     const ang = (j / count) * Math.PI * 2;
-                    f.scale.set(0.4, 0.4, 0.2); 
+                    // V krému musí být borůvky trošku vidět, ale jahody zůstávají dominantní
+                    const s = f.children.length > 0 ? 0.45 : 0.3; 
+                    f.scale.set(s, s, 0.2); 
                     f.rotation.y = ang; 
-                    f.position.set(Math.cos(ang) * (r * 0.97), (i * layerH), Math.sin(ang) * (r * 0.97));
+                    f.position.set(Math.cos(ang) * (r * 0.975), (i * layerH), Math.sin(ang) * (r * 0.975));
                     cakeGroup.add(f);
                 }
             }
