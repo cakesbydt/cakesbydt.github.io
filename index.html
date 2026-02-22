@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cakes by DT | Full 3D Experience</title>
+    <title>Cakes by DT | Real 3D Fruits</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ad1457; --bg: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); }
@@ -11,27 +11,27 @@
         
         .karta { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; backdrop-filter: blur(10px); }
         h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2rem; margin: 0; }
-        .ig { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.6; }
-
-        .scena { height: 320px; margin: 15px 0; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
+        
+        .scena { height: 320px; margin: 15px 0; display: flex; align-items: center; justify-content: center; perspective: 1200px; }
         
         .dort-telo { 
-            position: relative; 
-            width: 200px; height: 200px;
+            position: relative; width: 200px; height: 200px;
             transform-style: preserve-3d;
-            transform: rotateX(-15deg) rotateY(0deg);
+            transform: rotateX(-20deg) rotateY(0deg);
             transition: transform 0.1s linear;
         }
 
         .vrstva { position: absolute; width: 100%; height: 40px; transform-style: preserve-3d; bottom: var(--bottom); }
 
+        /* BOKY DORTU */
         .segment {
             position: absolute; width: var(--segW); height: 40px; background: var(--color);
             left: 50%; top: 0; margin-left: calc(var(--segW) / -2);
-            background: linear-gradient(to right, rgba(0,0,0,0.12), transparent, rgba(0,0,0,0.12)), var(--color);
-            border: 0.2px solid rgba(0,0,0,0.01);
+            background: linear-gradient(to right, rgba(0,0,0,0.15), transparent, rgba(0,0,0,0.15)), var(--color);
+            border: 0.3px solid rgba(0,0,0,0.02);
         }
 
+        /* VRŠEK DORTU */
         .vicko {
             position: absolute; width: var(--w); height: var(--w);
             background: var(--topColor); border-radius: 50%;
@@ -41,88 +41,89 @@
             box-shadow: inset 0 0 30px rgba(0,0,0,0.1);
         }
 
-        /* 3D JAHODA KONSTRUKCE */
-        .jahoda-wrap {
-            position: absolute; top: -10px; left: 50%;
-            transform-style: preserve-3d;
-            width: 40px; height: 50px;
-        }
-
-        .jahoda-telo {
+        /* --- SKUTEČNÁ 3D JAHODA --- */
+        .jahoda-3d {
             position: absolute; width: 30px; height: 40px;
-            background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
-            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
-            left: 50%; margin-left: -15px;
+            transform-style: preserve-3d;
+            top: -20px; left: 50%; margin-left: -15px;
         }
-        
-        /* Křížení pro 3D efekt jahody */
-        .jahoda-telo.f2 { transform: rotateY(90deg); }
 
-        .listky {
-            position: absolute; top: -5px; left: 50%; width: 20px; height: 10px;
-            background: #4caf50; border-radius: 50%; margin-left: -10px;
-            transform: rotateX(90deg);
+        .jahoda-rez {
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at 30% 30%, #ff4d4d, #990000);
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            backface-visibility: visible;
+        }
+
+        .listek-top {
+            position: absolute; top: -5px; left: 50%; width: 22px; height: 22px;
+            background: #2e7d32; border-radius: 50% 0 50% 0;
+            margin-left: -11px; transform: rotateX(90deg) rotateZ(45deg);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
         }
 
         /* UI */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .box { background: #fff; padding: 12px; border-radius: 20px; text-align: left; border: 1px solid rgba(0,0,0,0.05); }
-        label { font-size: 9px; font-weight: 700; color: #bbb; text-transform: uppercase; display: block; }
-        select { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; outline: none; color: #444; }
-        .tahlo { width: 100%; accent-color: var(--primary); margin: 15px 0 5px 0; cursor: pointer; }
-        .btn { width: 100%; padding: 18px; background: linear-gradient(90deg, #ad1457, #ff1744); color: white; border: none; border-radius: 25px; font-weight: 700; font-size: 16px; margin-top: 20px; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .box { background: #fff; padding: 10px; border-radius: 18px; text-align: left; border: 1px solid rgba(0,0,0,0.05); }
+        label { font-size: 8px; font-weight: 700; color: #bbb; text-transform: uppercase; display: block; }
+        select { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; outline: none; color: #444; }
+        .tahlo { width: 100%; accent-color: var(--primary); margin: 15px 0; cursor: pointer; }
+        .btn { width: 100%; padding: 16px; background: linear-gradient(90deg, #ad1457, #ff1744); color: white; border: none; border-radius: 20px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="karta">
     <h1>Cakes by DT</h1>
-    <a href="#" class="ig">📸 @cakesbydt_</a>
-
     <div class="scena">
         <div class="dort-telo" id="vizual"></div>
     </div>
 
     <input type="range" min="0" max="360" value="0" class="tahlo" oninput="otoc(this.value)">
-    <div style="font-size: 10px; color: #bbb;">OTÁČET DORTEM O 360°</div>
-
+    
     <div class="grid">
         <div class="box"><label>Velikost</label>
-            <select id="s" onchange="uprav()"><option value="160">15 cm</option><option value="200" selected>20 cm</option><option value="240">25 cm</option></select>
+            <select id="s" onchange="uprav()"><option value="160">15 cm</option><option value="200" selected>20 cm</option></select>
         </div>
         <div class="box"><label>Vrstvy</label>
-            <select id="l" onchange="uprav()"><option value="3">3 vrstvy</option><option value="4" selected>4 vrstvy</option><option value="5">5 vrstev</option></select>
+            <select id="l" onchange="uprav()"><option value="3">3 vrstvy</option><option value="4" selected>4 vrstvy</option></select>
         </div>
     </div>
-
     <div class="grid">
         <div class="box"><label>Korpus</label>
-            <select id="c" onchange="uprav()"><option value="#f3e5ab" selected>Světlý</option><option value="#5d4037">Ořechový</option></select>
+            <select id="c" onchange="uprav()"><option value="#f3e5ab">Světlý</option><option value="#5d4037" selected>Ořechový</option></select>
         </div>
         <div class="box"><label>Krém</label>
             <select id="k" onchange="uprav()"><option value="#f8bbd0" selected>Malinový</option><option value="#ffffff">Vanilkový</option></select>
         </div>
     </div>
-
     <button class="btn">ODESLAT POPTÁVKU</button>
 </div>
 
 <script>
     function otoc(v) {
-        document.getElementById('vizual').style.transform = `rotateX(-15deg) rotateY(${v}deg)`;
+        document.getElementById('vizual').style.transform = `rotateX(-20deg) rotateY(${v}deg)`;
     }
 
-    function vytvorJahodu(x, z) {
-        const wrap = document.createElement('div');
-        wrap.className = 'jahoda-wrap';
-        wrap.style.transform = `translateX(${x}px) translateZ(${z}px)`;
+    function vytvor3DJahodu(x, z) {
+        const jahoda = document.createElement('div');
+        jahoda.className = 'jahoda-3d';
+        // Umístění na ploše dortu
+        jahoda.style.transform = `translate3d(${x}px, -20px, ${z}px)`;
         
-        const t1 = document.createElement('div'); t1.className = 'jahoda-telo';
-        const t2 = document.createElement('div'); t2.className = 'jahoda-telo f2';
-        const l = document.createElement('div'); l.className = 'listky';
+        // Vytvoření 6 řezů pro objem jahody
+        for(let r=0; r<6; r++) {
+            const rez = document.createElement('div');
+            rez.className = 'jahoda-rez';
+            rez.style.transform = `rotateY(${r * 30}deg)`;
+            jahoda.appendChild(rez);
+        }
         
-        wrap.appendChild(t1); wrap.appendChild(t2); wrap.appendChild(l);
-        return wrap;
+        const listky = document.createElement('div');
+        listky.className = 'listek-top';
+        jahoda.appendChild(listky);
+        
+        return jahoda;
     }
 
     function uprav() {
@@ -133,22 +134,21 @@
         const barvaN = document.getElementById('k').value;
 
         plocha.innerHTML = "";
-        const pocetSegmentu = 24;
-        const uhelKrok = 360 / pocetSegmentu;
-        const segW = (Math.PI * sirka / pocetSegmentu) + 1;
+        const segPocet = 24;
+        const segW = (Math.PI * sirka / segPocet) + 1;
 
         for (let i = 0; i < pocet; i++) {
             const v = document.createElement('div');
             v.className = 'vrstva';
-            const barvaVrstvy = (i % 2 === 0 ? barvaK : barvaN);
+            const barva = (i % 2 === 0 ? barvaK : barvaN);
             v.style.setProperty('--bottom', (i * 40) + 'px');
-            v.style.setProperty('--color', barvaVrstvy);
+            v.style.setProperty('--color', barva);
             v.style.setProperty('--segW', segW + 'px');
 
-            for (let j = 0; j < pocetSegmentu; j++) {
+            for (let j = 0; j < segPocet; j++) {
                 const seg = document.createElement('div');
                 seg.className = 'segment';
-                seg.style.transform = `rotateY(${j * uhelKrok}deg) translateZ(${sirka / 2}px)`;
+                seg.style.transform = `rotateY(${j * (360/segPocet)}deg) translateZ(${sirka/2}px)`;
                 v.appendChild(seg);
             }
 
@@ -156,13 +156,14 @@
                 const vicko = document.createElement('div');
                 vicko.className = 'vicko';
                 vicko.style.setProperty('--w', sirka + 'px');
-                vicko.style.setProperty('--topColor', barvaVrstvy);
+                vicko.style.setProperty('--topColor', barva);
                 v.appendChild(vicko);
 
-                // Rozmístění 3D jahod
-                v.appendChild(vytvorJahodu(0, 0));
-                v.appendChild(vytvorJahodu(sirka/4, sirka/4));
-                v.appendChild(vytvorJahodu(-sirka/4, -sirka/4));
+                // Rozmístění jahod do kruhu na vršku
+                const jahodyPozice = [[0,0], [40,30], [-40,30], [30,-40], [-30,-40]];
+                jahodyPozice.forEach(p => {
+                    v.appendChild(vytvor3DJahodu(p[0], p[1]));
+                });
             }
             plocha.appendChild(v);
         }
