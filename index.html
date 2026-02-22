@@ -3,421 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dortový konfigurátor | Cakes by DT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <title>3D Konfigurátor | Cakes by DT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #db2777;
-            --primary-dark: #ad1457;
-            --accent: #fce7f3;
-            --bg: #fff5f8;
-            --text: #4a4a4a;
-            --shadow: 0 15px 35px rgba(219, 39, 119, 0.1);
-        }
-
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background: linear-gradient(135deg, #fff5f8 0%, #fde2e4 100%);
-            color: var(--text);
-            display: flex; 
-            justify-content: center; 
-            padding: 40px 20px;
-            margin: 0;
-        }
-
-        .karta { 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 40px; 
-            border-radius: 30px; 
-            box-shadow: var(--shadow); 
-            width: 100%;
-            max-width: 650px; 
-            backdrop-filter: blur(10px);
-        }
+        :root { --primary: #db2777; --primary-dark: #ad1457; --accent: #fce7f3; --bg: #fff5f8; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .karta { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 100%; max-width: 600px; }
         
-        /* LOGO & HLAVIČKA */
-        .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo-img { 
-            max-width: 120px; 
-            border-radius: 50%; 
-            border: 4px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: transform 0.5s ease;
-        }
-        .logo-img:hover { transform: rotate(5deg) scale(1.05); }
+        h1 { font-family: 'Playfair Display', serif; color: var(--primary-dark); text-align: center; margin-bottom: 5px; }
+        .ig-odkaz { text-align: center; margin-bottom: 20px; }
+        .ig-odkaz a { color: var(--primary); text-decoration: none; font-weight: bold; font-size: 14px; }
 
-        h1 { 
-            font-family: 'Playfair Display', serif;
-            color: var(--primary-dark); 
-            text-align: center; 
-            margin: 0; 
-            font-size: 2.2rem;
-            letter-spacing: -0.5px;
-        }
-
-        .ig-odkaz { text-align: center; margin-bottom: 30px; }
-        .ig-odkaz a { 
-            color: var(--primary); 
-            text-decoration: none; 
-            font-weight: 600; 
-            font-size: 14px; 
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: 0.3s;
-        }
-        .ig-odkaz a:hover { opacity: 0.7; }
-
-        /* GALERIE */
-        .galerie { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 15px; 
-            margin-bottom: 35px; 
-        }
-        .galerie img { 
-            width: 100%; 
-            height: 140px; 
-            object-fit: cover; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .galerie img:hover { transform: translateY(-5px) scale(1.02); }
-
-        /* VIZUALIZACE DORTU */
-        #box-dortu { 
-            margin: 30px auto; 
-            padding: 50px 20px 30px 20px; 
-            background: #fff; 
-            border-radius: 20px;
-            display: flex; 
-            flex-direction: column-reverse; 
-            align-items: center; 
-            min-height: 220px;
+        /* 3D SCÉNA */
+        .scena-3d { 
+            height: 300px; perspective: 1000px; 
+            display: flex; align-items: center; justify-content: center; 
+            background: radial-gradient(circle, #fff 0%, #fdf2f7 100%);
+            border-radius: 20px; margin-bottom: 10px; overflow: hidden;
             border: 1px solid var(--accent);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
         }
-        .v-korpus { 
-            height: 28px; 
-            border-radius: 6px; 
-            margin-top: 2px; 
-            position: relative; 
-            z-index: 2; 
-            transition: 0.4s;
-            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.1);
+        .dort-container { 
+            position: relative; width: 200px; height: 200px; 
+            transform-style: preserve-3d; transform: rotateX(-15deg) rotateY(0deg);
+            transition: transform 0.1s ease;
         }
-        .v-krem { 
-            height: 18px; 
-            border-radius: 12px; 
-            margin-bottom: -2px; 
-            position: relative; 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center; 
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        .vrstva { 
+            position: absolute; left: 50%; transform-style: preserve-3d; 
+            transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .kousek-ovoce { 
-            width: 8px; 
-            height: 8px; 
-            border-radius: 50%; 
-            filter: blur(0.5px);
+        /* Válec (korpus/krém) */
+        .valec { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; }
+        .strana { 
+            position: absolute; width: 20px; height: 100%; 
+            left: 50%; margin-left: -10px;
+            background: inherit; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
         }
-        .jahody-top { 
-            position: absolute; 
-            bottom: 110%; 
-            width: 100%; 
-            display: flex; 
-            justify-content: center; 
-            font-size: 32px; 
-            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
-        }
+
+        /* OVLÁDÁNÍ ROTACE */
+        .rotace-control { margin-bottom: 30px; text-align: center; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); }
 
         /* FORMULÁŘ */
-        .sekce { 
-            margin-bottom: 20px; 
-            padding: 20px; 
-            background: white; 
-            border-radius: 18px; 
-            border: 1px solid #f1f1f1;
-            transition: 0.3s;
-        }
-        .sekce:hover { border-color: var(--accent); }
-
-        h3 { 
-            color: var(--primary-dark); 
-            font-size: 15px; 
-            margin: 0 0 15px 0; 
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        h3::after { content: ""; flex: 1; height: 1px; background: var(--accent); }
-
-        label { display: block; font-weight: 600; color: #777; font-size: 12px; margin-bottom: 8px; }
-        
-        input[type="text"], input[type="tel"], input[type="email"], select, textarea { 
-            width: 100%; 
-            padding: 12px 15px; 
-            border-radius: 10px; 
-            border: 1.5px solid #eee; 
-            box-sizing: border-box; 
-            font-family: inherit;
-            font-size: 14px;
-            transition: 0.3s;
-            background: #fafafa;
-        }
-        input:focus, select:focus, textarea:focus { 
-            outline: none; 
-            border-color: var(--primary); 
-            background: white;
-            box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.05);
-        }
-
-        .ch-radek { 
-            display: grid; 
-            grid-template-columns: 24px 120px 1fr;
-            align-items: center; 
-            gap: 10px; 
-            margin-bottom: 12px; 
-            font-size: 14px; 
-        }
-        input[type="checkbox"] { 
-            width: 18px; 
-            height: 18px; 
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-
-        .flex { display: flex; gap: 15px; }
+        .sekce { background: #fffcfd; padding: 15px; border-radius: 15px; border: 1px solid var(--accent); margin-bottom: 15px; }
+        h3 { color: var(--primary-dark); font-size: 14px; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px; }
+        .flex { display: flex; gap: 10px; }
         .flex > div { flex: 1; }
-        
+        input, select, textarea { 
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--accent); 
+            font-family: inherit; margin-top: 5px; box-sizing: border-box;
+        }
         .btn { 
-            width: 100%; 
-            padding: 18px; 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            border-radius: 15px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            font-size: 16px; 
-            letter-spacing: 1px;
-            margin-top: 20px; 
-            transition: all 0.3s; 
-            box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2);
+            width: 100%; padding: 18px; background: var(--primary); color: white; border: none; 
+            border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; 
         }
-        .btn:hover { 
-            background: var(--primary-dark); 
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(219, 39, 119, 0.3);
-        }
-
-        .footer-ig { text-align: center; margin-top: 30px; font-size: 13px; color: #999; }
-        .footer-ig a { color: var(--primary); text-decoration: none; font-weight: 600; }
-
-        @media (max-width: 500px) {
-            .flex { flex-direction: column; gap: 10px; }
-            .ch-radek { grid-template-columns: 24px 1fr; }
-            .ch-radek input[type="text"] { grid-column: 1 / span 2; }
-        }
+        .btn:hover { background: var(--primary-dark); transform: scale(1.02); }
     </style>
 </head>
 <body>
 
 <div class="karta">
-    <div class="logo-container">
-        <img src="https://img.freepik.com/premium-vector/elegant-cake-logo-design-bakery-logo-vector_564346-30.jpg" alt="Logo" class="logo-img">
-    </div>
-
     <h1>Cakes by DT</h1>
-    <div class="ig-odkaz">
-        <a href="https://www.instagram.com/_cakesbydt_/" target="_blank">✨ Sledovat na Instagramu</a>
+    <div class="ig-odkaz"><a href="#">📸 @_cakesbydt_</a></div>
+
+    <div class="scena-3d">
+        <div class="dort-container" id="dort">
+            </div>
+    </div>
+    <div class="rotace-control">
+        <label style="font-size: 11px; color: #999;">OTÁČET DORTEM</label>
+        <input type="range" min="0" max="360" value="45" oninput="otoc(this.value)">
     </div>
 
-    <div class="galerie">
-        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=300&q=80" alt="Dort 1">
-        <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=300&q=80" alt="Dort 2">
-        <img src="https://images.unsplash.com/photo-1535141192574-5d4897c82536?auto=format&fit=crop&w=300&q=80" alt="Dort 3">
+    <div class="sekce flex">
+        <div>
+            <label>Průměr</label>
+            <select id="sirka" onchange="aktualizuj()">
+                <option value="120">15 cm</option>
+                <option value="160" selected>20 cm</option>
+                <option value="200">25 cm</option>
+            </select>
+        </div>
+        <div>
+            <label>Patra</label>
+            <select id="patra" onchange="aktualizuj()">
+                <option value="3">3 vrstvy</option>
+                <option value="5" selected>5 vrstev</option>
+                <option value="7">7 vrstev</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="sekce flex">
+        <div>
+            <label>Korpus</label>
+            <select id="cK" onchange="aktualizuj()">
+                <option value="#f3e5ab">Světlý</option>
+                <option value="#4e342e">Čoko</option>
+            </select>
+        </div>
+        <div>
+            <label>Náplň</label>
+            <select id="cN" onchange="aktualizuj()">
+                <option value="#fff">Vanilka</option>
+                <option value="#f8bbd0">Ovocný</option>
+            </select>
+        </div>
     </div>
 
     <div class="sekce">
         <h3>👤 Kontaktní údaje</h3>
-        <input type="text" id="jmeno" placeholder="Vaše jméno a příjmení">
-        <div class="flex" style="margin-top:12px">
-            <input type="tel" id="telefon" placeholder="Telefonní číslo">
-            <input type="email" id="email-zak" placeholder="E-mailová adresa">
-        </div>
+        <input type="text" id="jmeno" placeholder="Jméno">
+        <input type="tel" id="tel" placeholder="Telefon" style="margin-top:10px">
     </div>
 
-    <div class="sekce flex">
-        <div>
-            <label>Průměr dortu</label>
-            <select id="sirka" onchange="aktualizuj()">
-                <option value="180">Malý (15 cm)</option>
-                <option value="240" selected>Střední (20 cm)</option>
-                <option value="300">Velký (25 cm)</option>
-                <option value="360">Extra (30 cm)</option>
-            </select>
-        </div>
-        <div>
-            <label>Počet pater</label>
-            <select id="patra" onchange="aktualizuj()">
-                <option value="2">2 patra (standard)</option>
-                <option value="3" selected>3 patra (vysoký)</option>
-                <option value="4">4 patra</option>
-                <option value="5">5 pater</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="sekce flex">
-        <div>
-            <label>Příchuť korpusu</label>
-            <select id="korpus" onchange="aktualizuj()">
-                <option value="#f3e5ab">Světlý piškot</option>
-                <option value="#3e2723">Čokoládový (kakao)</option>
-                <option value="#d7ccc8">Ořechový korpus</option>
-            </select>
-        </div>
-        <div>
-            <label>Druh náplně</label>
-            <select id="krem" onchange="aktualizuj()">
-                <option value="#fffde7">Lehký vanilkový</option>
-                <option value="#5d4037">Pařížská šlehačka</option>
-                <option value="#f8bbd0">Ovocný krém</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="sekce">
-        <h3>✨ Design a doplňky</h3>
-        <div class="ch-radek">
-            <input type="checkbox" id="ov-krem" onchange="aktualizuj()"> <span>Ovoce v krému</span>
-            <input type="text" id="ov-krem-txt" placeholder="Např. maliny..." oninput="aktualizuj()">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="ov-dort" onchange="aktualizuj()"> <span>Ovoce nahoře</span>
-            <input type="text" id="ov-dort-txt" placeholder="Např. jahody..." oninput="aktualizuj()">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="papir-ch"> <span>Jedlý papír</span>
-            <input type="text" id="papir-txt" placeholder="Motiv (např. Tlapková patrola)">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="marc-ch"> <span>Figurka</span>
-            <input type="text" id="marc-txt" placeholder="Popis figurky">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="zapich-ch"> <span>Zápich</span>
-            <input type="text" id="zapich-txt" placeholder="Věk nebo jméno">
-        </div>
-        <textarea id="poznamka" style="margin-top:15px; min-height: 80px;" placeholder="Máte speciální přání? Napište mi ho sem..."></textarea>
-    </div>
-
-    <div id="box-dortu"></div>
-    
-    <button class="btn" onclick="poslatMail()">ODESLAT NEZÁVAZNOU POPTÁVKU</button>
-
-    <div class="footer-ig">
-        S láskou peče <a href="https://www.instagram.com/_cakesbydt_/" target="_blank">@_cakesbydt_</a>
-    </div>
+    <button class="btn" onclick="alert('Poptávka připravena!')">ODESLAT POPTÁVKU</button>
 </div>
 
 <script>
-    function detekujOvoce(text) {
-        text = text.toLowerCase();
-        if (text.includes("borův") || text.includes("boruv")) return { barva: "#3f51b5", emoji: "🫐" };
-        if (text.includes("malin")) return { barva: "#e91e63", emoji: "💖" };
-        if (text.includes("hrozn")) return { barva: "#8bc34a", emoji: "🍇" };
-        if (text.includes("kiwi")) return { barva: "#4caf50", emoji: "🥝" };
-        if (text.includes("čoko") || text.includes("coko")) return { barva: "#3e2723", emoji: "🍫" };
-        if (text.includes("mango")) return { barva: "#ffb300", emoji: "🥭" };
-        return { barva: "#ff4d4d", emoji: "🍓" };
+    function otoc(val) {
+        const dort = document.getElementById('dort');
+        dort.style.transform = `rotateX(-15deg) rotateY(${val}deg)`;
+    }
+
+    function vytvorVálec(sirka, vyska, hloubka, barva, texturuj = false) {
+        const container = document.createElement('div');
+        container.className = 'vrstva';
+        container.style.width = sirka + 'px';
+        container.style.height = vyska + 'px';
+        container.style.bottom = hloubka + 'px';
+        container.style.marginLeft = -(sirka/2) + 'px';
+        
+        const valec = document.createElement('div');
+        valec.className = 'valec';
+        valec.style.backgroundColor = barva;
+
+        // Vytvoření stran (plošky tvořící kruh)
+        const pocetStran = 12;
+        const uhelKrok = 360 / pocetStran;
+        const sirkaStrany = (Math.PI * sirka) / pocetStran;
+
+        for (let i = 0; i < pocetStran; i++) {
+            const strana = document.createElement('div');
+            strana.className = 'strana';
+            strana.style.width = (sirkaStrany + 2) + 'px';
+            strana.style.height = vyska + 'px';
+            strana.style.backgroundColor = barva;
+            strana.style.transform = `rotateY(${i * uhelKrok}deg) translateZ(${(sirka/2) - 1}px)`;
+            valec.appendChild(strana);
+        }
+
+        // Víko
+        const viko = document.createElement('div');
+        viko.style.position = 'absolute';
+        viko.style.width = sirka + 'px';
+        viko.style.height = sirka + 'px';
+        viko.style.backgroundColor = barva;
+        viko.style.borderRadius = '50%';
+        viko.style.transform = `rotateX(90deg) translateZ(${sirka/2}px)`;
+        viko.style.boxShadow = 'inset 0 0 20px rgba(0,0,0,0.1)';
+        valec.appendChild(viko);
+
+        container.appendChild(valec);
+        return container;
     }
 
     function aktualizuj() {
-        const plocha = document.getElementById('box-dortu');
-        const s = document.getElementById('sirka').value;
-        const p = document.getElementById('patra').value;
-        const cK = document.getElementById('korpus').value;
-        const cN = document.getElementById('krem').value;
-        
-        const ovoceUvnitr = document.getElementById('ov-krem').checked;
-        const textUvnitr = document.getElementById('ov-krem-txt').value;
-        const barvaUvnitr = detekujOvoce(textUvnitr).barva;
-
-        const ovoceNahore = document.getElementById('ov-dort').checked;
-        const textNahore = document.getElementById('ov-dort-txt').value;
-        const emojiNahore = detekujOvoce(textNahore).emoji;
+        const plocha = document.getElementById('dort');
+        const s = parseInt(document.getElementById('sirka').value);
+        const p = parseInt(document.getElementById('patra').value);
+        const korpusBarva = document.getElementById('cK').value;
+        const kremBarva = document.getElementById('cN').value;
 
         plocha.innerHTML = "";
+        let aktualniVyska = 0;
 
         for (let i = 0; i < p; i++) {
-            let korp = document.createElement('div');
-            korp.className = 'v-korpus';
-            korp.style.width = s + "px";
-            korp.style.backgroundColor = cK;
+            // Střídání korpusu a krému
+            const jeKorpus = i % 2 === 0;
+            const barva = jeKorpus ? korpusBarva : kremBarva;
+            const v = jeKorpus ? 25 : 12; // Výška vrstvy
             
-            if (i == p - 1 && ovoceNahore) {
-                let dekorce = document.createElement('div');
-                dekorce.className = 'jahody-top';
-                dekorce.innerHTML = emojiNahore + emojiNahore + emojiNahore;
-                korp.appendChild(dekorce);
-            }
-            plocha.appendChild(korp);
-
-            if (i < p - 1) {
-                let napl = document.createElement('div');
-                napl.className = 'v-krem';
-                napl.style.width = (s - 12) + "px";
-                napl.style.backgroundColor = cN;
-                
-                if (ovoceUvnitr) {
-                    for(let j=0; j<5; j++) {
-                        let tecka = document.createElement('div');
-                        tecka.className = 'kousek-ovoce';
-                        tecka.style.backgroundColor = barvaUvnitr;
-                        napl.appendChild(tecka);
-                    }
-                }
-                plocha.appendChild(napl);
-            }
+            const vrstva = vytvorVálec(s, v, aktualniVyska, barva);
+            plocha.appendChild(vrstva);
+            aktualniVyska += v;
         }
     }
 
-    function poslatMail() {
-        const jmeno = document.getElementById('jmeno').value;
-        if(!jmeno) { alert("Prosím vyplňte jméno."); return; }
-        
-        const getVal = (idCh, idTxt) => {
-            const ch = document.getElementById(idCh).checked;
-            const txt = idTxt ? document.getElementById(idTxt).value : "";
-            return ch ? `ANO (${txt})` : "NE";
-        };
-
-        const prumer = document.getElementById('sirka').options[document.getElementById('sirka').selectedIndex].text;
-        const patraText = document.getElementById('patra').options[document.getElementById('patra').selectedIndex].text;
-        
-        const telo = `Nová poptávka od: ${jmeno}%0A` +
-                     `Kontakt: ${document.getElementById('telefon').value} | ${document.getElementById('email-zak').value}%0A%0A` +
-                     `--- SPECIFIKACE ---%0A` +
-                     `Dort: ${prumer}, ${patraText}%0A` +
-                     `Korpus: ${document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text}%0A` +
-                     `Krém: ${document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text}%0A%0A` +
-                     `--- DOPLŇKY ---%0A` +
-                     `Ovoce v krému: ${getVal('ov-krem', 'ov-krem-txt')}%0A` +
-                     `Ovoce na dortu: ${getVal('ov-dort', 'ov-dort-txt')}%0A` +
-                     `Jedlý papír: ${getVal('papir-ch', 'papir-txt')}%0A` +
-                     `Figurka: ${getVal('marc-ch', 'marc-txt')}%0A` +
-                     `Zápich: ${getVal('zapich-ch', 'zapich-txt')}%0A%0A` +
-                     `Poznámka: ${document.getElementById('poznamka').value}`;
-
-        window.location.href = `mailto:trnda9@SEZNAM.CZ?subject=Poptávka_Dortu_${jmeno.replace(/ /g, '_')}&body=${telo}`;
-    }
-
-    window.onload = aktualizuj;
+    window.onload = () => {
+        aktualizuj();
+        otoc(45);
+    };
 </script>
 
 </body>
