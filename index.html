@@ -205,7 +205,7 @@
                             (fruitC === 'strawberries' ? createStrawberryCream() : createBlueberry());
                     const ang = (j / count) * Math.PI * 2;
                     // Poloměr je teď jen o kousíček větší než válec, aby ovoce prosvítalo nebo jemně vyčnívalo
-                    const fruitDist = r -0.2; 
+                    const fruitDist = r -0.0; 
                     f.position.set(Math.cos(ang) * fruitDist, i * h, Math.sin(ang) * fruitDist);
                     f.rotation.y = ang;
                     cakeGroup.add(f);
