@@ -2,92 +2,78 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Dortový konfigurátor</title>
+    <title>Dortový konfigurátor - Trnda</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #fff5f8; display: flex; justify-content: center; padding: 20px; gap: 40px; flex-wrap: wrap; }
-        .form-container { width: 400px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        :root { --pomer: 10px; } /* 1cm ve skutečnosti = 10px na obrazovce */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fdf2f8; display: flex; justify-content: center; padding: 20px; gap: 30px; flex-wrap: wrap; }
+        .configurator { width: 450px; background: white; padding: 25px; border-radius: 15px; shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
-        /* Grafika dortu */
-        .preview-container { width: 300px; height: 400px; position: sticky; top: 20px; background: #fff; border-radius: 20px; display: flex; flex-direction: column-reverse; align-items: center; padding-bottom: 50px; border: 2px dashed #fce4ec; }
+        /* Grafické okno */
+        .preview-box { width: 350px; height: 500px; background: #fff; border-radius: 15px; position: sticky; top: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #fbcfe8; }
         
-        /* Vrstvy dortu */
-        .layer { width: 200px; height: 40px; border-radius: 10px; margin-bottom: -5px; transition: all 0.5s ease; border: 1px solid rgba(0,0,0,0.1); }
-        .korpus-layer { height: 50px; z-index: 1; }
-        .krem-layer { height: 30px; width: 180px; z-index: 2; border-radius: 20px; }
-        .ovoce-layer { height: 20px; width: 160px; z-index: 3; display: none; }
-
-        /* Barvy korpusů */
-        .svetlý { background-color: #f3e5ab; } /* Piškotová */
-        .čokoládový { background-color: #3e2723; } /* Tmavě hnědá */
-        .ořechový { background-color: #d7ccc8; } /* Béžová */
-
-        /* Barvy krémů */
-        .vanilkový { background-color: #fffde7; border: 2px solid #fff9c4; }
-        .pařížský { background-color: #5d4037; }
-        .tvarohový { background-color: #ffffff; border: 2px dashed #e1f5fe; }
-
-        .sekce { margin-bottom: 20px; }
-        h3 { color: #ad1457; border-bottom: 2px solid #fce4ec; }
-        label { display: block; padding: 8px; cursor: pointer; border-radius: 5px; }
-        label:hover { background: #fff5f8; }
-        .tlacitko { display: block; width: 100%; padding: 15px; background: #d63384; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        /* Stavba dortu */
+        #cake-visual { display: flex; flex-direction: column-reverse; align-items: center; transition: all 0.5s ease; padding: 10px; border-radius: 5px; }
+        .layer-k { height: 20px; width: 100px; border-radius: 4px; border-bottom: 1px solid rgba(0,0,0,0.1); } /* Korpus 2cm */
+        .layer-n { height: 20px; width: 95px; border-radius: 10px; margin-bottom: -2px; } /* Náplň 2cm */
+        
+        .section { margin-bottom: 15px; padding: 10px; background: #fff9fb; border-radius: 8px; }
+        h3 { font-size: 16px; color: #be185d; margin-top: 0; }
+        input[type="text"] { width: 90%; padding: 5px; margin-top: 5px; border: 1px solid #f9a8d4; border-radius: 4px; }
+        select, input[type="color"] { padding: 5px; border-radius: 4px; border: 1px solid #f9a8d4; }
+        .btn { display: block; width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="form-container">
-    <h1>🍰 Konfigurátor</h1>
-    
-    <div class="sekce">
-        <h3>1. Korpus</h3>
-        <label><input type="radio" name="korpus" value="svetlý" checked onclick="upravDort()"> Světlý piškot</label>
-        <label><input type="radio" name="korpus" value="čokoládový" onclick="upravDort()"> Čokoládový</label>
-        <label><input type="radio" name="korpus" value="ořechový" onclick="upravDort()"> Ořechový</label>
+<div class="configurator">
+    <h1>🎂 Sestavte si dort</h1>
+
+    <div class="section">
+        <h3>📏 Průměr dortu (cm)</h3>
+        <select id="prumer" onchange="updateCake()">
+            <option value="15">15 cm</option>
+            <option value="20" selected>20 cm</option>
+            <option value="25">25 cm</option>
+            <option value="30">30 cm</option>
+        </select>
     </div>
 
-    <div class="sekce">
-        <h3>2. Náplň (krém)</h3>
-        <label><input type="radio" name="krem" value="vanilkový" checked onclick="upravDort()"> Vanilkové mascarpone</label>
-        <label><input type="radio" name="krem" value="pařížský" onclick="upravDort()"> Pařížský krém</label>
-        <label><input type="radio" name="krem" value="tvarohový" onclick="upravDort()"> Tvarohový</label>
+    <div class="section">
+        <h3>🍰 Korpus a Náplň</h3>
+        <select id="korpus-color" onchange="updateCake()">
+            <option value="#f3e5ab">Světlý piškot</option>
+            <option value="#3e2723">Čokoládový</option>
+            <option value="#d7ccc8">Ořechový</option>
+        </select>
+        <select id="napln-color" onchange="updateCake()">
+            <option value="#fff9c4">Vanilkový krém</option>
+            <option value="#5d4037">Pařížský krém</option>
+            <option value="#f8bbd0">Ovocný krém</option>
+        </select>
     </div>
 
-    <div class="sekce">
-        <h3>3. Doplňky</h3>
-        <label><input type="checkbox" id="checkJahody" value="jahody" onclick="upravDort()"> Jahody navrch</label>
+    <div class="section">
+        <h3>🍓 Ovoce v krému</h3>
+        <label><input type="checkbox" id="ovoce-v-kremu" onchange="updateCake()"> Ano, přidat ovoce</label>
+        <input type="text" id="ovoce-note" placeholder="Jaké ovoce si přejete?">
     </div>
 
-    <button onclick="poslatObjednavku()" class="tlacitko">Objednat tento skvost</button>
-</div>
+    <div class="section">
+        <h3>🎨 Krém na potření</h3>
+        <input type="color" id="coat-color" value="#ffffff" onchange="updateCake()"> 
+        <span>Vyberte barvu potahu</span>
+    </div>
 
-<div class="preview-container" id="dort-preview">
-    <div id="v-ovoce" class="ovoce-layer" style="background: #ff1744; border-radius: 50% 50% 0 0; margin-bottom: 5px;"></div>
-    <div id="v-krem" class="layer krem-layer vanilkový"></div>
-    <div id="v-korpus" class="layer korpus-layer svetlý"></div>
-    <p style="color: #ad1457; font-weight: bold;">Váš budoucí dort:</p>
-</div>
+    <div class="section">
+        <h3>🖼️ Jedlý papír</h3>
+        <label><input type="checkbox" id="papir"> Ano</label>
+        <input type="text" id="papir-note" placeholder="Motiv na papír...">
+    </div>
 
-<script>
-function upravDort() {
-    // Změna korpusu
-    let korpus = document.querySelector('input[name="korpus"]:checked').value;
-    document.getElementById('v-korpus').className = 'layer korpus-layer ' + korpus;
+    <div class="section">
+        <h3>🧸 Marcipánová figurka</h3>
+        <label><input type="checkbox" id="figurka"> Ano</label>
+        <input type="text" id="figurka-note" placeholder="Jaká figurka?">
+    </div>
 
-    // Změna krému
-    let krem = document.querySelector('input[name="krem"]:checked').value;
-    document.getElementById('v-krem').className = 'layer krem-layer ' + krem;
-
-    // Zobrazení ovoce
-    let jahody = document.getElementById('checkJahody').checked;
-    document.getElementById('v-ovoce').style.display = jahody ? 'block' : 'none';
-}
-
-function poslatObjednavku() {
-    let k = document.querySelector('input[name="korpus"]:checked').parentElement.textContent.trim();
-    let r = document.querySelector('input[name="krem"]:checked').parentElement.textContent.trim();
-    alert("Objednávka na " + k + " dort s " + r + " krémem byla připravena! (Zde pak propojíme ten e-mail)");
-}
-</script>
-
-</body>
-</html>
+    <button class="btn" onclick="sendOrder()">Odeslat specifikaci</button
