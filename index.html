@@ -1,47 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Web uživatele Trnda</title>
+    <title>Dorty od manželky</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .karta {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        h1 { color: #2c3e50; }
-        p { color: #7f8c8d; }
-        .tlacitko {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        .tlacitko:hover { background-color: #2980b9; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fff5f8; color: #444; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        h1 { color: #d63384; text-align: center; }
+        .sekce { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
+        h3 { color: #ad1457; margin-bottom: 10px; }
+        label { display: block; margin: 8px 0; cursor: pointer; padding: 10px; border: 1px solid #fce4ec; border-radius: 8px; transition: 0.2s; }
+        label:hover { background-color: #fce4ec; }
+        input[type="radio"], input[type="checkbox"] { margin-right: 10px; }
+        .tlacitko { display: block; width: 100%; padding: 15px; background-color: #d63384; color: white; border: none; border-radius: 10px; font-size: 18px; cursor: pointer; margin-top: 20px; text-align: center; text-decoration: none; }
+        .tlacitko:hover { background-color: #c2185b; }
     </style>
 </head>
 <body>
-    <div class="karta">
-        <h1>Ahoj, já jsem Trnda! 🚀</h1>
-        <p>Tohle je můj první web hostovaný na GitHubu.</p>
-        <a href="#" class="tlacitko">Klikni na mě</a>
+
+<div class="container">
+    <h1>🍰 Sestav si svůj dort</h1>
+    
+    <div class="sekce">
+        <h3>1. Výběr korpusu</h3>
+        <label><input type="radio" name="korpus" value="Světlý piškot" checked> Světlý piškot</label>
+        <label><input type="radio" name="korpus" value="Čokoládový"> Čokoládový</label>
+        <label><input type="radio" name="korpus" value="Ořechový"> Ořechový</label>
     </div>
+
+    <div class="sekce">
+        <h3>2. Výběr krému</h3>
+        <label><input type="radio" name="krem" value="Vanilkový" checked> Vanilkový mascarpone</label>
+        <label><input type="radio" name="krem" value="Pařížský"> Pařížský (čokoládový)</label>
+        <label><input type="radio" name="krem" value="Tvarohový s ovocem"> Lehký tvarohový</label>
+    </div>
+
+    <div class="sekce">
+        <h3>3. Ovoce a doplňky (můžeš víc)</h3>
+        <label><input type="checkbox" name="ovoce" value="Jahody"> Jahody</label>
+        <label><input type="checkbox" name="ovoce" value="Maliny"> Maliny</label>
+        <label><input type="checkbox" name="ovoce" value="Borůvky"> Borůvky</label>
+        <label><input type="checkbox" name="ovoce" value="Vlašské ořechy"> Vlašské ořechy</label>
+    </div>
+
+    <button onclick="poslatObjednavku()" class="tlacitko">Mám vybráno!</button>
+</div>
+
+<script>
+function poslatObjednavku() {
+    let korpus = document.querySelector('input[name="korpus"]:checked').value;
+    let krem = document.querySelector('input[name="krem"]:checked').value;
+    let ovoce = Array.from(document.querySelectorAll('input[name="ovoce"]:checked')).map(el => el.value).join(", ");
+    
+    let text = `Ahoj, mám zájem o dort: %0A- Korpus: ${korpus}%0A- Krém: ${krem}%0A- Ovoce/Doplňky: ${ovoce || 'žádné'}`;
+    
+    // Tohle otevře e-mail s předvyplněným textem
+    window.location.href = `mailto:VÁŠ-EMAIL@SEZNAM.CZ?subject=Objednávka dortu&body=${text}`;
+}
+</script>
+
 </body>
 </html>
