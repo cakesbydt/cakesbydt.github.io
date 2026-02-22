@@ -42,10 +42,7 @@
         .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 15px rgba(173,20,87,0.2); margin-top: 10px; }
         .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
-        @media (max-width: 950px) {
-            .hlavni-wrapper { flex-direction: column; margin: 0; border-radius: 0; }
-            .levy-panel { width: 100%; }
-        }
+        @media (max-width: 950px) { .hlavni-wrapper { flex-direction: column; margin: 0; border-radius: 0; } .levy-panel { width: 100%; } }
     </style>
 </head>
 <body>
@@ -77,8 +74,8 @@
             <h3>🎨 Krémy a potažení</h3>
             <div class="flex">
                 <div><label>Typ potažení</label><select id="coating" onchange="updateCake()"><option value="naked">Naháč (bez vnějšího krému)</option><option value="semi">Polonaháč (jemná stěrka)</option><option value="full" selected>Plné potažení</option></select></div>
-                <div><label>Krém uvnitř (mezi patry)</label><select id="innerCream" onchange="updateCake()"><option value="0xffffff">Smetanový / Bílý</option><option value="0xfce4ec">Růžový (malina)</option><option value="0xdcedc8">Pistáciový</option><option value="0x5d4037">Pařížský</option></select></div>
-                <div><label>Krém na potažení (vnější)</label><select id="outerCream" onchange="updateCake()"><option value="0xffffff">Bílá klasika</option><option value="0xfce4ec">Růžové snění</option><option value="0xdcedc8">Pistáciová zelená</option><option value="0x5d4037">Čokoládová stěrka</option></select></div>
+                <div><label>Krém uvnitř</label><select id="innerCream" onchange="updateCake()"><option value="0xffffff">Smetanový / Bílý</option><option value="0xfce4ec">Růžový (malina)</option><option value="0xdcedc8">Pistáciový</option><option value="0x5d4037">Pařížský</option></select></div>
+                <div><label>Krém na potažení</label><select id="outerCream" onchange="updateCake()"><option value="0xffffff">Bílá klasika</option><option value="0xfce4ec">Růžové snění</option><option value="0xdcedc8">Pistáciová zelená</option><option value="0x5d4037">Čokoládová stěrka</option></select></div>
             </div>
         </div>
 
@@ -127,8 +124,8 @@
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
-        scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-        const light = new THREE.DirectionalLight(0xffffff, 0.8);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+        const light = new THREE.DirectionalLight(0xffffff, 0.6);
         light.position.set(5, 10, 7);
         scene.add(light);
         cakeGroup = new THREE.Group();
@@ -140,7 +137,7 @@
     function createStrawberryTop() {
         const group = new THREE.Group();
         const pts = []; for (let i = 0; i < 10; i++) pts.push(new THREE.Vector2(Math.sin(i * 0.3) * 0.22 + 0.01, (i - 5) * 0.08));
-        const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 16), new THREE.MeshPhongMaterial({ color: 0xe53935, shininess: 90 }));
+        const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 16), new THREE.MeshPhongMaterial({ color: 0xe53935, shininess: 80 }));
         body.rotation.x = Math.PI; group.add(body);
         for(let i=0; i<6; i++) {
             const l = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 3), new THREE.MeshPhongMaterial({ color: 0x388e3c }));
@@ -181,31 +178,40 @@
             const isCreamLayer = i % 2 === 1;
             
             // Základní segment (korpus nebo vnitřní krém)
+            // U plného potažení ho mírně zmenšíme, aby neprosvítal skrz "obal"
+            const segmentR = (coat === 'full') ? r - 0.02 : r;
             const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(r, r, h, 45),
-                new THREE.MeshPhongMaterial({ color: isCreamLayer ? innerCreamColor : flavorColor })
+                new THREE.CylinderGeometry(segmentR, segmentR, h, 45),
+                new THREE.MeshPhongMaterial({ color: isCreamLayer ? innerCreamColor : flavorColor, shininess: 5 })
             );
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
-            // VNĚJŠÍ POTAŽENÍ (stěrka) - Bere barvu z vnějšího krému
+            // VNĚJŠÍ POTAŽENÍ (stěrka a vršek)
             if (coat !== 'naked') {
+                const isTopLayer = (i === layers - 1);
                 const coatOpacity = coat === 'semi' ? 0.6 : 1.0;
-                const coatR = r + 0.02;
+                const coatR = r + 0.01;
+                
+                // Pokud je to úplně horní vrstva, použijeme uzavřený válec (s vrškem)
+                // Pro ostatní vrstvy stačí jen boční stěna, aby se vrstvy nepraly mezi sebou
+                const coatingGeom = new THREE.CylinderGeometry(coatR, coatR, h, 45, 1, !isTopLayer);
                 const coating = new THREE.Mesh(
-                    new THREE.CylinderGeometry(coatR, coatR, h, 45),
+                    coatingGeom,
                     new THREE.MeshPhongMaterial({ 
                         color: outerCreamColor, 
                         transparent: true, 
                         opacity: coatOpacity,
-                        side: THREE.DoubleSide
+                        shininess: 10
                     })
                 );
                 coating.position.y = i * h;
+                // Posuneme o mikro kousek výš jen u vršku, aby stoprocentně zakryl vnitřek
+                if(isTopLayer) coating.position.y += 0.005; 
                 cakeGroup.add(coating);
             }
 
-            // Ovoce v krému (vždy v barvě vnitřního krému)
+            // Ovoce v krému
             if (isCreamLayer && fruitC !== 'none' && i < layers - 1) {
                 const count = Math.floor(r * 10);
                 for (let j = 0; j < count; j++) {
@@ -229,7 +235,7 @@
                         const f = (fruitT === 'mix' ? (j%2===0 ? createStrawberryTop():createBlueberry()) : 
                                  (fruitT==='strawberries'?createStrawberryTop():createBlueberry()));
                         const ang = (j/count) * Math.PI * 2;
-                        f.position.set(Math.cos(ang)*rStep, (i*h)+0.35, Math.sin(ang)*rStep);
+                        f.position.set(Math.cos(ang)*rStep, (i*h)+0.36, Math.sin(ang)*rStep);
                         f.rotation.y = Math.random() * 5;
                         cakeGroup.add(f);
                     }
