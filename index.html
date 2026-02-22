@@ -6,135 +6,139 @@
     <style>
         :root { --primary: #ad1457; --bg: #fff5f8; --border: #fce7f3; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        
         .karta { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 650px; display: flex; flex-direction: column; }
         
         .header { text-align: center; margin-bottom: 20px; }
-        .logo-img { max-width: 140px; border-radius: 50%; border: 3px solid var(--border); }
-        h1 { color: var(--primary); margin: 10px 0 5px; }
-        .ig-odkaz a { color: #db2777; text-decoration: none; font-weight: bold; font-size: 14px; }
-
-        .galerie { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
-        .galerie img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border); }
+        .logo-img { max-width: 130px; border-radius: 50%; border: 3px solid var(--border); }
+        h1 { color: var(--primary); margin: 5px 0; }
+        
+        .galerie { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .galerie img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; border: 1px solid var(--border); }
 
         /* 3D SEKCE */
-        .scena-wrapper { background: #fff; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 10px 0 20px 0; padding: 30px 10px; display: flex; flex-direction: column; align-items: center; }
-        .scena { height: 320px; perspective: 1000px; display: flex; align-items: center; justify-content: center; width: 100%; }
+        .scena-wrapper { background: #fff; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 10px 0; padding: 30px 10px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .scena { height: 300px; perspective: 1000px; display: flex; align-items: center; justify-content: center; width: 100%; }
         .dort-telo { position: relative; width: 160px; transform-style: preserve-3d; transition: transform 0.1s linear; }
-        .vyska-info { background: var(--primary); color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 15px; }
+        .vyska-info { background: var(--primary); color: white; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 13px; margin-bottom: 10px; z-index: 10; }
 
-        /* 3D PRVKY */
+        /* 3D VRSTVY */
         .vrstva { position: absolute; width: 100%; height: 10px; transform-style: preserve-3d; bottom: var(--bottom); }
         .segment { position: absolute; width: var(--segW); height: 10px; left: 50%; margin-left: calc(var(--segW)/-2); background: linear-gradient(to right, rgba(0,0,0,0.1), transparent, rgba(0,0,0,0.1)), var(--color); }
         .vicko { position: absolute; width: var(--w); height: var(--w); background: var(--topColor); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(90deg) translateZ(5px); transform-style: preserve-3d; }
         
-        .deco-3d { position: absolute; width: 28px; height: 35px; transform-style: preserve-3d; transform-origin: center bottom; }
+        /* DEKORACE */
+        .deco-3d { position: absolute; width: 24px; height: 30px; transform-style: preserve-3d; transform-origin: center bottom; }
         .deco-face { position: absolute; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; transform-origin: bottom center; }
         .face-2 { transform: rotateY(90deg); }
 
         /* FORMULÁŘ */
-        .sekce { background: #fffcfd; padding: 18px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; text-align: left; }
-        h3 { color: var(--primary); font-size: 16px; margin: 0 0 12px; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
-        .flex { display: flex; gap: 12px; margin-bottom: 10px; }
+        .sekce { background: #fffcfd; padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; }
+        h3 { color: var(--primary); font-size: 15px; margin: 0 0 10px; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .flex { display: flex; gap: 10px; margin-bottom: 10px; }
         .flex > div { flex: 1; }
-        label { display: block; font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #f9a8d4; box-sizing: border-box; font-family: inherit; }
+        label { display: block; font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 4px; }
+        input, select, textarea { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; font-family: inherit; font-size: 13px; }
         
-        .moznos-radek { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
-        .moznos-radek input[type="checkbox"] { width: 18px; height: 18px; margin: 0; }
-
-        .tahlo { width: 80%; accent-color: var(--primary); cursor: pointer; margin-top: 15px; }
-        .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 18px; transition: 0.3s; margin-top: 10px; }
-        .btn:hover { background: #880e4f; transform: scale(1.01); }
+        .moznos-radek { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 13px; }
+        .tahlo { width: 80%; accent-color: var(--primary); cursor: pointer; margin-top: 10px; }
+        .btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="karta">
     <div class="header">
-        <img src="https://via.placeholder.com/150?text=LOGO+DT" alt="Logo" class="logo-img">
+        <img src="https://via.placeholder.com/150?text=LOGO+DT" id="hlavni-logo" alt="Logo" class="logo-img">
         <h1>Cakes by DT</h1>
-        <div class="ig-odkaz"><a href="https://www.instagram.com/_cakesbydt_/" target="_blank">📸 @_cakesbydt_</a></div>
-    </div>
-
-    <div class="galerie">
-        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200" alt="Dort 1">
-        <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=200" alt="Dort 2">
-        <img src="https://images.unsplash.com/photo-1535141192574-5d4897c82536?w=200" alt="Dort 3">
     </div>
 
     <div class="sekce">
-        <h3>👤 Kontaktní údaje</h3>
+        <h3>👤 Kontakt</h3>
         <div class="flex">
-            <div style="flex: 2;"><label>Jméno</label><input type="text" id="jmeno" placeholder="Vaše jméno"></div>
-            <div><label>Telefon</label><input type="tel" id="telefon" placeholder="777 000 000"></div>
+            <input type="text" id="jmeno" placeholder="Jméno">
+            <input type="tel" id="telefon" placeholder="Telefon">
         </div>
-        <label>E-mail</label>
-        <input type="email" id="email" placeholder="vas@email.cz">
+        <input type="email" id="email" placeholder="E-mail" style="margin-top:5px">
     </div>
 
     <div class="sekce">
-        <h3>🎂 Vnitřek dortu</h3>
+        <h3>🎂 Složení dortu</h3>
         <div class="flex">
             <div>
-                <label>Počet vrstev</label>
+                <label>Vrstvy korpusu</label>
                 <select id="patra" onchange="kresliDort()">
-                    <option value="2">2 vrstvy (3 cm)</option>
-                    <option value="3">3 vrstvy (4.5 cm)</option>
-                    <option value="4" selected>4 vrstvy (6 cm)</option>
-                    <option value="5">5 vrstev (7.5 cm)</option>
-                    <option value="6">6 vrstev (9 cm)</option>
+                    <option value="2">2 vrstvy</option>
+                    <option value="3">3 vrstvy</option>
+                    <option value="4" selected>4 vrstvy</option>
+                    <option value="5">5 vrstev</option>
                 </select>
             </div>
             <div>
-                <label>Korpus</label>
+                <label>Typ korpusu</label>
                 <select id="korpus" onchange="kresliDort()">
-                    <option value="#4e342e" selected>Čokoládový</option>
-                    <option value="#f3e5ab">Světlý piškot</option>
-                    <option value="#d7ccc8">Ořechový</option>
+                    <option value="#4e342e">Čokoládový</option>
+                    <option value="#f3e5ab" selected>Světlý piškot</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex">
+            <div>
+                <label>Základ krému</label>
+                <select id="krem" onchange="kresliDort()">
+                    <option value="#ffffff">Mascarpone (Bílý)</option>
+                    <option value="#fffde7">Vanilkový (Žlutý)</option>
+                    <option value="#f8bbd0">Ovocný (Růžový)</option>
                 </select>
             </div>
             <div>
-                <label>Vnitřní krém</label>
-                <select id="krem" onchange="kresliDort()">
-                    <option value="#f8bbd0" selected>Ovocný (Růžový)</option>
-                    <option value="#fffde7">Vanilkový</option>
-                    <option value="#ffffff">Mascarpone</option>
-                    <option value="#795548">Pařížský</option>
+                <label>Ovoce v krému</label>
+                <select id="ovoce-vnitrek" onchange="kresliDort()">
+                    <option value="none">Bez ovoce</option>
+                    <option value="jahody">Jahody</option>
+                    <option value="boruvky">Borůvky</option>
+                    <option value="maliny">Maliny</option>
                 </select>
             </div>
         </div>
     </div>
 
-    <div class="sekce" style="border: 2px solid var(--primary);">
-        <h3>🎨 Vnější design (Povrch)</h3>
-        <label>Barva krému zvenku (potření)</label>
-        <select id="vnejsi-barva" onchange="kresliDort()">
-            <option value="naked" selected>Žádná (Naked dort - viditelný řez)</option>
-            <option value="#ffffff">Sněhově bílá</option>
-            <option value="#fce7f3">Jemně růžová</option>
-            <option value="#fff9c4">Krémová / Žlutá</option>
-            <option value="#e1bee7">Světle fialová</option>
-            <option value="#4e342e">Čokoládová hnědá</option>
-        </select>
-        <p style="font-size: 11px; color: #666; margin-top: 5px;">* Pokud vyberete barvu, celý dort bude touto barvou potřen.</p>
+    <div class="sekce" style="background: #fff0f5; border: 1.5px solid var(--primary);">
+        <h3>🎨 Vnější vzhled</h3>
+        <div class="flex">
+            <div style="flex: 2;">
+                <label>Barva potření (venkovní krém)</label>
+                <select id="vnejsi-barva" onchange="kresliDort()">
+                    <option value="naked" selected>Nahatý dort (viditelný řez)</option>
+                    <option value="#ffffff">Bílá</option>
+                    <option value="#fce7f3">Růžová</option>
+                    <option value="#4e342e">Čokoládová</option>
+                </select>
+            </div>
+            <div>
+                <label>Ovoce na vršek</label>
+                <select id="ovoce-vrsek" onchange="kresliDort()">
+                    <option value="jahoda">Jahody</option>
+                    <option value="boruvka">Borůvky</option>
+                    <option value="mix">Mix obojí</option>
+                    <option value="none">Bez ovoce</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <div class="scena-wrapper">
         <div class="vyska-info">Celková výška: <span id="cm-vyska">0</span> cm</div>
         <div class="scena"><div class="dort-telo" id="vizual"></div></div>
         <input type="range" min="0" max="360" value="45" class="tahlo" oninput="otoc(this.value)">
-        <div style="font-size: 11px; color: #ad1457; margin-top: 10px; font-weight: bold;">OTÁČEJTE PRO 3D NÁHLED</div>
     </div>
 
     <div class="sekce">
-        <h3>🍓 Doplňky a poznámka</h3>
+        <h3>🎁 Doplňky a poznámka</h3>
         <div class="flex">
-            <div class="moznos-radek"><input type="checkbox" id="ov-dort" onchange="kresliDort()" checked> <span>Ovoce</span></div>
             <div class="moznos-radek"><input type="checkbox" id="cedule"> <span>Zápich</span></div>
             <div class="moznos-radek"><input type="checkbox" id="krabice"> <span>Krabice</span></div>
         </div>
-        <textarea id="poznamka" rows="3" placeholder="Zde napište specifické přání (např. barva zdobení, jméno na zápich...)"></textarea>
+        <textarea id="poznamka" rows="2" placeholder="Další přání (např. barva zdobení, nápis...)"></textarea>
     </div>
 
     <button class="btn" onclick="odeslat()">ODESLAT POPTÁVKU</button>
@@ -142,7 +146,10 @@
 
 <script>
     let rotY = 45;
-    const strawberrySVG = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M50,115 C20,115 5,85 5,55 C5,25 25,10 50,10 C75,10 95,25 95,55 C95,85 80,115 50,115 Z" fill="%23ff4d4d"/><path d="M50,15 L35,-5 L50,5 L65,-5 Z" fill="%232e7d32"/></svg>')`;
+    const assets = {
+        jahoda: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M50,115 C20,115 5,85 5,55 C5,25 25,10 50,10 C75,10 95,25 95,55 C95,85 80,115 50,115 Z" fill="%23ff4d4d"/><path d="M50,15 L35,-5 L50,5 L65,-5 Z" fill="%232e7d32"/></svg>')`,
+        boruvka: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%233f51b5"/><circle cx="50" cy="50" r="15" fill="%231a237e" opacity="0.5"/></svg>')`
+    };
 
     function otoc(v) {
         rotY = v;
@@ -153,26 +160,30 @@
         const plocha = document.getElementById('vizual');
         const pCount = parseInt(document.getElementById('patra').value);
         const cK = document.getElementById('korpus').value;
-        const cN = document.getElementById('krem').value;
+        const cN_base = document.getElementById('krem').value;
         const vnejsiBarva = document.getElementById('vnejsi-barva').value;
-        const showOvoce = document.getElementById('ov-dort').checked;
+        const ovVrsek = document.getElementById('ovoce-vrsek').value;
+        const ovVnitrek = document.getElementById('ovoce-vnitrek').value;
         
         plocha.innerHTML = "";
         const sirka = 160;
         const vyskaPX = 10;
-        const vyskaCM = 1.5;
         const pocetVrstev = pCount * 2; 
+        document.getElementById('cm-vyska').innerText = (pocetVrstev * 1.5).toFixed(1);
 
-        document.getElementById('cm-vyska').innerText = (pocetVrstev * vyskaCM).toFixed(1);
+        // Barva vnitřního krému s "kousky ovoce"
+        let cN = cN_base;
+        if(ovVnitrek !== 'none' && vnejsiBarva === 'naked') {
+            if(ovVnitrek === 'jahody' || ovVnitrek === 'maliny') cN = `radial-gradient(circle, ${cN_base} 70%, #ff80ab 100%)`;
+            if(ovVnitrek === 'boruvky') cN = `radial-gradient(circle, ${cN_base} 70%, #9fa8da 100%)`;
+        }
 
         for (let i = 0; i < pocetVrstev; i++) {
             const v = document.createElement('div');
             v.className = 'vrstva';
             v.style.setProperty('--bottom', (i * vyskaPX) + 'px');
             
-            // LOGIKA BARVY: Pokud je vybraná vnější barva, použije se pro všechny segmenty
             const barvaVrstvy = (vnejsiBarva === "naked") ? (i % 2 === 0 ? cK : cN) : vnejsiBarva;
-            
             v.style.setProperty('--color', barvaVrstvy);
             v.style.setProperty('--segW', (Math.PI * sirka / 32 + 2) + 'px');
 
@@ -187,19 +198,23 @@
                 const vicko = document.createElement('div');
                 vicko.className = 'vicko';
                 vicko.style.setProperty('--w', sirka + 'px');
-                // Víčko má barvu vnějšího krému nebo vnitřního krému u nahatého dortu
-                vicko.style.setProperty('--topColor', (vnejsiBarva === "naked") ? cN : vnejsiBarva);
+                vicko.style.setProperty('--topColor', (vnejsiBarva === "naked") ? cN_base : vnejsiBarva);
                 
-                if (showOvoce) {
+                if (ovVrsek !== 'none') {
                     const r = sirka / 3.5;
-                    [[0,0], [r,0], [-r,0], [0,r], [0,-r]].forEach(pos => {
+                    [[0,0], [r,0], [-r,0], [0,r], [0,-r]].forEach((pos, idx) => {
                         const d = document.createElement('div');
                         d.className = 'deco-3d';
-                        d.style.left = (sirka/2 + pos[0] - 14) + 'px';
-                        d.style.top = (sirka/2 + pos[1] - 17.5) + 'px';
+                        d.style.left = (sirka/2 + pos[0] - 12) + 'px';
+                        d.style.top = (sirka/2 + pos[1] - 15) + 'px';
                         d.style.transform = `rotateX(-90deg) translateZ(2px)`;
-                        const f1 = document.createElement('div'); f1.className = 'deco-face'; f1.style.backgroundImage = strawberrySVG;
-                        const f2 = document.createElement('div'); f2.className = 'deco-face face-2'; f2.style.backgroundImage = strawberrySVG;
+                        
+                        let img = assets.jahoda;
+                        if(ovVrsek === 'boruvka') img = assets.boruvka;
+                        if(ovVrsek === 'mix' && idx % 2 === 0) img = assets.boruvka;
+
+                        const f1 = document.createElement('div'); f1.className = 'deco-face'; f1.style.backgroundImage = img;
+                        const f2 = document.createElement('div'); f2.className = 'deco-face face-2'; f2.style.backgroundImage = img;
                         d.appendChild(f1); d.appendChild(f2); vicko.appendChild(d);
                     });
                 }
@@ -212,14 +227,8 @@
 
     function odeslat() {
         const jmeno = document.getElementById('jmeno').value;
-        const email = document.getElementById('email').value;
-        const vnejsi = document.getElementById('vnejsi-barva').options[document.getElementById('vnejsi-barva').selectedIndex].text;
-        
-        if(!jmeno || !email) { alert("Prosím vyplňte jméno a e-mail."); return; }
-        
-        const body = `Poptávka: ${jmeno}%0AEmail: ${email}%0A%0A--- DORT ---%0AVýška: ${document.getElementById('cm-vyska').innerText} cm%0AKorpus: ${document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text}%0AKrém vnitřní: ${document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text}%0AVnější design: ${vnejsi}%0APoznámka: ${document.getElementById('poznamka').value}`;
-        
-        window.location.href = `mailto:domii.trnovska@seznam.cz?subject=Poptávka_Dortu_${jmeno}&body=${body}`;
+        const body = `Poptávka od: ${jmeno}%0AVýška: ${document.getElementById('cm-vyska').innerText} cm%0AVnitřek: ${document.getElementById('ovoce-vnitrek').value}%0AVršek: ${document.getElementById('ovoce-vrsek').value}%0APoznámka: ${document.getElementById('poznamka').value}`;
+        window.location.href = `mailto:domii.trnovska@seznam.cz?subject=Dort_Poptavka&body=${body}`;
     }
 
     window.onload = kresliDort;
