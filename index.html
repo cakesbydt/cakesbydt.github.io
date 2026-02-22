@@ -111,6 +111,17 @@
             </div>
         </div>
 
+        <div id="canvas-container">
+            <div id="info-display" class="info-badge-float">Výška: ~14.5 cm<br>Průměr: 20 cm</div>
+        </div>
+        
+        <div class="ovladani-3d">
+            <div class="flex">
+                <div style="flex: 1;"><label>🔄 Otáčení</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0" oninput="manualControl()"></div>
+                <div style="flex: 1;"><label>↕️ Náklon</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
+            </div>
+        </div>
+
         <div class="sekce">
             <h3>✨ 4. Doplňky a Poznámky</h3>
             <div class="doplnek-item">
@@ -128,17 +139,6 @@
             <div style="margin-top: 20px;">
                 <label>Další požadavky a detaily</label>
                 <textarea placeholder="Upřesněte barvy, čas vyzvednutí nebo jiné detaily..."></textarea>
-            </div>
-        </div>
-
-        <div id="canvas-container">
-            <div id="info-display" class="info-badge-float">Výška: ~14.5 cm<br>Průměr: 20 cm</div>
-        </div>
-        
-        <div class="ovladani-3d">
-            <div class="flex">
-                <div style="flex: 1;"><label>🔄 Otáčení</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0" oninput="manualControl()"></div>
-                <div style="flex: 1;"><label>↕️ Náklon</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
             </div>
         </div>
 
