@@ -171,7 +171,7 @@
                     </select>
                 </div>
                 <div><label>Průměr základny</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm (Mini)</option><option value="20" selected>20 cm (Classic)</option><option value="24">24 cm (Grand)</option></select></div>
-                <div><label>Celkový počet vrstev</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
+                <div><label>Výška korpusu</label><select id="layers" onchange="updateCake()"><option value="4">6 cm (4 vrstvy)</option><option value="6">9 cm (6 vrstev)</option><option value="8" selected>12 cm (8 vrstev)</option><option value="12">18 cm (12 vrstev)</option></select></div>
                 <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x3d2b1f">Belgická Čokoláda</option><option value="0xfff4e0">Madagaskarská Vanilka</option></select></div>
             </div>
         </div>
@@ -195,7 +195,7 @@
         </div>
 
         <div id="canvas-container">
-            <div id="info-display" class="info-badge-float">MODEL: 20cm | Vrstev: 8</div>
+            <div id="info-display" class="info-badge-float">MODEL: 20cm | VÝŠKA: 12cm</div>
         </div>
         
         <div class="controls-row">
@@ -323,10 +323,11 @@
         const outerColor = parseInt(document.getElementById('outerCream').value);
         
         const baseRadius = diameter / 6.5;
-        const h = 0.5;
+        const h = 0.5; // Vizuální výška segmentu v 3D
+        const realHeight = layers * 1.5; // Přepočet na reálné CM
         
         const typeLabel = style === 'wedding' ? 'Svatební' : 'Klasický';
-        document.getElementById('info-display').innerHTML = `${typeLabel} | ${diameter}cm | ${layers} vrstev`;
+        document.getElementById('info-display').innerHTML = `${typeLabel} | ${diameter}cm | VÝŠKA: cca ${realHeight}cm`;
 
         for (let i = 0; i < layers; i++) {
             let currentRadius = baseRadius;
@@ -354,7 +355,7 @@
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
 
-                // VRŠEK - Pevná "poklička"
+                // VRŠEK - Pevná poklička
                 if (isTopLayerOfTier) {
                     const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.03, 64);
                     const topCapMat = new THREE.MeshPhongMaterial({ color: outerColor, transparent: false });
