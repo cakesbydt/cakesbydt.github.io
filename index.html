@@ -333,20 +333,46 @@
         });
     }
 
-    /* FUNKCE PRO TVORBU MODELŮ OVOCE (Jahody/Borůvky) */
+   /* FUNKCE PRO TVORBU MODELŮ OVOCE (Jahody / Borůvky / Maliny) */
     function createFruit(type, isTop) {
         const group = new THREE.Group();
-        const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5));
         
-        // Geometrie ovoce: Koule, která se u jahody protáhne
-        const geo = new THREE.SphereGeometry(isStrawberry ? (isTop ? 0.22 : 0.16) : (isTop ? 0.12 : 0.08), 16, 16);
-        const mat = new THREE.MeshPhongMaterial({ 
-            color: isStrawberry ? 0xd32f2f : 0x283593, // Červená pro jahodu, tmavě modrá pro borůvku
-            shininess: 40 
-        });
+        // Rozhodovací logika pro typ ovoce v případě mixu
+        let finalType = type;
+        if (type === 'mix') {
+            const rand = Math.random();
+            if (rand < 0.33) finalType = 'strawberries';
+            else if (rand < 0.66) finalType = 'blueberries';
+            else finalType = 'raspberries';
+        }
+
+        let geo, mat, mesh;
+
+        if (finalType === 'strawberries') {
+            // JAHODA: Protažená červená koule
+            geo = new THREE.SphereGeometry(isTop ? 0.22 : 0.16, 16, 16);
+            mat = new THREE.MeshPhongMaterial({ color: 0xd32f2f, shininess: 40 });
+            mesh = new THREE.Mesh(geo, mat);
+            mesh.scale.set(0.8, 1.3, 0.8); 
+        } 
+        else if (finalType === 'raspberries') {
+            // MALINA: Sytě růžová, o něco menší než jahoda, mírně zploštělá
+            geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.13, 20, 20);
+            mat = new THREE.MeshPhongMaterial({ 
+                color: 0xe91e63, // Typická malinová (Deep Pink)
+                shininess: 10,   // Maliny jsou matnější než borůvky
+                flatShading: true // Flat shading vytvoří jemný "bobulovitý" vzhled povrchu
+            });
+            mesh = new THREE.Mesh(geo, mat);
+            mesh.scale.set(1, 1.1, 1); 
+        } 
+        else {
+            // BORŮVKA: Malá tmavě modrá kulička
+            geo = new THREE.SphereGeometry(isTop ? 0.12 : 0.08, 16, 16);
+            mat = new THREE.MeshPhongMaterial({ color: 0x283593, shininess: 50 });
+            mesh = new THREE.Mesh(geo, mat);
+        }
         
-        const mesh = new THREE.Mesh(geo, mat);
-        if(isStrawberry) mesh.scale.set(0.8, 1.3, 0.8); // Protáhnutí do tvaru jahody
         group.add(mesh);
         return group;
     }
