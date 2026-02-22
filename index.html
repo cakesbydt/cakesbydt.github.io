@@ -208,6 +208,16 @@
             
             <div class="doplnek-item">
                 <label class="check-row">
+                    <input type="checkbox" id="c_flowers">
+                    <span class="checkbox-label">Květinová dekorace</span>
+                </label>
+                <div class="extra-input">
+                    <input type="text" placeholder="Specifikujte druh květin (např. živé růže, pivoňky, sušené květy)...">
+                </div>
+            </div>
+
+            <div class="doplnek-item">
+                <label class="check-row">
                     <input type="checkbox" id="c1">
                     <span class="checkbox-label">Jedlý papír / Fotografie</span>
                 </label>
@@ -344,7 +354,7 @@
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
 
-                // OPRAVA: Pevný vršek (poklička), aby nebyl krém shora průhledný
+                // VRŠEK - Pevná "poklička"
                 if (isTopLayerOfTier) {
                     const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.03, 64);
                     const topCapMat = new THREE.MeshPhongMaterial({ color: outerColor, transparent: false });
