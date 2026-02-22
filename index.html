@@ -499,47 +499,57 @@
         renderer.render(scene, camera);
     }
 
-    // LOGIKA ODESLÁNÍ FORMULÁŘE
-    document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
-        // 1. Získání textových hodnot ze selectů
-        const s_style = document.getElementById('cakeStyle').options[document.getElementById('cakeStyle').selectedIndex].text;
-        const s_diam = document.getElementById('diameter').value + " cm";
-        const s_layers = document.getElementById('layers').options[document.getElementById('layers').selectedIndex].text;
-        const s_flavor = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
-        const s_coat = document.getElementById('coating').options[document.getElementById('coating').selectedIndex].text;
-        const s_fruitC = document.getElementById('fruitCream').options[document.getElementById('fruitCream').selectedIndex].text;
-        const s_fruitT = document.getElementById('fruitTop').options[document.getElementById('fruitTop').selectedIndex].text;
+ // LOGIKA ODESLÁNÍ FORMULÁŘE (Aktualizováno o krémy a styl vršku)
+document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
+    // 1. Získání textových hodnot ze všech selectů
+    const s_style = document.getElementById('cakeStyle').options[document.getElementById('cakeStyle').selectedIndex].text;
+    const s_diam = document.getElementById('diameter').value + " cm";
+    const s_layers = document.getElementById('layers').options[document.getElementById('layers').selectedIndex].text;
+    const s_flavor = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
+    const s_coat = document.getElementById('coating').options[document.getElementById('coating').selectedIndex].text;
+    
+    // NOVĚ PŘIDÁNO: Krémy
+    const s_innerCr = document.getElementById('innerCream').options[document.getElementById('innerCream').selectedIndex].text;
+    const s_outerCr = document.getElementById('outerCream').options[document.getElementById('outerCream').selectedIndex].text;
+    
+    const s_fruitC = document.getElementById('fruitCream').options[document.getElementById('fruitCream').selectedIndex].text;
+    const s_fruitT = document.getElementById('fruitTop').options[document.getElementById('fruitTop').selectedIndex].text;
+    
+    // NOVĚ PŘIDÁNO: Styl vršku
+    const s_topSt = document.getElementById('topStyle').options[document.getElementById('topStyle').selectedIndex].text;
 
-        // 2. Sestavení přehledu konfigurace
-        const configText = `
-            Styl: ${s_style}
-            Průměr: ${s_diam}
-            Vrstvy: ${s_layers}
-            Chuť: ${s_flavor}
-            Obmaz: ${s_coat}
-            Ovoce uvnitř: ${s_fruitC}
-            Ovoce nahoře: ${s_fruitT}
-        `;
+    // 2. Sestavení přehledu konfigurace (Doplněno o tvé požadavky)
+    const configText = `
+        Styl: ${s_style}
+        Průměr: ${s_diam}
+        Vrstvy: ${s_layers}
+        Chuť korpusu: ${s_flavor}
+        Vnitřní krém: ${s_innerCr}
+        Vnější krém: ${s_outerCr}
+        Typ obmazu: ${s_coat}
+        Ovoce uvnitř: ${s_fruitC}
+        Ovoce nahoře: ${s_fruitT}
+        Styl vršku: ${s_topSt}
+    `;
 
-        // 3. Sestavení seznamu doplňků
-        let extras = [];
-        if(document.getElementById('c_flowers').checked) extras.push("Květiny");
-        if(document.getElementById('c1').checked) extras.push("Jedlý papír");
-        if(document.getElementById('c2').checked) extras.push("Figurka");
-        if(document.getElementById('c3').checked) extras.push("Zápich");
+    // 3. Sestavení seznamu doplňků
+    let extras = [];
+    if(document.getElementById('c_flowers').checked) extras.push("Květiny");
+    if(document.getElementById('c1').checked) extras.push("Jedlý papír");
+    if(document.getElementById('c2').checked) extras.push("Figurka");
+    if(document.getElementById('c3').checked) extras.push("Zápich");
 
-        // 4. Naplnění skrytých polí
-        document.getElementById('hiddenConfig').value = configText;
-        document.getElementById('hiddenExtras').value = extras.length > 0 ? extras.join(", ") : "Žádné doplňky";
-        document.getElementById('hiddenPrice').value = document.getElementById('price-display').innerText;
+    // 4. Naplnění skrytých polí
+    document.getElementById('hiddenConfig').value = configText;
+    document.getElementById('hiddenExtras').value = extras.length > 0 ? extras.join(", ") : "Žádné doplňky";
+    document.getElementById('hiddenPrice').value = document.getElementById('price-display').innerText;
 
-        // Tlačítko se změní na "Odesílám..."
-        const btn = this.querySelector('.btn');
-        btn.innerText = "ODESÍLÁM...";
-        btn.style.opacity = "0.7";
-        btn.disabled = true;
-    });
-
+    // Tlačítko se změní na "Odesílám..."
+    const btn = this.querySelector('.btn');
+    btn.innerText = "ODESÍLÁM...";
+    btn.style.opacity = "0.7";
+    btn.disabled = true;
+});
     window.onload = init3D;
 </script>
 </body>
