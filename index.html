@@ -32,5 +32,111 @@
 <body>
 
 <div class="karta">
-    <h1>🍰 Objednávka dort
+    <h1>🍰 Objednávka dortu</h1>
+
+    <div class="sekce flex">
+        <div>
+            <label>Průměr (šířka)</label>
+            <select id="sirka" onchange="aktualizuj()">
+                <option value="150">15 cm</option>
+                <option value="200" selected>20 cm</option>
+                <option value="250">25 cm</option>
+                <option value="300">30 cm</option>
+            </select>
+        </div>
+        <div>
+            <label>Počet pater (výška)</label>
+            <input type="number" id="patra" value="3" min="1" max="8" oninput="aktualizuj()">
+        </div>
+    </div>
+
+    <div class="sekce flex">
+        <div>
+            <label>Korpus</label>
+            <select id="korpus" onchange="aktualizuj()">
+                <option value="#f3e5ab">Světlý piškot</option>
+                <option value="#4e342e">Čokoládový</option>
+                <option value="#d7ccc8">Ořechový</option>
+            </select>
+        </div>
+        <div>
+            <label>Náplň (krém)</label>
+            <select id="krem" onchange="aktualizuj()">
+                <option value="#fffde7">Vanilkový</option>
+                <option value="#795548">Pařížský</option>
+                <option value="#f8bbd0">Ovocný</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="sekce">
+        <label>Barva krému na potření (vnější)</label>
+        <input type="color" id="potah" value="#ffffff" oninput="aktualizuj()">
+    </div>
+
+    <div class="sekce">
+        <label>Ovoce, dekorace, figurky...</label>
+        <input type="text" id="poznámka" placeholder="Např. jahody dovnitř, nápis 'Vše nejlepší'...">
+    </div>
+
+    <div id="box-dortu"></div>
+    <p id="vyska-info" style="font-size: 12px; color: #999; text-align: center;"></p>
+    
+    <button class="btn" onclick="poslatMail()">Odeslat manželce na e-mail</button>
+</div>
+
+<script>
+    function aktualizuj() {
+        const plocha = document.getElementById('box-dortu');
+        const s = document.getElementById('sirka').value;
+        const p = document.getElementById('patra').value;
+        const cK = document.getElementById('korpus').value;
+        const cN = document.getElementById('krem').value;
+        const cP = document.getElementById('potah').value;
+
+        // Nastavení vnější barvy
+        plocha.style.backgroundColor = cP;
+        document.getElementById('vyska-info').innerText = "Odhadovaná výška: " + (p * 4) + " cm";
+
+        plocha.innerHTML = "";
+        for (let i = 0; i < p; i++) {
+            let korp = document.createElement('div');
+            korp.className = 'v-korpus';
+            korp.style.width = s + "px";
+            korp.style.backgroundColor = cK;
+            plocha.appendChild(korp);
+
+            if (i < p - 1) {
+                let napl = document.createElement('div');
+                napl.className = 'v-krem';
+                napl.style.width = (s - 10) + "px";
+                napl.style.backgroundColor = cN;
+                plocha.appendChild(napl);
+            }
+        }
+    }
+
+    function poslatMail() {
+        const s = document.getElementById('sirka').options[document.getElementById('sirka').selectedIndex].text;
+        const p = document.getElementById('patra').value;
+        const korp = document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text;
+        const napl = document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text;
+        const pozn = document.getElementById('poznámka').value || "žádné";
+
+        const mail = "VÁŠ-EMAIL@SEZNAM.CZ"; // <--- TADY DOPLŇ EMAIL
+        const subjekt = "Nová objednávka dortu";
+        const telo = `Ahoj, mám novou poptávku:%0A
+        - Průměr: ${s}%0A
+        - Počet pater: ${p}%0A
+        - Korpus: ${korp}%0A
+        - Náplň: ${napl}%0A
+        - Doplňky: ${pozn}`;
+
+        window.location.href = `mailto:${mail}?subject=${subjekt}&body=${telo}`;
+    }
+
+    window.onload = aktualizuj;
+</script>
+
+</body>
 </html>
