@@ -14,7 +14,6 @@
         h1 { color: var(--primary); margin: 10px 0 5px; }
         .ig-odkaz a { color: #db2777; text-decoration: none; font-weight: bold; font-size: 14px; }
 
-        /* GALERIE */
         .galerie { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
         .galerie img { width: 100%; height: 110px; object-fit: cover; border-radius: 12px; border: 2px solid var(--border); }
 
@@ -28,24 +27,25 @@
         .vrstva { position: absolute; width: 100%; height: 10px; transform-style: preserve-3d; bottom: var(--bottom); }
         .segment { position: absolute; width: var(--segW); height: 10px; left: 50%; margin-left: calc(var(--segW)/-2); background: linear-gradient(to right, rgba(0,0,0,0.1), transparent, rgba(0,0,0,0.1)), var(--color); }
         .vicko { position: absolute; width: var(--w); height: var(--w); background: var(--topColor); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(90deg) translateZ(5px); transform-style: preserve-3d; }
+        
         .deco-3d { position: absolute; width: 28px; height: 35px; transform-style: preserve-3d; transform-origin: center bottom; }
         .deco-face { position: absolute; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; transform-origin: bottom center; }
         .face-2 { transform: rotateY(90deg); }
 
         /* FORMULÁŘ */
         .sekce { background: #fffcfd; padding: 18px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; text-align: left; }
-        h3 { color: var(--primary); font-size: 16px; margin: 0 0 12px; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        h3 { color: var(--primary); font-size: 16px; margin: 0 0 12px; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
         .flex { display: flex; gap: 12px; margin-bottom: 10px; }
         .flex > div { flex: 1; }
-        label { display: block; font-size: 12px; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+        label { display: block; font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; }
         input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #f9a8d4; box-sizing: border-box; font-family: inherit; }
         
-        .moznos-radek { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; cursor: pointer; }
-        .moznos-radek input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+        .moznos-radek { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
+        .moznos-radek input[type="checkbox"] { width: 18px; height: 18px; margin: 0; }
 
         .tahlo { width: 80%; accent-color: var(--primary); cursor: pointer; margin-top: 15px; }
         .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 18px; transition: 0.3s; margin-top: 10px; }
-        .btn:hover { background: #880e4f; transform: scale(1.02); }
+        .btn:hover { background: #880e4f; transform: scale(1.01); }
     </style>
 </head>
 <body>
@@ -66,7 +66,7 @@
     <div class="sekce">
         <h3>👤 Kontaktní údaje</h3>
         <div class="flex">
-            <div style="flex: 2;"><label>Celé jméno</label><input type="text" id="jmeno" placeholder="Jan Novák"></div>
+            <div style="flex: 2;"><label>Jméno</label><input type="text" id="jmeno" placeholder="Vaše jméno"></div>
             <div><label>Telefon</label><input type="tel" id="telefon" placeholder="777 000 000"></div>
         </div>
         <label>E-mail</label>
@@ -74,10 +74,10 @@
     </div>
 
     <div class="sekce">
-        <h3>🎂 Konfigurace korpusu a krému</h3>
+        <h3>🎂 Vnitřek dortu</h3>
         <div class="flex">
             <div>
-                <label>Vrstvy korpusu</label>
+                <label>Počet vrstev</label>
                 <select id="patra" onchange="kresliDort()">
                     <option value="2">2 vrstvy (3 cm)</option>
                     <option value="3">3 vrstvy (4.5 cm)</option>
@@ -87,7 +87,7 @@
                 </select>
             </div>
             <div>
-                <label>Typ korpusu</label>
+                <label>Korpus</label>
                 <select id="korpus" onchange="kresliDort()">
                     <option value="#4e342e" selected>Čokoládový</option>
                     <option value="#f3e5ab">Světlý piškot</option>
@@ -95,7 +95,7 @@
                 </select>
             </div>
             <div>
-                <label>Typ krému</label>
+                <label>Vnitřní krém</label>
                 <select id="krem" onchange="kresliDort()">
                     <option value="#f8bbd0" selected>Ovocný (Růžový)</option>
                     <option value="#fffde7">Vanilkový</option>
@@ -106,29 +106,35 @@
         </div>
     </div>
 
+    <div class="sekce" style="border: 2px solid var(--primary);">
+        <h3>🎨 Vnější design (Povrch)</h3>
+        <label>Barva krému zvenku (potření)</label>
+        <select id="vnejsi-barva" onchange="kresliDort()">
+            <option value="naked" selected>Žádná (Naked dort - viditelný řez)</option>
+            <option value="#ffffff">Sněhově bílá</option>
+            <option value="#fce7f3">Jemně růžová</option>
+            <option value="#fff9c4">Krémová / Žlutá</option>
+            <option value="#e1bee7">Světle fialová</option>
+            <option value="#4e342e">Čokoládová hnědá</option>
+        </select>
+        <p style="font-size: 11px; color: #666; margin-top: 5px;">* Pokud vyberete barvu, celý dort bude touto barvou potřen.</p>
+    </div>
+
     <div class="scena-wrapper">
         <div class="vyska-info">Celková výška: <span id="cm-vyska">0</span> cm</div>
         <div class="scena"><div class="dort-telo" id="vizual"></div></div>
         <input type="range" min="0" max="360" value="45" class="tahlo" oninput="otoc(this.value)">
-        <div style="font-size: 11px; color: #ad1457; margin-top: 10px; font-weight: bold; letter-spacing: 1px;">OTÁČEJTE PRO 3D NÁHLED</div>
+        <div style="font-size: 11px; color: #ad1457; margin-top: 10px; font-weight: bold;">OTÁČEJTE PRO 3D NÁHLED</div>
     </div>
 
     <div class="sekce">
-        <h3>🍓 Zdobení a doplňky</h3>
-        <div class="moznos-radek">
-            <input type="checkbox" id="ov-dort" onchange="kresliDort()" checked>
-            <span>Ovoce na dortu (jahody/borůvky)</span>
+        <h3>🍓 Doplňky a poznámka</h3>
+        <div class="flex">
+            <div class="moznos-radek"><input type="checkbox" id="ov-dort" onchange="kresliDort()" checked> <span>Ovoce</span></div>
+            <div class="moznos-radek"><input type="checkbox" id="cedule"> <span>Zápich</span></div>
+            <div class="moznos-radek"><input type="checkbox" id="krabice"> <span>Krabice</span></div>
         </div>
-        <div class="moznos-radek">
-            <input type="checkbox" id="cedule">
-            <span>Zápich / Jmenovka</span>
-        </div>
-        <div class="moznos-radek">
-            <input type="checkbox" id="krabice">
-            <span>Dárkové balení (krabice)</span>
-        </div>
-        <label style="margin-top:10px">Specifické přání (nápis, barvy, styl...)</label>
-        <textarea id="poznamka" rows="3" placeholder="Např.: Chci modré borůvky místo jahod a zlatý nápis 'Vše nejlepší'"></textarea>
+        <textarea id="poznamka" rows="3" placeholder="Zde napište specifické přání (např. barva zdobení, jméno na zápich...)"></textarea>
     </div>
 
     <button class="btn" onclick="odeslat()">ODESLAT POPTÁVKU</button>
@@ -148,21 +154,26 @@
         const pCount = parseInt(document.getElementById('patra').value);
         const cK = document.getElementById('korpus').value;
         const cN = document.getElementById('krem').value;
+        const vnejsiBarva = document.getElementById('vnejsi-barva').value;
         const showOvoce = document.getElementById('ov-dort').checked;
         
         plocha.innerHTML = "";
         const sirka = 160;
         const vyskaPX = 10;
         const vyskaCM = 1.5;
-
         const pocetVrstev = pCount * 2; 
+
         document.getElementById('cm-vyska').innerText = (pocetVrstev * vyskaCM).toFixed(1);
 
         for (let i = 0; i < pocetVrstev; i++) {
             const v = document.createElement('div');
             v.className = 'vrstva';
             v.style.setProperty('--bottom', (i * vyskaPX) + 'px');
-            v.style.setProperty('--color', (i % 2 === 0) ? cK : cN);
+            
+            // LOGIKA BARVY: Pokud je vybraná vnější barva, použije se pro všechny segmenty
+            const barvaVrstvy = (vnejsiBarva === "naked") ? (i % 2 === 0 ? cK : cN) : vnejsiBarva;
+            
+            v.style.setProperty('--color', barvaVrstvy);
             v.style.setProperty('--segW', (Math.PI * sirka / 32 + 2) + 'px');
 
             for (let j = 0; j < 32; j++) {
@@ -176,7 +187,8 @@
                 const vicko = document.createElement('div');
                 vicko.className = 'vicko';
                 vicko.style.setProperty('--w', sirka + 'px');
-                vicko.style.setProperty('--topColor', cN);
+                // Víčko má barvu vnějšího krému nebo vnitřního krému u nahatého dortu
+                vicko.style.setProperty('--topColor', (vnejsiBarva === "naked") ? cN : vnejsiBarva);
                 
                 if (showOvoce) {
                     const r = sirka / 3.5;
@@ -186,14 +198,9 @@
                         d.style.left = (sirka/2 + pos[0] - 14) + 'px';
                         d.style.top = (sirka/2 + pos[1] - 17.5) + 'px';
                         d.style.transform = `rotateX(-90deg) translateZ(2px)`;
-                        const f1 = document.createElement('div');
-                        f1.className = 'deco-face';
-                        f1.style.backgroundImage = strawberrySVG;
-                        const f2 = document.createElement('div');
-                        f2.className = 'deco-face face-2';
-                        f2.style.backgroundImage = strawberrySVG;
-                        d.appendChild(f1); d.appendChild(f2);
-                        vicko.appendChild(d);
+                        const f1 = document.createElement('div'); f1.className = 'deco-face'; f1.style.backgroundImage = strawberrySVG;
+                        const f2 = document.createElement('div'); f2.className = 'deco-face face-2'; f2.style.backgroundImage = strawberrySVG;
+                        d.appendChild(f1); d.appendChild(f2); vicko.appendChild(d);
                     });
                 }
                 v.appendChild(vicko);
@@ -206,16 +213,11 @@
     function odeslat() {
         const jmeno = document.getElementById('jmeno').value;
         const email = document.getElementById('email').value;
-        const tel = document.getElementById('telefon').value;
-        const patra = document.getElementById('patra').value;
-        const vyska = document.getElementById('cm-vyska').innerText;
-        const korpusTxt = document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text;
-        const kremTxt = document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text;
-        const poznamka = document.getElementById('poznamka').value;
+        const vnejsi = document.getElementById('vnejsi-barva').options[document.getElementById('vnejsi-barva').selectedIndex].text;
         
         if(!jmeno || !email) { alert("Prosím vyplňte jméno a e-mail."); return; }
         
-        const body = `Poptávka od: ${jmeno}%0AEmail: ${email}%0ATel: ${tel}%0A%0A--- SPECIFIKACE ---%0AVrstvy korpusu: ${patra}%0ACelková výška: ${vyska} cm%0AKorpus: ${korpusTxt}%0AKrém: ${kremTxt}%0AOvoce: ${document.getElementById('ov-dort').checked ? 'ANO' : 'NE'}%0AZápich: ${document.getElementById('cedule').checked ? 'ANO' : 'NE'}%0AKrabice: ${document.getElementById('krabice').checked ? 'ANO' : 'NE'}%0A%0APoznámka:%0A${poznamka}`;
+        const body = `Poptávka: ${jmeno}%0AEmail: ${email}%0A%0A--- DORT ---%0AVýška: ${document.getElementById('cm-vyska').innerText} cm%0AKorpus: ${document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text}%0AKrém vnitřní: ${document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text}%0AVnější design: ${vnejsi}%0APoznámka: ${document.getElementById('poznamka').value}`;
         
         window.location.href = `mailto:domii.trnovska@seznam.cz?subject=Poptávka_Dortu_${jmeno}&body=${body}`;
     }
