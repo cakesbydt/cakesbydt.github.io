@@ -20,7 +20,7 @@
         .flex { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .flex > div { flex: 1; min-width: 130px; }
         label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; outline: none; }
+        select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; outline: none; background: white; }
 
         #canvas-container { 
             width: 100%; height: 450px; 
@@ -52,8 +52,8 @@
         <div class="sekce">
             <h3>🎂 1. Velikost a Korpus</h3>
             <div class="flex">
-                <div><label>Průměr dortu</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm (malý)</option><option value="20" selected>20 cm (střední)</option><option value="24">24 cm (velký)</option></select></div>
-                <div><label>Vrstvy</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
+                <div><label>Průměr dortu</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm</option><option value="20" selected>20 cm</option><option value="24">24 cm</option></select></div>
+                <div><label>Vrstvy (1.5 cm/vr)</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
                 <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x4e342e">Čokoládový</option><option value="0xf3e5ab">Vanilkový</option></select></div>
             </div>
         </div>
@@ -68,8 +68,9 @@
         </div>
 
         <div class="sekce">
-            <h3>🍓 3. Zdobení</h3>
+            <h3>🍓 3. Ovoce a Zdobení</h3>
             <div class="flex">
+                <div><label>Ovoce v krému</label><select id="fruitCream" onchange="updateCake()"><option value="none">Bez ovoce</option><option value="strawberries">Jahody</option><option value="blueberries">Borůvky</option><option value="mix" selected>Mix</option></select></div>
                 <div><label>Ovoce navrchu</label><select id="fruitTop" onchange="updateCake()"><option value="none">Bez ovoce</option><option value="strawberries" selected>Jahody</option><option value="blueberries">Borůvky</option><option value="mix">Mix</option></select></div>
                 <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake()"><option value="border">Po obvodu</option><option value="full" selected>Zaplněný</option></select></div>
             </div>
@@ -134,12 +135,12 @@
         const diameter = parseInt(document.getElementById('diameter').value);
         const coat = document.getElementById('coating').value;
         const fruitT = document.getElementById('fruitTop').value;
+        const fruitC = document.getElementById('fruitCream').value;
         const topS = document.getElementById('topStyle').value;
         const flavorColor = parseInt(document.getElementById('flavor').value);
         const innerColor = parseInt(document.getElementById('innerCream').value);
         const outerColor = parseInt(document.getElementById('outerCream').value);
         
-        // Převod průměru na 3D radius (měřítko)
         const baseRadius = diameter / 6.5; 
         const realHeight = (layers * 1.5 + (fruitT !== 'none' ? 2.5 : 0.5)).toFixed(1);
         document.getElementById('info-display').innerHTML = `Výška: ~${realHeight} cm<br>Průměr: ${diameter} cm`;
@@ -164,14 +165,23 @@
                 cakeGroup.add(coating);
             }
 
+            // Ovoce v krému (zobrazí se, pokud není plné potažení)
+            if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
+                const count = Math.floor(baseRadius * 12);
+                for (let j = 0; j < count; j++) {
+                    const f = createFruit(fruitC, false);
+                    const ang = (j / count) * Math.PI * 2;
+                    f.position.set(Math.cos(ang) * (baseRadius - 0.05), i * h, Math.sin(ang) * (baseRadius - 0.05));
+                    cakeGroup.add(f);
+                }
+            }
+
             // Ovoce navrchu
             if (i === layers - 1 && fruitT !== 'none') {
                 let radii = [baseRadius * 0.85];
-                if (topS === 'full') {
-                    radii = [baseRadius * 0.3, baseRadius * 0.55, baseRadius * 0.85];
-                }
+                if (topS === 'full') radii = [baseRadius * 0.3, baseRadius * 0.6, baseRadius * 0.85];
                 radii.forEach(rStep => {
-                    const count = Math.floor(rStep * 8);
+                    const count = Math.floor(rStep * 9);
                     for(let j=0; j<count; j++) {
                         const f = createFruit(fruitT, true);
                         const ang = (j/count) * Math.PI * 2;
