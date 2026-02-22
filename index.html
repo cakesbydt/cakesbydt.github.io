@@ -2,74 +2,130 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>3D Konfigurátor | Cakes by DT</title>
+    <title>Cakes by DT | Upečeme vám vzpomínku</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Segoe+UI:wght@400;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
         :root { --primary: #ad1457; --primary-dark: #880e4f; --bg: #fff5f8; --border: #fce7f3; --accent: #f9a8d4; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; }
         
-        .hlavni-wrapper { display: flex; width: 100%; max-width: 1200px; background: white; box-shadow: 0 20px 60px rgba(173,20,87,0.1); margin: 40px 20px; border-radius: 30px; overflow: hidden; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg); 
+            display: flex; 
+            justify-content: center; 
+            padding: 0; 
+            margin: 0; 
+            min-height: 100vh; 
+        }
         
-        /* Levý panel */
-        .levy-panel { flex: 0 0 320px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; align-items: center; padding: 40px 25px; color: white; box-sizing: border-box; }
-        .logo-vlevo { width: 220px; height: auto; border-radius: 20px; border: 4px solid rgba(255,255,255,0.2); margin-bottom: 30px; }
+        .hlavni-wrapper { 
+            display: flex; 
+            width: 100%; 
+            max-width: 1200px; 
+            background: white; 
+            box-shadow: 0 20px 60px rgba(173,20,87,0.1); 
+            margin: 40px 20px; 
+            border-radius: 30px; 
+            overflow: hidden; 
+        }
+        
+        /* LEVÝ PANEL - KONTAKTY */
+        .levy-panel { 
+            flex: 0 0 320px; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 40px 25px; 
+            color: white; 
+            box-sizing: border-box; 
+        }
+        
+        .logo-vlevo { 
+            width: 200px; 
+            height: auto; 
+            border-radius: 20px; 
+            border: 4px solid rgba(255,255,255,0.2); 
+            margin-bottom: 30px; 
+        }
         
         .kontaktni-form { width: 100%; }
         .input-group { width: 100%; margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 11px; margin-bottom: 5px; font-weight: bold; opacity: 0.8; }
-        .input-group input { width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.15); color: white; font-family: inherit; }
-        .input-group input:focus { background: rgba(255,255,255,0.25); }
+        .input-group label { display: block; font-size: 11px; margin-bottom: 5px; font-weight: bold; opacity: 0.8; text-transform: uppercase; }
+        .input-group input { 
+            width: 100%; 
+            padding: 12px; 
+            border-radius: 10px; 
+            border: none; 
+            outline: none; 
+            box-sizing: border-box; 
+            background: rgba(255,255,255,0.15); 
+            color: white; 
+            font-family: inherit; 
+        }
+        .input-group input::placeholder { color: rgba(255,255,255,0.4); }
 
-        /* Hlavní část */
-        .obsah { flex: 1; padding: 50px 60px; background: white; overflow-y: auto; }
-        /* Styl pro nové motto */
-.hlavni-motto { 
-    font-family: 'Dancing Script', cursive; 
-    color: var(--primary); 
-    margin: 0 0 25px 0; 
-    font-size: 52px; 
-    text-align: center;
-    line-height: 1.2;
-    font-weight: 700;
-}
+        /* HLAVNÍ OBSAH */
+        .obsah { flex: 1; padding: 40px 50px; background: white; overflow-y: auto; }
+        
+        .hlavni-motto { 
+            font-family: 'Dancing Script', cursive; 
+            color: var(--primary); 
+            margin: 0 0 25px 0; 
+            font-size: 52px; 
+            text-align: center;
+            line-height: 1.2;
+        }
 
-/* Úprava doplňků nad sebou */
-.doplnky-seznam { display: flex; flex-direction: column; gap: 12px; }
-.doplnek-blok { border: 1px solid #eee; border-radius: 15px; background: #fcfcfc; transition: all 0.3s ease; overflow: hidden; }
-.doplnek-hlavicka { display: flex; align-items: center; gap: 12px; padding: 18px; cursor: pointer; font-weight: 600; font-size: 15px; }
-.doplnek-hlavicka input { width: 18px; height: 18px; accent-color: var(--primary); }
-.doplnek-poznamka { max-height: 0; padding: 0 18px; opacity: 0; transition: all 0.3s ease; }
-.doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); }
-.doplnek-blok.aktivni .doplnek-poznamka { max-height: 120px; padding: 10px 18px 18px 18px; opacity: 1; }
-        h3 { color: var(--primary); font-size: 14px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        h3 { color: var(--primary); font-size: 13px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; letter-spacing: 1px; }
 
         .sekce { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
+        
         .flex { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .flex > div { flex: 1; min-width: 130px; }
+        .flex > div { flex: 1; min-width: 140px; }
         
         label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
-        select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; }
+        select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: 'Segoe UI', sans-serif; font-size: 14px; outline: none; }
 
-        #canvas-container { width: 100%; height: 400px; background: radial-gradient(#ffffff, #f9f9f9); border-radius: 25px; border: 2px dashed var(--accent); cursor: move; margin: 20px 0; }
+        #canvas-container { 
+            width: 100%; 
+            height: 400px; 
+            background: radial-gradient(#ffffff, #fefefe); 
+            border-radius: 25px; 
+            border: 2px dashed var(--accent); 
+            cursor: move; 
+            margin: 10px 0 20px 0; 
+        }
 
         /* DOPLŇKY NAD SEBOU */
-        .doplnky-seznam { display: flex; flex-direction: column; gap: 10px; }
-        .doplnek-blok { border: 1px solid #eee; border-radius: 15px; padding: 0; background: #fcfcfc; transition: all 0.3s ease; overflow: hidden; }
-        .doplnek-hlavicka { display: flex; align-items: center; gap: 12px; padding: 18px; cursor: pointer; font-weight: 600; font-size: 15px; user-select: none; }
-        .doplnek-hlavicka input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+        .doplnky-seznam { display: flex; flex-direction: column; gap: 12px; }
+        .doplnek-blok { border: 1px solid #eee; border-radius: 15px; background: #fcfcfc; transition: all 0.3s ease; overflow: hidden; }
+        .doplnek-hlavicka { display: flex; align-items: center; gap: 12px; padding: 18px; cursor: pointer; font-weight: 600; font-size: 15px; }
+        .doplnek-hlavicka input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
         
-        .doplnek-poznamka { max-height: 0; padding: 0 18px; opacity: 0; transition: all 0.3s ease; background: #fff; }
-        .doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); box-shadow: 0 4px 12px rgba(173,20,87,0.05); }
-        .doplnek-blok.aktivni .doplnek-poznamka { max-height: 100px; padding: 10px 18px 18px 18px; opacity: 1; }
+        .doplnek-poznamka { max-height: 0; padding: 0 18px; opacity: 0; transition: all 0.3s ease; }
+        .doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); }
+        .doplnek-blok.aktivni .doplnek-poznamka { max-height: 150px; padding: 5px 18px 18px 18px; opacity: 1; }
 
-        .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; margin-top: 20px; transition: 0.2s; }
-        .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn { 
+            width: 100%; 
+            padding: 20px; 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            border-radius: 18px; 
+            cursor: pointer; 
+            font-weight: 800; 
+            font-size: 18px; 
+            margin-top: 10px; 
+            transition: 0.3s; 
+        }
+        .btn:hover { background: var(--primary-dark); transform: scale(1.01); }
 
         @media (max-width: 950px) {
             .hlavni-wrapper { flex-direction: column; margin: 0; border-radius: 0; }
             .levy-panel { width: 100%; }
-            .obsah { padding: 30px; }
+            .hlavni-motto { font-size: 38px; }
         }
     </style>
 </head>
@@ -82,26 +138,25 @@
         <div class="kontaktni-form">
             <div class="input-group">
                 <label>Jméno a příjmení</label>
-                <input type="text" id="user-name" placeholder="Např. Jana Sladká">
+                <input type="text" id="user-name" placeholder="Vaše jméno">
             </div>
             <div class="input-group">
                 <label>E-mail</label>
-                <input type="email" id="user-email" placeholder="email@seznam.cz">
+                <input type="email" id="user-email" placeholder="vas@email.cz">
             </div>
             <div class="input-group">
                 <label>Telefon</label>
-                <input type="tel" id="user-phone" placeholder="+420 777 000 000">
+                <input type="tel" id="user-phone" placeholder="+420 ...">
             </div>
         </div>
-        
-        <p style="margin-top:auto; text-align:center; opacity:0.6; font-style: italic; font-size: 12px; padding-top: 40px;">"Upečeme vám vzpomínku..."</p>
+        <p style="margin-top:auto; font-size: 11px; opacity: 0.5; text-align: center; font-style: italic;">"Upečeme vám vzpomínku..."</p>
     </div>
 
     <div class="obsah">
         <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
         
         <div class="sekce">
-            <h3>🎂 Základní parametry</h3>
+            <h3>🎂 Parametry dortu</h3>
             <div class="flex">
                 <div>
                     <label>Styl dortu</label>
@@ -113,14 +168,14 @@
                 <div>
                     <label>Počet vrstev</label>
                     <select id="layers" onchange="updateCake()">
-                        <option value="4">4 vrstvy</option>
-                        <option value="6">6 vrstev</option>
-                        <option value="8" selected>8 vrstev</option>
-                        <option value="12">12 vrstev</option>
+                        <option value="4">4 vrstvy (cca 6cm)</option>
+                        <option value="6">6 vrstev (cca 9cm)</option>
+                        <option value="8" selected>8 vrstev (cca 12cm)</option>
+                        <option value="12">12 vrstev (cca 18cm)</option>
                     </select>
                 </div>
                 <div>
-                    <label>Příchuť korpusu</label>
+                    <label>Korpus</label>
                     <select id="flavor" onchange="updateCake()">
                         <option value="0x4e342e">Čokoládový</option>
                         <option value="0xf3e5ab">Světlý piškot</option>
@@ -128,16 +183,16 @@
                     </select>
                 </div>
                 <div>
-                    <label>Barva krému</label>
+                    <label>Krém</label>
                     <select id="creamColor" onchange="updateCake()">
-                        <option value="0xffffff">Smetanová</option>
-                        <option value="0xfce4ec">Růžová</option>
-                        <option value="0xdcedc8">Pistáciová</option>
-                        <option value="0x6d4c41">Pařížská</option>
+                        <option value="0xffffff">Smetanový</option>
+                        <option value="0xfce4ec">Jahodový</option>
+                        <option value="0xdcedc8">Pistáciový</option>
+                        <option value="0x6d4c41">Pařížský</option>
                     </select>
                 </div>
                 <div>
-                    <label>Zdobení (3D)</label>
+                    <label>Zdobení ovocem</label>
                     <select id="fruit" onchange="updateCake()">
                         <option value="none">Bez ovoce</option>
                         <option value="strawberries" selected>Jahody</option>
@@ -149,41 +204,39 @@
         </div>
 
         <div id="canvas-container"></div>
-        <p style="text-align: center; color: #999; font-size: 11px;">Klikněte a táhněte pro rotaci a náklon 3D modelu</p>
+        <p style="text-align: center; color: #999; font-size: 11px;">Táhněte myší pro otáčení a náklon modelu</p>
 
         <div class="sekce">
-            <h3>🎁 Doplňky k objednávce</h3>
+            <h3>🎁 Doplňky</h3>
             <div class="doplnky-seznam">
                 <div class="doplnek-blok" id="blok-papir">
                     <label class="doplnek-hlavicka">
                         <input type="checkbox" onchange="toggleBlok(this, 'papir')"> Jedlý papír
                     </label>
                     <div class="doplnek-poznamka">
-                        <textarea rows="2" placeholder="Popište motiv, který chcete na papír vytisknout..."></textarea>
+                        <textarea rows="2" placeholder="Popište motiv pro tisk..."></textarea>
                     </div>
                 </div>
-
                 <div class="doplnek-blok" id="blok-figurka">
                     <label class="doplnek-hlavicka">
                         <input type="checkbox" onchange="toggleBlok(this, 'figurka')"> Figurka
                     </label>
                     <div class="doplnek-poznamka">
-                        <textarea rows="2" placeholder="Jakou figurku byste si na dortu přáli?"></textarea>
+                        <textarea rows="2" placeholder="Jakou figurku si přejete?"></textarea>
                     </div>
                 </div>
-
                 <div class="doplnek-blok" id="blok-zapich">
                     <label class="doplnek-hlavicka">
                         <input type="checkbox" onchange="toggleBlok(this, 'zapich')"> Zápich
                     </label>
                     <div class="doplnek-poznamka">
-                        <textarea rows="2" placeholder="Text na zápich (např. 'Vše nejlepší k 10. narozeninám')"></textarea>
+                        <textarea rows="2" placeholder="Text na zápich..."></textarea>
                     </div>
                 </div>
             </div>
         </div>
 
-        <button class="btn" onclick="odeslatPoptavku()">ODESLAT POPTÁVKU</button>
+        <button class="btn" onclick="odeslat()">ODESLAT POPTÁVKU</button>
     </div>
 </div>
 
@@ -192,17 +245,16 @@
     const container = document.getElementById('canvas-container');
     let isDragging = false, prevX = 0, prevY = 0;
 
-    function odeslatPoptavku() {
+    function odeslat() {
         const name = document.getElementById('user-name').value;
-        if(!name) { alert('Prosím vyplňte své jméno v levém panelu.'); return; }
-        alert('Děkujeme, poptávka pro ' + name + ' byla úspěšně odeslána!');
+        if(!name) return alert('Prosím vyplňte jméno v levém panelu.');
+        alert('Děkujeme! Poptávka byla odeslána.');
     }
 
     function toggleBlok(cb, id) {
         document.getElementById('blok-' + id).classList.toggle('aktivni', cb.checked);
     }
 
-    // --- 3D ENGINE ---
     function init3D() {
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -281,7 +333,7 @@
                                 (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
                         const ang = (j / count) * Math.PI * 2;
                         const spread = isTop ? 0.7 : 0.9;
-                        f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.3, Math.sin(ang) * r * spread);
+                        f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.32, Math.sin(ang) * r * spread);
                         f.rotation.y = Math.random() * Math.PI;
                         cakeGroup.add(f);
                     }
@@ -290,14 +342,13 @@
         }
     }
 
-    // --- INTERAKCE ---
+    // OVLÁDÁNÍ
     container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
     window.onmouseup = () => isDragging = false;
     window.onmousemove = (e) => {
         if (isDragging) {
             cakeGroup.rotation.y += (e.clientX - prevX) * 0.01;
             cakeGroup.rotation.x += (e.clientY - prevY) * 0.01;
-            // Limit náklonu
             cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x));
             prevX = e.clientX; prevY = e.clientY;
         }
