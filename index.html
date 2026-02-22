@@ -8,13 +8,11 @@
         .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 480px; }
         h1 { color: #ad1457; text-align: center; margin-bottom: 20px; }
         
-        /* Box pro náhled dortu */
         #box-dortu { 
             margin: 20px auto; padding: 20px; background: #ffffff; border: 2px dashed #f9a8d4; border-radius: 15px;
             display: flex; flex-direction: column-reverse; align-items: center; min-height: 120px; transition: 0.3s;
         }
 
-        /* Vrstvy dortu */
         .v-korpus { height: 20px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 2px; }
         .v-krem { height: 18px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; }
 
@@ -27,6 +25,7 @@
         
         .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; }
         .btn:hover { background: #c2185b; }
+        h3 { color: #ad1457; font-size: 16px; margin-top: 0; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -34,19 +33,38 @@
 <div class="karta">
     <h1>🍰 Objednávka dortu</h1>
 
-    <div class="sekce flex">
-        <div>
-            <label>Průměr (šířka)</label>
-            <select id="sirka" onchange="aktualizuj()">
-                <option value="150">15 cm</option>
-                <option value="200" selected>20 cm</option>
-                <option value="250">25 cm</option>
-                <option value="300">30 cm</option>
-            </select>
+    <div class="sekce">
+        <h3>👤 Kontaktní údaje</h3>
+        <label>Jméno a příjmení</label>
+        <input type="text" id="jmeno" placeholder="Jan Novák" required>
+        <div class="flex" style="margin-top: 10px;">
+            <div>
+                <label>E-mail</label>
+                <input type="email" id="zakaznik-email" placeholder="vas@email.cz" required>
+            </div>
+            <div>
+                <label>Telefon</label>
+                <input type="tel" id="telefon" placeholder="+420 123 456 789" required>
+            </div>
         </div>
-        <div>
-            <label>Počet pater (výška)</label>
-            <input type="number" id="patra" value="3" min="1" max="8" oninput="aktualizuj()">
+    </div>
+
+    <div class="sekce">
+        <h3>🎂 Parametry dortu</h3>
+        <div class="flex">
+            <div>
+                <label>Průměr (šířka)</label>
+                <select id="sirka" onchange="aktualizuj()">
+                    <option value="150">15 cm</option>
+                    <option value="200" selected>20 cm</option>
+                    <option value="250">25 cm</option>
+                    <option value="300">30 cm</option>
+                </select>
+            </div>
+            <div>
+                <label>Počet pater (výška)</label>
+                <input type="number" id="patra" value="3" min="2" max="5" oninput="aktualizuj()">
+            </div>
         </div>
     </div>
 
@@ -82,7 +100,7 @@
     <div id="box-dortu"></div>
     <p id="vyska-info" style="font-size: 12px; color: #999; text-align: center;"></p>
     
-    <button class="btn" onclick="poslatMail()">Odeslat manželce na e-mail</button>
+    <button class="btn" onclick="poslatMail()">Odeslat poptávku</button>
 </div>
 
 <script>
@@ -94,7 +112,6 @@
         const cN = document.getElementById('krem').value;
         const cP = document.getElementById('potah').value;
 
-        // Nastavení vnější barvy
         plocha.style.backgroundColor = cP;
         document.getElementById('vyska-info').innerText = "Odhadovaná výška: " + (p * 4) + " cm";
 
@@ -117,22 +134,40 @@
     }
 
     function poslatMail() {
+        // Načtení kontaktních údajů
+        const jmeno = document.getElementById('jmeno').value;
+        const emailZakaznik = document.getElementById('zakaznik-email').value;
+        const telefon = document.getElementById('telefon').value;
+
+        // Validace
+        if (!jmeno || !emailZakaznik || !telefon) {
+            alert("Prosím vyplňte jméno, e-mail i telefon.");
+            return;
+        }
+
         const s = document.getElementById('sirka').options[document.getElementById('sirka').selectedIndex].text;
         const p = document.getElementById('patra').value;
         const korp = document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text;
         const napl = document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text;
         const pozn = document.getElementById('poznámka').value || "žádné";
 
-        const mail = "VÁŠ-EMAIL@SEZNAM.CZ"; // <--- TADY DOPLŇ EMAIL
-        const subjekt = "Nová objednávka dortu";
-        const telo = `Ahoj, mám novou poptávku:%0A
+        const mail = "DOMII.TRNOVSKA@SEZNAM.CZ";
+        const subjekt = `Poptávka dortu - ${jmeno}`;
+        
+        const telo = `Nová poptávka od zákazníka:%0A
+        ----------------------------------%0A
+        Jméno: ${jmeno}%0A
+        E-mail: ${emailZakaznik}%0A
+        Telefon: ${telefon}%0A
+        ----------------------------------%0A
+        DORT:%0A
         - Průměr: ${s}%0A
         - Počet pater: ${p}%0A
         - Korpus: ${korp}%0A
         - Náplň: ${napl}%0A
-        - Doplňky: ${pozn}`;
+        - Doplňky/Poznámka: ${pozn}`;
 
-        window.location.href = `mailto:${mail}?subject=${subjekt}&body=${telo}`;
+        window.location.href = `mailto:${mail}?subject=${encodeURIComponent(subjekt)}&body=${telo}`;
     }
 
     window.onload = aktualizuj;
