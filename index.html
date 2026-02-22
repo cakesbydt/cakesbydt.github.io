@@ -15,7 +15,7 @@
         h3 { color: var(--primary); font-size: 14px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .sekce { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
         .flex { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .flex > div { flex: 1; min-width: 150px; }
+        .flex > div { flex: 1; min-width: 140px; }
         label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
         select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; }
         #canvas-container { width: 100%; height: 450px; background: radial-gradient(#ffffff, #f9f9f9); border-radius: 25px; border: 2px dashed var(--accent); cursor: grab; margin: 20px 0; }
@@ -64,6 +64,16 @@
                         <option value="0x4e342e">Čokoládový</option>
                         <option value="0xf3e5ab">Světlý piškot</option>
                         <option value="0xd32f2f">Red Velvet</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Krém (náplň)</label>
+                    <select id="creamColor" onchange="updateCake()">
+                        <option value="0xffffff">Smetanový / Bílý</option>
+                        <option value="0xfff4e0">Vanilkový</option>
+                        <option value="0xfce4ec">Jahodový (Růžový)</option>
+                        <option value="0x6d4c41">Pařížský (Tmavý)</option>
+                        <option value="0xdcedc8">Pistáciový</option>
                     </select>
                 </div>
                 <div>
@@ -160,29 +170,27 @@
         const layerCount = parseInt(document.getElementById('layers').value);
         const fruitType = document.getElementById('fruit').value;
         const flavorColor = parseInt(document.getElementById('flavor').value);
+        const creamColor = parseInt(document.getElementById('creamColor').value);
         const style = document.getElementById('style').value;
         
         const layerHeight = 0.5;
-        let lastRadius = 3;
 
         for (let i = 0; i < layerCount; i++) {
             const yPos = i * layerHeight;
             const isKorpus = i % 2 === 0;
             
-            // Logika poloměru: Svatební se zmenšuje každé dvě vrstvy (korpus+krém)
             let currentRadius = 3;
             if (style === 'wedding') {
                 currentRadius = 3 - (Math.floor(i / 2) * 0.4);
             }
-            lastRadius = currentRadius;
 
             const geo = new THREE.CylinderGeometry(currentRadius, currentRadius, layerHeight, 45);
-            const mat = new THREE.MeshPhongMaterial({ color: isKorpus ? flavorColor : 0xffffff });
+            // Změna: Pokud to není korpus, použije se vybraná barva krému
+            const mat = new THREE.MeshPhongMaterial({ color: isKorpus ? flavorColor : creamColor });
             const mesh = new THREE.Mesh(geo, mat);
             mesh.position.y = yPos;
             cakeGroup.add(mesh);
 
-            // Ovoce na úplném vršku
             if (i === layerCount - 1 && fruitType !== "none") {
                 const fruitCount = Math.floor(currentRadius * 5); 
                 for (let j = 0; j < fruitCount; j++) {
