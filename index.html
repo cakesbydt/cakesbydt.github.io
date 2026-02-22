@@ -10,9 +10,17 @@
         
         .hlavni-wrapper { display: flex; width: 100%; max-width: 1200px; background: white; box-shadow: 0 20px 60px rgba(173,20,87,0.1); margin: 40px 20px; border-radius: 30px; overflow: hidden; }
         
-        /* Levý panel */
-        .levy-panel { flex: 0 0 320px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; align-items: center; padding: 60px 20px; color: white; box-sizing: border-box; }
-        .logo-vlevo { width: 260px; height: auto; border-radius: 20px; border: 4px solid rgba(255,255,255,0.2); }
+        /* Levý panel s kontaktními údaji */
+        .levy-panel { flex: 0 0 320px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; align-items: center; padding: 40px 25px; color: white; box-sizing: border-box; }
+        .logo-vlevo { width: 220px; height: auto; border-radius: 20px; border: 4px solid rgba(255,255,255,0.2); margin-bottom: 30px; }
+        
+        .kontaktni-form { width: 100%; margin-top: 10px; }
+        .kontaktni-form h4 { text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; font-size: 14px; opacity: 0.9; }
+        .input-group { width: 100%; margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 11px; margin-bottom: 5px; font-weight: bold; opacity: 0.8; }
+        .input-group input { width: 100%; padding: 10px; border-radius: 10px; border: none; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.15); color: white; font-family: inherit; }
+        .input-group input::placeholder { color: rgba(255,255,255,0.5); }
+        .input-group input:focus { background: rgba(255,255,255,0.25); }
 
         /* Hlavní část */
         .obsah { flex: 1; padding: 50px 60px; background: white; overflow-y: auto; }
@@ -26,18 +34,8 @@
         label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
         select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; }
 
-        /* 3D SCÉNA */
-        #canvas-container { 
-            width: 100%; 
-            height: 450px; 
-            background: radial-gradient(#ffffff, #f9f9f9); 
-            border-radius: 25px; 
-            border: 2px dashed var(--accent);
-            cursor: move;
-            margin: 20px 0;
-        }
+        #canvas-container { width: 100%; height: 400px; background: radial-gradient(#ffffff, #f9f9f9); border-radius: 25px; border: 2px dashed var(--accent); cursor: move; margin: 20px 0; }
 
-        /* DOPLŇKY */
         .doplnky-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .doplnek-blok { border: 1px solid #eee; border-radius: 15px; padding: 15px; background: #fcfcfc; transition: 0.3s; }
         .doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); }
@@ -45,7 +43,8 @@
         .doplnek-poznamka { margin-top: 10px; display: none; }
         .doplnek-blok.aktivni .doplnek-poznamka { display: block; }
 
-        .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; margin-top: 20px; }
+        .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; margin-top: 20px; transition: 0.2s; }
+        .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
         @media (max-width: 950px) {
             .hlavni-wrapper { flex-direction: column; margin: 0; }
@@ -59,7 +58,24 @@
 <div class="hlavni-wrapper">
     <div class="levy-panel">
         <img src="logo.jpg" alt="Logo Cakes by DT" class="logo-vlevo">
-        <p style="margin-top:30px; text-align:center; opacity:0.8; font-style: italic;">"Upečeme vám vzpomínku..."</p>
+        
+        <div class="kontaktni-form">
+            <h4>Vaše údaje</h4>
+            <div class="input-group">
+                <label>Jméno a příjmení</label>
+                <input type="text" id="user-name" placeholder="Jan Novák">
+            </div>
+            <div class="input-group">
+                <label>E-mail</label>
+                <input type="email" id="user-email" placeholder="jan@seznam.cz">
+            </div>
+            <div class="input-group">
+                <label>Telefon</label>
+                <input type="tel" id="user-phone" placeholder="+420 000 000 000">
+            </div>
+        </div>
+        
+        <p style="margin-top:40px; text-align:center; opacity:0.6; font-style: italic; font-size: 12px;">"Upečeme vám vzpomínku..."</p>
     </div>
 
     <div class="obsah">
@@ -134,7 +150,7 @@
             </div>
         </div>
 
-        <button class="btn" onclick="alert('Poptávka odeslána!')">ODESLAT POPTÁVKU</button>
+        <button class="btn" onclick="odeslatPoptavku()">ODESLAT POPTÁVKU</button>
     </div>
 </div>
 
@@ -142,6 +158,12 @@
     let scene, camera, renderer, cakeGroup;
     const container = document.getElementById('canvas-container');
     let isDragging = false, prevX = 0, prevY = 0;
+
+    function odeslatPoptavku() {
+        const name = document.getElementById('user-name').value;
+        if(!name) { alert('Prosím vyplňte své jméno v levém panelu.'); return; }
+        alert('Děkujeme, pane/paní ' + name + '! Poptávka byla odeslána.');
+    }
 
     function toggleBlok(cb, id) {
         document.getElementById('blok-' + id).classList.toggle('aktivni', cb.checked);
@@ -214,32 +236,18 @@
             mesh.position.y = i * layerH;
             cakeGroup.add(mesh);
 
-            // LOGIKA OVOCE
             if (fruitType !== "none") {
-                // Podmínka: Dej ovoce na vršek (poslední vrstva) 
-                // NEBO na každé "schodiště" u kaskády (vždy na konci krémové vrstvy, pokud je nad ní užší patro)
-                const isTopLayer = (i === layerCount - 1);
-                const isStepLayer = (style === 'wedding' && i % 2 === 1 && i < layerCount - 1);
+                const isTop = (i === layerCount - 1);
+                const isStep = (style === 'wedding' && i % 2 === 1 && i < layerCount - 1);
 
-                if (isTopLayer || isStepLayer) {
-                    const count = Math.floor(r * 6); // Více ovoce na širších patrech
+                if (isTop || isStep) {
+                    const count = Math.floor(r * 6);
                     for (let j = 0; j < count; j++) {
                         let f = (fruitType === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : 
                                 (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
-                        
                         const ang = (j / count) * Math.PI * 2;
-                        
-                        // Pokud je to vršek, ovoce je víc ve středu. Pokud "schod", je na okraji.
-                        const spread = isTopLayer ? 0.7 : 0.9; 
-                        
-                        f.position.set(
-                            Math.cos(ang) * r * spread, 
-                            (i * layerH) + 0.3, 
-                            Math.sin(ang) * r * spread
-                        );
-                        
-                        // Trocha náhodné rotace, aby to vypadalo přirozeně
-                        f.rotation.y = Math.random() * Math.PI;
+                        const spread = isTop ? 0.7 : 0.9;
+                        f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.3, Math.sin(ang) * r * spread);
                         cakeGroup.add(f);
                     }
                 }
@@ -247,7 +255,6 @@
         }
     }
 
-    // OVLÁDÁNÍ MYŠÍ (ROTACE + NÁKLON)
     container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
     window.onmouseup = () => isDragging = false;
     window.onmousemove = (e) => {
