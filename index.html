@@ -3,119 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cakes by DT | 3D Sweet Experience</title>
+    <title>Cakes by DT | Real 3D Experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { 
             --primary: #ad1457; 
-            --accent: #ff007f;
-            --glass: rgba(255, 255, 255, 0.85);
+            --bg-gradient: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
         }
 
         body { 
             font-family: 'Montserrat', sans-serif; 
-            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
-            min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            padding: 20px; margin: 0;
+            background: var(--bg-gradient);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center;
+            margin: 0; padding: 20px;
         }
         
         .karta { 
-            background: var(--glass); 
+            background: rgba(255, 255, 255, 0.9); 
             padding: 30px; border-radius: 40px; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
-            width: 100%; max-width: 420px; text-align: center;
-            backdrop-filter: blur(15px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1); 
+            width: 100%; max-width: 400px; text-align: center;
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.4);
         }
 
-        h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2.4rem; margin: 0; }
+        h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2.2rem; margin: 0; }
         .ig { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.7; }
 
-        /* 3D DISPLAY AREA */
+        /* VIZUALIZAČNÍ PLOCHA */
         .display-area {
-            height: 300px; margin: 25px 0;
+            height: 320px; margin: 20px 0;
             display: flex; align-items: center; justify-content: center;
             position: relative;
         }
 
-        /* Světelný kruh za dortem */
-        .glow {
-            position: absolute;
-            width: 250px; height: 250px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 40px rgba(255,255,255,0.8), inset 0 0 60px rgba(255,255,255,1);
-            border: 8px solid rgba(255,255,255,0.4);
+        .glow-circle {
+            position: absolute; width: 260px; height: 260px;
+            background: white; border-radius: 50%;
+            box-shadow: 0 0 50px rgba(255,255,255,0.8);
+            border: 10px solid rgba(255,255,255,0.5);
             z-index: 0;
         }
 
-        .cake-container {
+        /* DORT - JEDEN CELEK */
+        .cake-wrapper {
             position: relative; z-index: 1;
             display: flex; flex-direction: column-reverse;
             align-items: center;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
             transition: transform 0.3s ease;
         }
 
-        /* BUCLATÉ PATRO */
+        /* VRSTVA DORTU - BUCLATÁ */
         .layer {
             position: relative;
-            height: 35px; width: var(--w);
+            width: var(--w);
+            height: 45px; /* Výška boku */
             background: var(--color);
-            margin-bottom: -5px; /* Sjednocení do jednoho bloku */
-            /* Bok dortu s hloubkou */
+            margin-bottom: -15px; /* Klíčový trik pro propojení vrstev */
+            border-radius: 50% / 15px; /* Zaoblení spodku vrstvy */
+            
+            /* Stínování boku pro 3D efekt */
             background: linear-gradient(90deg, 
-                rgba(0,0,0,0.2) 0%, 
-                rgba(255,255,255,0.3) 20%, 
+                rgba(0,0,0,0.15) 0%, 
+                rgba(255,255,255,0.2) 20%, 
                 rgba(255,255,255,0) 50%, 
-                rgba(0,0,0,0.15) 100%), var(--color);
+                rgba(0,0,0,0.1) 100%), var(--color);
             box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1);
         }
 
-        /* Horní zaoblení každé vrstvy */
-        .layer::after {
+        /* Horní plocha vrstvy (elipsa) */
+        .layer::before {
             content: ''; position: absolute;
             top: -15px; left: 0;
             width: 100%; height: 30px;
             border-radius: 50%;
             background: inherit;
-            box-shadow: inset 0 5px 10px rgba(255,255,255,0.4);
+            filter: brightness(1.05); /* Vršek je vždy o něco světlejší */
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.3);
         }
 
-        /* Poslední patro - vršek */
-        .layer:last-child::after {
-            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.1) 100%), var(--color);
+        /* Speciální úprava pro vršek dortu */
+        .layer:last-child { margin-bottom: 0; }
+        .layer:last-child::before {
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.05) 100%), var(--color);
         }
 
-        .top-decor {
-            position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
-            z-index: 100; font-size: 40px; 
-            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.2));
-            white-space: nowrap;
+        .strawberries {
+            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
+            z-index: 10; font-size: 40px; 
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+            pointer-events: none;
         }
 
         /* OVLÁDÁNÍ */
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
         .box { 
-            background: white; padding: 15px; border-radius: 20px; 
-            text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            background: white; padding: 12px; border-radius: 18px; 
+            text-align: left; border: 1px solid rgba(0,0,0,0.05);
         }
-        label { font-size: 10px; font-weight: 700; color: #aaa; text-transform: uppercase; display: block; }
+        label { font-size: 9px; font-weight: 700; color: #bbb; text-transform: uppercase; display: block; }
         select { 
             width: 100%; border: none; background: transparent; 
             font-family: inherit; font-size: 14px; font-weight: 600; outline: none;
-            cursor: pointer; padding-top: 5px;
+            cursor: pointer; padding-top: 4px; color: #444;
         }
 
-        .slider { width: 100%; accent-color: var(--primary); margin: 20px 0 5px 0; cursor: pointer; }
+        .slider { width: 100%; accent-color: var(--primary); margin: 15px 0 5px 0; }
 
         .btn { 
-            width: 100%; padding: 20px; background: linear-gradient(90deg, #ad1457, #ff007f); 
-            color: white; border: none; border-radius: 25px; 
-            font-weight: 700; font-size: 16px; margin-top: 20px; cursor: pointer;
-            box-shadow: 0 10px 30px rgba(173, 20, 87, 0.4); transition: 0.3s;
+            width: 100%; padding: 18px; background: linear-gradient(90deg, #ad1457, #d81b60); 
+            color: white; border: none; border-radius: 20px; 
+            font-weight: 700; font-size: 15px; margin-top: 20px; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(173, 20, 87, 0.3);
         }
-        .btn:hover { transform: scale(1.02); filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -125,16 +126,16 @@
     <a href="#" class="ig">📸 @cakesbydt_</a>
 
     <div class="display-area">
-        <div class="glow"></div>
-        <div class="cake-container" id="cake-visual"></div>
+        <div class="glow-circle"></div>
+        <div class="cake-wrapper" id="cake-visual"></div>
     </div>
 
-    <input type="range" min="-15" max="15" value="0" class="slider" oninput="tilt(this.value)">
-    <div style="font-size: 10px; color: #888; letter-spacing: 1px; margin-bottom: 20px;">NAKLONIT POHLED</div>
+    <input type="range" min="-10" max="10" value="0" class="slider" oninput="tilt(this.value)">
+    <div style="font-size: 10px; color: #999; letter-spacing: 1px;">NAKLONIT POHLED</div>
 
     <div class="controls">
         <div class="box"><label>Průměr dortu</label>
-            <select id="size" onchange="render()"><option value="160">15 cm</option><option value="200" selected>20 cm</option><option value="240">25 cm</option></select>
+            <select id="size" onchange="render()"><option value="170">15 cm</option><option value="210" selected>20 cm</option><option value="250">25 cm</option></select>
         </div>
         <div class="box"><label>Vrstvy</label>
             <select id="layers" onchange="render()"><option value="3">3 vrstvy</option><option value="4" selected>4 vrstvy</option><option value="5">5 vrstev</option></select>
@@ -143,10 +144,10 @@
 
     <div class="controls">
         <div class="box"><label>Korpus</label>
-            <select id="cColor" onchange="render()"><option value="#f3e5ab">Světlý</option><option value="#5d4037">Ořechový</option><option value="#ad1457">Malinový</option></select>
+            <select id="cColor" onchange="render()"><option value="#f3e5ab" selected>Světlý</option><option value="#5d4037">Ořechový</option><option value="#ad1457">Malinový</option></select>
         </div>
         <div class="box"><label>Krém</label>
-            <select id="fColor" onchange="render()"><option value="#ffb6c1" selected>Jahodový</option><option value="#ffffff">Vanilkový</option><option value="#8d6e63">Kávový</option></select>
+            <select id="fColor" onchange="render()"><option value="#fce7f3">Jahodový</option><option value="#ffffff" selected>Vanilkový</option><option value="#8d6e63">Kávový</option></select>
         </div>
     </div>
 
@@ -176,7 +177,7 @@
             
             if (i == layerCount - 1) {
                 const decor = document.createElement('div');
-                decor.className = 'top-decor';
+                decor.className = 'strawberries';
                 decor.innerHTML = "🍓🍓🍓";
                 div.appendChild(decor);
             }
