@@ -2,60 +2,90 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Dorty od manželky</title>
+    <title>Dortový konfigurátor</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #fff5f8; color: #444; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        h1 { color: #d63384; text-align: center; }
-        .sekce { margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        h3 { color: #ad1457; margin-bottom: 10px; }
-        label { display: block; margin: 8px 0; cursor: pointer; padding: 10px; border: 1px solid #fce4ec; border-radius: 8px; transition: 0.2s; }
-        label:hover { background-color: #fce4ec; }
-        input[type="radio"], input[type="checkbox"] { margin-right: 10px; }
-        .tlacitko { display: block; width: 100%; padding: 15px; background-color: #d63384; color: white; border: none; border-radius: 10px; font-size: 18px; cursor: pointer; margin-top: 20px; text-align: center; text-decoration: none; }
-        .tlacitko:hover { background-color: #c2185b; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #fff5f8; display: flex; justify-content: center; padding: 20px; gap: 40px; flex-wrap: wrap; }
+        .form-container { width: 400px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        
+        /* Grafika dortu */
+        .preview-container { width: 300px; height: 400px; position: sticky; top: 20px; background: #fff; border-radius: 20px; display: flex; flex-direction: column-reverse; align-items: center; padding-bottom: 50px; border: 2px dashed #fce4ec; }
+        
+        /* Vrstvy dortu */
+        .layer { width: 200px; height: 40px; border-radius: 10px; margin-bottom: -5px; transition: all 0.5s ease; border: 1px solid rgba(0,0,0,0.1); }
+        .korpus-layer { height: 50px; z-index: 1; }
+        .krem-layer { height: 30px; width: 180px; z-index: 2; border-radius: 20px; }
+        .ovoce-layer { height: 20px; width: 160px; z-index: 3; display: none; }
+
+        /* Barvy korpusů */
+        .svetlý { background-color: #f3e5ab; } /* Piškotová */
+        .čokoládový { background-color: #3e2723; } /* Tmavě hnědá */
+        .ořechový { background-color: #d7ccc8; } /* Béžová */
+
+        /* Barvy krémů */
+        .vanilkový { background-color: #fffde7; border: 2px solid #fff9c4; }
+        .pařížský { background-color: #5d4037; }
+        .tvarohový { background-color: #ffffff; border: 2px dashed #e1f5fe; }
+
+        .sekce { margin-bottom: 20px; }
+        h3 { color: #ad1457; border-bottom: 2px solid #fce4ec; }
+        label { display: block; padding: 8px; cursor: pointer; border-radius: 5px; }
+        label:hover { background: #fff5f8; }
+        .tlacitko { display: block; width: 100%; padding: 15px; background: #d63384; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🍰 Sestav si svůj dort</h1>
+<div class="form-container">
+    <h1>🍰 Konfigurátor</h1>
     
     <div class="sekce">
-        <h3>1. Výběr korpusu</h3>
-        <label><input type="radio" name="korpus" value="Světlý piškot" checked> Světlý piškot</label>
-        <label><input type="radio" name="korpus" value="Čokoládový"> Čokoládový</label>
-        <label><input type="radio" name="korpus" value="Ořechový"> Ořechový</label>
+        <h3>1. Korpus</h3>
+        <label><input type="radio" name="korpus" value="svetlý" checked onclick="upravDort()"> Světlý piškot</label>
+        <label><input type="radio" name="korpus" value="čokoládový" onclick="upravDort()"> Čokoládový</label>
+        <label><input type="radio" name="korpus" value="ořechový" onclick="upravDort()"> Ořechový</label>
     </div>
 
     <div class="sekce">
-        <h3>2. Výběr krému</h3>
-        <label><input type="radio" name="krem" value="Vanilkový" checked> Vanilkový mascarpone</label>
-        <label><input type="radio" name="krem" value="Pařížský"> Pařížský (čokoládový)</label>
-        <label><input type="radio" name="krem" value="Tvarohový s ovocem"> Lehký tvarohový</label>
+        <h3>2. Náplň (krém)</h3>
+        <label><input type="radio" name="krem" value="vanilkový" checked onclick="upravDort()"> Vanilkové mascarpone</label>
+        <label><input type="radio" name="krem" value="pařížský" onclick="upravDort()"> Pařížský krém</label>
+        <label><input type="radio" name="krem" value="tvarohový" onclick="upravDort()"> Tvarohový</label>
     </div>
 
     <div class="sekce">
-        <h3>3. Ovoce a doplňky (můžeš víc)</h3>
-        <label><input type="checkbox" name="ovoce" value="Jahody"> Jahody</label>
-        <label><input type="checkbox" name="ovoce" value="Maliny"> Maliny</label>
-        <label><input type="checkbox" name="ovoce" value="Borůvky"> Borůvky</label>
-        <label><input type="checkbox" name="ovoce" value="Vlašské ořechy"> Vlašské ořechy</label>
+        <h3>3. Doplňky</h3>
+        <label><input type="checkbox" id="checkJahody" value="jahody" onclick="upravDort()"> Jahody navrch</label>
     </div>
 
-    <button onclick="poslatObjednavku()" class="tlacitko">Mám vybráno!</button>
+    <button onclick="poslatObjednavku()" class="tlacitko">Objednat tento skvost</button>
+</div>
+
+<div class="preview-container" id="dort-preview">
+    <div id="v-ovoce" class="ovoce-layer" style="background: #ff1744; border-radius: 50% 50% 0 0; margin-bottom: 5px;"></div>
+    <div id="v-krem" class="layer krem-layer vanilkový"></div>
+    <div id="v-korpus" class="layer korpus-layer svetlý"></div>
+    <p style="color: #ad1457; font-weight: bold;">Váš budoucí dort:</p>
 </div>
 
 <script>
-function poslatObjednavku() {
+function upravDort() {
+    // Změna korpusu
     let korpus = document.querySelector('input[name="korpus"]:checked').value;
+    document.getElementById('v-korpus').className = 'layer korpus-layer ' + korpus;
+
+    // Změna krému
     let krem = document.querySelector('input[name="krem"]:checked').value;
-    let ovoce = Array.from(document.querySelectorAll('input[name="ovoce"]:checked')).map(el => el.value).join(", ");
-    
-    let text = `Ahoj, mám zájem o dort: %0A- Korpus: ${korpus}%0A- Krém: ${krem}%0A- Ovoce/Doplňky: ${ovoce || 'žádné'}`;
-    
-    // Tohle otevře e-mail s předvyplněným textem
-    window.location.href = `mailto:VÁŠ-EMAIL@SEZNAM.CZ?subject=Objednávka dortu&body=${text}`;
+    document.getElementById('v-krem').className = 'layer krem-layer ' + krem;
+
+    // Zobrazení ovoce
+    let jahody = document.getElementById('checkJahody').checked;
+    document.getElementById('v-ovoce').style.display = jahody ? 'block' : 'none';
+}
+
+function poslatObjednavku() {
+    let k = document.querySelector('input[name="korpus"]:checked').parentElement.textContent.trim();
+    let r = document.querySelector('input[name="krem"]:checked').parentElement.textContent.trim();
+    alert("Objednávka na " + k + " dort s " + r + " krémem byla připravena! (Zde pak propojíme ten e-mail)");
 }
 </script>
 
