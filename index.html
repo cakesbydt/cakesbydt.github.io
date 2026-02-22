@@ -202,12 +202,10 @@
         const style = document.getElementById('style').value;
         
         const layerH = 0.5;
-        let lastR = 3;
 
         for (let i = 0; i < layerCount; i++) {
             let r = 3;
             if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
-            lastR = r;
 
             const mesh = new THREE.Mesh(
                 new THREE.CylinderGeometry(r, r, layerH, 45),
@@ -216,14 +214,34 @@
             mesh.position.y = i * layerH;
             cakeGroup.add(mesh);
 
-            if (i === layerCount - 1 && fruitType !== "none") {
-                const count = Math.floor(r * 5);
-                for (let j = 0; j < count; j++) {
-                    let f = (fruitType === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : 
-                            (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
-                    const ang = (j / count) * Math.PI * 2;
-                    f.position.set(Math.cos(ang) * r * 0.75, (i * layerH) + 0.3, Math.sin(ang) * r * 0.75);
-                    cakeGroup.add(f);
+            // LOGIKA OVOCE
+            if (fruitType !== "none") {
+                // Podmínka: Dej ovoce na vršek (poslední vrstva) 
+                // NEBO na každé "schodiště" u kaskády (vždy na konci krémové vrstvy, pokud je nad ní užší patro)
+                const isTopLayer = (i === layerCount - 1);
+                const isStepLayer = (style === 'wedding' && i % 2 === 1 && i < layerCount - 1);
+
+                if (isTopLayer || isStepLayer) {
+                    const count = Math.floor(r * 6); // Více ovoce na širších patrech
+                    for (let j = 0; j < count; j++) {
+                        let f = (fruitType === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : 
+                                (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
+                        
+                        const ang = (j / count) * Math.PI * 2;
+                        
+                        // Pokud je to vršek, ovoce je víc ve středu. Pokud "schod", je na okraji.
+                        const spread = isTopLayer ? 0.7 : 0.9; 
+                        
+                        f.position.set(
+                            Math.cos(ang) * r * spread, 
+                            (i * layerH) + 0.3, 
+                            Math.sin(ang) * r * spread
+                        );
+                        
+                        // Trocha náhodné rotace, aby to vypadalo přirozeně
+                        f.rotation.y = Math.random() * Math.PI;
+                        cakeGroup.add(f);
+                    }
                 }
             }
         }
