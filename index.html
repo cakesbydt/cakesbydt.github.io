@@ -24,7 +24,6 @@
             min-height: 100vh;
         }
 
-        /* Dynamické pozadí */
         .bg-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: linear-gradient(45deg, #fbdae5, #ffffff, #ffe5ed);
@@ -36,7 +35,6 @@
         }
         @keyframes drift { from { transform: translate(-10%, -10%); } to { transform: translate(20%, 20%); } }
 
-        /* Hlavní kontejner */
         .hlavni-wrapper { 
             display: flex; width: 95%; max-width: 1400px;
             background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
@@ -46,7 +44,6 @@
         }
         @keyframes entrance { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Levý panel */
         .levy-panel { 
             flex: 0 0 380px; background: linear-gradient(165deg, #480024 0%, #ad1457 50%, #ff4081 100%);
             display: flex; flex-direction: column; align-items: center; padding: 60px 40px; color: white;
@@ -68,7 +65,6 @@
         }
         .input-group input:focus { background: rgba(0,0,0,0.4); border-color: var(--gold); }
 
-        /* Pravý panel */
         .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; scroll-behavior: smooth; }
         .hlavni-motto { font-family: 'Playfair Display', serif; font-style: italic; color: #1a1a1a; text-align: center; font-size: 62px; margin-bottom: 50px; }
         
@@ -91,7 +87,6 @@
         }
         select:hover { border-color: var(--primary); }
 
-        /* 3D Model Stage */
         #canvas-container { 
             width: 100%; height: 550px; 
             background: radial-gradient(circle at center, #f8f8f8 0%, #dcdcdc 100%); 
@@ -105,30 +100,34 @@
             font-weight: 800; font-size: 13px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); z-index: 10;
         }
 
-        /* Ovládání sliderem (záložní) */
         .controls-row { display: flex; gap: 40px; justify-content: center; margin-bottom: 40px; opacity: 0.6; }
         .slider { -webkit-appearance: none; width: 150px; height: 4px; background: #ccc; border-radius: 2px; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 3px solid white; cursor: pointer; }
 
-        /* Doplňky */
+        /* --- OPRAVENÉ DOPLŇKY --- */
         .doplnek-item { 
             background: #fdfdfd; padding: 25px; border-radius: 25px; margin-bottom: 20px; 
             border: 2px solid transparent; transition: 0.4s;
         }
-        .doplnek-item:has(input:checked) { border-color: var(--gold); background: #fffdf2; transform: scale(1.02); }
+        /* Změna barvy rámečku při zaškrtnutí */
+        .doplnek-item:has(input[type="checkbox"]:checked) { 
+            border-color: var(--gold); background: #fffdf2; transform: scale(1.02); 
+        }
 
         .check-row { display: flex; align-items: center; cursor: pointer; }
         input[type="checkbox"] { width: 26px; height: 26px; accent-color: var(--primary); cursor: pointer; }
         .checkbox-label { font-size: 17px; font-weight: 800; margin-left: 15px; color: #2d3436; }
 
-        /* OPRAVENÉ VYSOUVÁNÍ POZNÁMKY */
         .extra-input { 
             max-height: 0; overflow: hidden; opacity: 0; 
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-        input[type="checkbox"]:checked ~ .extra-input { 
+        
+        /* KLÍČOVÁ OPRAVA: Selektor, který najde poznámku uvnitř doplnek-item */
+        .doplnek-item input[type="checkbox"]:checked ~ .extra-input { 
             max-height: 120px; opacity: 1; margin-top: 20px; 
         }
+
         .extra-input input { 
             width: 100%; padding: 16px; border-radius: 15px; border: 1px solid #ddd; background: white; 
             font-family: inherit; font-size: 14px; box-sizing: border-box;
@@ -186,7 +185,7 @@
             <h3>3. Výběr ovoce</h3>
             <div class="flex">
                 <div><label>Ovoce v krému</label><select id="fruitCream" onchange="updateCake()"><option value="none">Bez ovoce</option><option value="strawberries">Jahody</option><option value="blueberries">Borůvky</option><option value="mix" selected>Královský Mix</option></select></div>
-                <div><label>Ovoce na vrchu</label><select id="fruitTop" onchange="updateCake()"><option value="none">Bez zdobení</option><option value="strawberries" selected>Čerstvé jahody</option><option value="blueberries">Zahradní borůvky</option><option value="mix">Bohatý Mix</option></select></div>
+                <div><label>Ovoce nahoře</label><select id="fruitTop" onchange="updateCake()"><option value="none">Bez zdobení</option><option value="strawberries" selected>Čerstvé jahody</option><option value="blueberries">Zahradní borůvky</option><option value="mix">Bohatý Mix</option></select></div>
                 <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake()"><option value="border">Věneček</option><option value="full" selected>Plné zaplnění</option></select></div>
             </div>
         </div>
@@ -204,27 +203,33 @@
             <h3>4. Signature detaily</h3>
             
             <div class="doplnek-item">
-                <div class="check-row">
-                    <input type="checkbox" id="c1">
-                    <label for="c1" class="checkbox-label">Jedlý papír / Fotografie</label>
+                <input type="checkbox" id="c1" style="display:none;"> <div class="check-row">
+                    <input type="checkbox" id="c1_real">
+                    <label for="c1_real" class="checkbox-label">Jedlý papír / Fotografie</label>
                 </div>
-                <div class="extra-input"><input type="text" placeholder="Jaký motiv nebo fotku si přejete?"></div>
+                <div class="extra-input">
+                    <input type="text" placeholder="Jaký motiv nebo fotku si přejete?">
+                </div>
             </div>
 
             <div class="doplnek-item">
-                <div class="check-row">
+                <label class="check-row">
                     <input type="checkbox" id="c2">
-                    <label for="c2" class="checkbox-label">Ručně modelovaná figurka</label>
+                    <span class="checkbox-label">Ručně modelovaná figurka</span>
+                </label>
+                <div class="extra-input">
+                    <input type="text" placeholder="Popište postavičku (např. medvídek, auto)...">
                 </div>
-                <div class="extra-input"><input type="text" placeholder="Popište postavičku (např. medvídek, auto)..."></div>
             </div>
 
             <div class="doplnek-item">
-                <div class="check-row">
+                <label class="check-row">
                     <input type="checkbox" id="c3">
-                    <label for="c3" class="checkbox-label">Personalizovaný zápich</label>
+                    <span class="checkbox-label">Personalizovaný zápich</span>
+                </label>
+                <div class="extra-input">
+                    <input type="text" placeholder="Text na zápich (např. 'Vše nejlepší')...">
                 </div>
-                <div class="extra-input"><input type="text" placeholder="Text na zápich (např. 'Vše nejlepší k 5. narozeninám')..."></div>
             </div>
 
             <textarea rows="4" placeholder="Další specifické požadavky, barevné ladění nebo vzkaz pro nás..."></textarea>
@@ -235,6 +240,7 @@
 </div>
 
 <script>
+    // ... (zbytek tvého Three.js skriptu zůstává beze změny)
     let scene, camera, renderer, cakeGroup;
     let isDragging = false;
     let previousMousePosition = { x: 0, y: 0 };
@@ -251,13 +257,11 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
 
-        // SVĚTELNÉ STUDIO
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
         const mainLight = new THREE.DirectionalLight(0xffffff, 0.9);
         mainLight.position.set(5, 10, 7);
         scene.add(mainLight);
 
-        // RIM LIGHT pro bílé objekty
         const rimLight = new THREE.SpotLight(0xffffff, 1.5);
         rimLight.position.set(-10, 10, -10);
         scene.add(rimLight);
@@ -269,7 +273,6 @@
         updateCake();
         animate();
 
-        // INTERAKTIVNÍ ROTACE MYŠÍ
         container.addEventListener('mousedown', (e) => { isDragging = true; });
         window.addEventListener('mouseup', () => { isDragging = false; });
         window.addEventListener('mousemove', (e) => {
@@ -278,7 +281,6 @@
                 const deltaY = e.clientY - previousMousePosition.y;
                 cakeGroup.rotation.y += deltaX * 0.01;
                 cakeGroup.rotation.x += deltaY * 0.01;
-                // Sync se slidery
                 document.getElementById('rotateY').value = cakeGroup.rotation.y;
                 document.getElementById('rotateX').value = cakeGroup.rotation.x;
             }
@@ -290,11 +292,7 @@
         const group = new THREE.Group();
         const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5));
         const geo = new THREE.SphereGeometry(isStrawberry ? (isTop ? 0.22 : 0.16) : (isTop ? 0.12 : 0.08), 16, 16);
-        const mat = new THREE.MeshPhongMaterial({ 
-            color: isStrawberry ? 0xd32f2f : 0x283593, 
-            shininess: 40,
-            specular: 0x999999
-        });
+        const mat = new THREE.MeshPhongMaterial({ color: isStrawberry ? 0xd32f2f : 0x283593, shininess: 40, specular: 0x999999 });
         const mesh = new THREE.Mesh(geo, mat);
         if(isStrawberry) mesh.scale.set(0.8, 1.3, 0.8);
         group.add(mesh);
@@ -303,7 +301,6 @@
 
     function updateCake() {
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
-        
         const layers = parseInt(document.getElementById('layers').value);
         const diameter = parseInt(document.getElementById('diameter').value);
         const coat = document.getElementById('coating').value;
@@ -313,40 +310,22 @@
         const flavorColor = parseInt(document.getElementById('flavor').value);
         const innerColor = parseInt(document.getElementById('innerCream').value);
         const outerColor = parseInt(document.getElementById('outerCream').value);
-        
         const radius = diameter / 6.5;
         const h = 0.5;
         document.getElementById('info-display').innerHTML = `KONFIGURACE: ${diameter}cm | ${layers} vrstev`;
 
         for (let i = 0; i < layers; i++) {
             const isCream = i % 2 === 1;
-            
-            // Základní segment
-            const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(radius, radius, h, 64),
-                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor, shininess: 5 })
-            );
+            const segment = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, h, 64), new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor, shininess: 5 }));
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
-            // Potažení
             if (coat !== 'naked') {
                 const isTopLayer = (i === layers - 1);
-                const coatMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(radius + 0.03, radius + 0.03, h, 64, 1, !isTopLayer),
-                    new THREE.MeshPhongMaterial({ 
-                        color: outerColor, 
-                        transparent: true, 
-                        opacity: (coat === 'semi' ? 0.5 : 1), 
-                        shininess: 40,
-                        specular: 0xaaaaaa // Silnější odlesk pro bílý krém
-                    })
-                );
+                const coatMesh = new THREE.Mesh(new THREE.CylinderGeometry(radius + 0.03, radius + 0.03, h, 64, 1, !isTopLayer), new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), shininess: 40, specular: 0xaaaaaa }));
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
             }
-
-            // Ovoce v krému
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 for (let j = 0; j < 12; j++) {
                     const f = createFruit(fruitC, false);
@@ -355,8 +334,6 @@
                     cakeGroup.add(f);
                 }
             }
-
-            // Ovoce na vrchu
             if (i === layers - 1 && fruitT !== 'none') {
                 let radii = [radius * 0.85];
                 if (topS === 'full') radii = [radius * 0.3, radius * 0.6, radius * 0.85];
