@@ -65,15 +65,20 @@
         <h1 class="hlavni-motto">Váš sladký sen</h1>
         
         <div class="sekce">
-            <h3>🎂 Vzhled a korpus</h3>
+            <h3>🎂 Základní styl a korpus</h3>
             <div class="flex">
                 <div><label>Styl dortu</label><select id="style" onchange="updateCake()"><option value="tower">Moderní Tower</option><option value="wedding">Svatební kaskáda</option></select></div>
-                <div><label>Typ potažení</label><select id="coating" onchange="updateCake()"><option value="naked">Naháč (bez krému)</option><option value="semi">Polonaháč (stěrka)</option><option value="full" selected>Plné potažení</option></select></div>
                 <div><label>Vrstvy</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
-            </div>
-            <div class="flex">
                 <div><label>Barva korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x4e342e">Čokoládový (tmavý)</option><option value="0xf3e5ab">Vanilkový (světlý)</option><option value="0xd32f2f">Red Velvet (červený)</option></select></div>
-                <div><label>Barva krému</label><select id="creamColor" onchange="updateCake()"><option value="0xffffff">Smetanový / Bílý</option><option value="0xfce4ec">Růžový</option><option value="0xdcedc8">Pistáciový</option><option value="0x5d4037">Pařížský</option></select></div>
+            </div>
+        </div>
+
+        <div class="sekce">
+            <h3>🎨 Krémy a potažení</h3>
+            <div class="flex">
+                <div><label>Typ potažení</label><select id="coating" onchange="updateCake()"><option value="naked">Naháč (bez vnějšího krému)</option><option value="semi">Polonaháč (jemná stěrka)</option><option value="full" selected>Plné potažení</option></select></div>
+                <div><label>Krém uvnitř (mezi patry)</label><select id="innerCream" onchange="updateCake()"><option value="0xffffff">Smetanový / Bílý</option><option value="0xfce4ec">Růžový (malina)</option><option value="0xdcedc8">Pistáciový</option><option value="0x5d4037">Pařížský</option></select></div>
+                <div><label>Krém na potažení (vnější)</label><select id="outerCream" onchange="updateCake()"><option value="0xffffff">Bílá klasika</option><option value="0xfce4ec">Růžové snění</option><option value="0xdcedc8">Pistáciová zelená</option><option value="0x5d4037">Čokoládová stěrka</option></select></div>
             </div>
         </div>
 
@@ -102,7 +107,7 @@
             </div>
         </div>
 
-        <button class="btn" onclick="alert('Odesláno!')">ODESLAT POPTÁVKU</button>
+        <button class="btn" onclick="alert('Poptávka odeslána k nacenění!')">ODESLAT POPTÁVKU</button>
     </div>
 </div>
 
@@ -165,31 +170,32 @@
         const fruitT = document.getElementById('fruitTop').value;
         const fruitC = document.getElementById('fruitCream').value;
         const topS = document.getElementById('topStyle').value;
-        const flav = parseInt(document.getElementById('flavor').value);
-        const cream = parseInt(document.getElementById('creamColor').value);
+        const flavorColor = parseInt(document.getElementById('flavor').value);
+        const innerCreamColor = parseInt(document.getElementById('innerCream').value);
+        const outerCreamColor = parseInt(document.getElementById('outerCream').value);
         const h = 0.5;
 
         for (let i = 0; i < layers; i++) {
             let r = 3;
             if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
-            const isCream = i % 2 === 1;
+            const isCreamLayer = i % 2 === 1;
             
             // Základní segment (korpus nebo vnitřní krém)
             const segment = new THREE.Mesh(
                 new THREE.CylinderGeometry(r, r, h, 45),
-                new THREE.MeshPhongMaterial({ color: isCream ? cream : flav })
+                new THREE.MeshPhongMaterial({ color: isCreamLayer ? innerCreamColor : flavorColor })
             );
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
-            // Vnější potažení (stěrka)
+            // VNĚJŠÍ POTAŽENÍ (stěrka) - Bere barvu z vnějšího krému
             if (coat !== 'naked') {
                 const coatOpacity = coat === 'semi' ? 0.6 : 1.0;
                 const coatR = r + 0.02;
                 const coating = new THREE.Mesh(
                     new THREE.CylinderGeometry(coatR, coatR, h, 45),
                     new THREE.MeshPhongMaterial({ 
-                        color: cream, 
+                        color: outerCreamColor, 
                         transparent: true, 
                         opacity: coatOpacity,
                         side: THREE.DoubleSide
@@ -199,8 +205,8 @@
                 cakeGroup.add(coating);
             }
 
-            // Ovoce v krému (jen u naháče nebo semi viditelné)
-            if (isCream && fruitC !== 'none' && i < layers - 1) {
+            // Ovoce v krému (vždy v barvě vnitřního krému)
+            if (isCreamLayer && fruitC !== 'none' && i < layers - 1) {
                 const count = Math.floor(r * 10);
                 for (let j = 0; j < count; j++) {
                     let f = (fruitC === 'mix') ? (j % 2 === 0 ? createStrawberryCream() : createBlueberry()) : 
