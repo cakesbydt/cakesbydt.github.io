@@ -3,117 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cakes by DT | Clear 3D Layers</title>
+    <title>Cakes by DT | Solid 3D Cake</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --primary: #ad1457; 
-            --bg: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
-        }
-
-        body { 
-            font-family: 'Montserrat', sans-serif; 
-            background: var(--bg);
-            min-height: 100vh; display: flex; justify-content: center; align-items: center;
-            margin: 0; padding: 15px;
-        }
+        :root { --primary: #ad1457; --bg: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 15px; }
         
-        .karta { 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 25px; border-radius: 40px; 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.1); 
-            width: 100%; max-width: 400px; text-align: center;
-            backdrop-filter: blur(10px);
-        }
-
+        .karta { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; backdrop-filter: blur(10px); }
         h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2rem; margin: 0; }
         .ig { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.6; }
 
-        /* VIZUALIZACE */
-        .scena {
-            height: 300px; margin: 20px 0;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-        }
+        .scena { height: 320px; margin: 20px 0; display: flex; align-items: center; justify-content: center; position: relative; }
+        .glow { position: absolute; width: 230px; height: 230px; background: white; border-radius: 50%; box-shadow: 0 0 40px rgba(255,255,255,0.8); border: 8px solid rgba(255,255,255,0.4); }
 
-        .glow {
-            position: absolute; width: 230px; height: 230px;
-            background: white; border-radius: 50%;
-            box-shadow: 0 0 40px rgba(255,255,255,0.8);
-            border: 8px solid rgba(255,255,255,0.4);
-        }
+        /* KONTEJNER DORTU */
+        .dort-telo { position: relative; z-index: 2; display: flex; flex-direction: column-reverse; align-items: center; transition: transform 0.3s ease; }
 
-        .dort-telo {
-            position: relative; z-index: 2;
-            display: flex; flex-direction: column-reverse;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
-
-        /* JEDNOTLIVÉ PATRO */
+        /* JEDNOTLIVÁ VRSTVA (BOKY) */
         .patro {
             position: relative;
             width: var(--w);
-            height: 35px; /* Výška boku */
+            height: 40px; 
             background: var(--color);
-            margin-bottom: 0px; /* Žádný negativní margin, aby nebyly mezery */
-            
-            /* Bok válce s jemným stínováním pro kulatost */
+            /* Gradient pro kulatost boku */
             background: linear-gradient(90deg, 
-                rgba(0,0,0,0.1) 0%, 
+                rgba(0,0,0,0.12) 0%, 
                 rgba(255,255,255,0.15) 20%, 
                 rgba(255,255,255,0) 50%, 
-                rgba(0,0,0,0.08) 100%), var(--color);
-            
-            /* Spodní ohraničení vrstvy, aby byla vidět separace */
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            border-radius: 0 0 50% 50% / 0 0 10px 10px;
+                rgba(0,0,0,0.1) 100%), var(--color);
+            margin-bottom: 0; 
         }
 
-        /* HORNÍ 3D PLOCHA */
-        .patro::before {
-            content: ''; position: absolute;
-            top: -12px; left: 0; /* -12px zajistí, že elipsa sedí na boku */
-            width: 100%; height: 24px;
+        /* SPODNÍ ZAOKROUHLENÍ CELÉHO DORTU */
+        .patro:first-child {
+            border-radius: 0 0 50% 50% / 0 0 15px 15px;
+        }
+
+        /* POUZE POSLEDNÍ (HORNÍ) VRSTVA MÁ ELIPSU */
+        .patro.vrchni::before {
+            content: '';
+            position: absolute;
+            top: -15px; left: 0;
+            width: 100%; height: 30px;
             border-radius: 50%;
             background: var(--color);
-            /* Gradient pro efekt plochy a stín na přechodu do boku */
             background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%), var(--color);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.08); /* Tento stín odděluje vrstvy! */
-            z-index: 2;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.4);
+            z-index: 5;
         }
 
-        .patro:last-child { margin-top: 10px; }
+        /* JAHODY NA VRCHU */
+        .dekorace { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); z-index: 20; font-size: 40px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.15)); }
 
-        /* JAHODY */
-        .dekorace {
-            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            z-index: 20; font-size: 40px; 
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.15));
-        }
-
-        /* FORMULÁŘ */
+        /* OVLÁDÁNÍ */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .box { 
-            background: #fff; padding: 12px; border-radius: 18px; 
-            text-align: left; border: 1px solid rgba(0,0,0,0.04);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
+        .box { background: #fff; padding: 12px; border-radius: 18px; text-align: left; border: 1px solid rgba(0,0,0,0.04); }
         label { font-size: 9px; font-weight: 700; color: #ccc; text-transform: uppercase; display: block; }
-        select { 
-            width: 100%; border: none; background: transparent; 
-            font-family: inherit; font-size: 14px; font-weight: 600; outline: none;
-            color: #444; padding-top: 4px;
-        }
-
+        select { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; outline: none; color: #444; }
         .tahlo { width: 100%; accent-color: var(--primary); margin: 15px 0 5px 0; }
-
-        .tlacitko { 
-            width: 100%; padding: 18px; background: linear-gradient(90deg, #ad1457, #ff1744); 
-            color: white; border: none; border-radius: 20px; 
-            font-weight: 700; font-size: 16px; margin-top: 20px; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(173, 20, 87, 0.3);
-        }
+        .tlacitko { width: 100%; padding: 18px; background: linear-gradient(90deg, #ad1457, #ff1744); color: white; border: none; border-radius: 20px; font-weight: 700; font-size: 16px; margin-top: 20px; cursor: pointer; box-shadow: 0 10px 25px rgba(173, 20, 87, 0.3); }
     </style>
 </head>
 <body>
@@ -148,7 +96,7 @@
         </div>
     </div>
 
-    <button class="tlacitko" onclick="alert('Hotovo!')">ODESLAT POPTÁVKU</button>
+    <button class="tlacitko" onclick="alert('Dort je připraven!')">ODESLAT POPTÁVKU</button>
 </div>
 
 <script>
@@ -168,6 +116,8 @@
         for (let i = 0; i < pocet; i++) {
             const div = document.createElement('div');
             div.className = 'patro';
+            if (i == pocet - 1) div.classList.add('vrchni'); // Pouze poslední vrstva dostane elipsu
+            
             div.style.setProperty('--w', sirka + 'px');
             div.style.setProperty('--color', i % 2 === 0 ? barvaK : barvaN);
             div.style.zIndex = pocet - i;
