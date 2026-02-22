@@ -85,25 +85,27 @@
         .flex { display: flex; gap: 15px; flex-wrap: wrap; } 
         .flex > div { flex: 1; min-width: 130px; } /* Prvky se dělí o prostor */
 
-        /* Stylování doplňků */
-        .doplnek-item { margin-bottom: 15px; }
-        .checkbox-label { font-size: 14px; font-weight: 600; color: #333; cursor: pointer; vertical-align: middle; }
-        input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); vertical-align: middle; cursor: pointer; }
+        /* Stylování selectů (výběrů) a textových polí */
+        label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
+        select, input[type="text"], textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; }
 
         /* Logika vysouvacího pole pro doplňky */
         .extra-input { 
             max-height: 0; /* Výchozí stav: nulová výška (skryto) */
             overflow: hidden; /* Skryje text uvnitř */
-            transition: all 0.4s ease; /* Plynulé vysunutí */
+            transition: all 0.3s ease-out; /* Plynulé vysunutí */
             opacity: 0; /* Neviditelné */
-            margin-left: 28px; /* Odsazení od checkboxu */
         }
-        /* Když je checkbox před tímto divem zaškrtnut, změní styl: */
+        
+        /* Když je checkbox ZAŠKRTNUT, ovlivni prvek .extra-input hned za ním */
         input[type="checkbox"]:checked ~ .extra-input { 
             max-height: 100px; /* Nastaví výšku pro zobrazení */
             opacity: 1; /* Zviditelní pole */
-            margin-top: 10px; /* Mezera nad polem */
+            margin-top: 10px;
         }
+
+        .doplnek-item { margin-bottom: 15px; }
+        .checkbox-label { cursor: pointer; font-weight: bold; color: #444; font-size: 14px; }
 
         /* Kontejner pro 3D grafiku */
         #canvas-container { 
@@ -187,30 +189,30 @@
             <h3>✨ 4. Doplňky a Poznámky</h3>
             
             <div class="doplnek-item">
-                <input type="checkbox" id="d_papir">
-                <label for="d_papir" class="checkbox-label">Jedlý papír</label>
+                <input type="checkbox" id="check-papir">
+                <label for="check-papir" class="checkbox-label">Jedlý papír</label>
                 <div class="extra-input">
-                    <input type="text" placeholder="Upřesněte motiv (např. Minecraft, fotka)...">
+                    <input type="text" placeholder="Popište motiv (např. Minecraft, fotka)...">
                 </div>
             </div>
 
             <div class="doplnek-item">
-                <input type="checkbox" id="d_figurka">
-                <label for="d_figurka" class="checkbox-label">Figurka</label>
+                <input type="checkbox" id="check-figurka">
+                <label for="check-figurka" class="checkbox-label">Figurka</label>
                 <div class="extra-input">
                     <input type="text" placeholder="Jaká figurka by to měla být?">
                 </div>
             </div>
 
             <div class="doplnek-item">
-                <input type="checkbox" id="d_zapich">
-                <label for="d_zapich" class="checkbox-label">Zápich</label>
+                <input type="checkbox" id="check-zapich">
+                <label for="check-zapich" class="checkbox-label">Zápich</label>
                 <div class="extra-input">
                     <input type="text" placeholder="Text na zápich (např. 'Vše nejlepší')...">
                 </div>
             </div>
 
-            <div style="margin-top: 25px;">
+            <div style="margin-top: 20px;">
                 <label>Další požadavky a detaily</label>
                 <textarea placeholder="Upřesněte barvy, styl nebo jiné detaily..."></textarea>
             </div>
