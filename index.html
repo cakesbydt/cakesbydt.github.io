@@ -9,8 +9,14 @@
         .karta { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 650px; display: flex; flex-direction: column; }
         
         .header { text-align: center; margin-bottom: 20px; }
-        .logo-img { max-width: 130px; border-radius: 50%; border: 3px solid var(--border); }
-        h1 { color: var(--primary); margin: 5px 0; }
+       .logo-img { 
+    width: 100%;       /* Logo se roztáhne na celou šířku kontejneru */
+    max-width: 100%;    /* Horní limit je šířka karty */
+    height: auto;       /* Výška se dopočítá podle poměru stran */
+    border-radius: 15px 15px 0 0; /* Zaoblí jen horní rohy, aby lícovaly s kartou */
+    display: block; 
+    margin: -30px -30px 20px -30px; /* Vyruší vnitřní okraje karty, aby logo sedělo až ke krajům */
+}
 
         /* 3D SCÉNA */
         .scena-wrapper { background: #fff; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 10px 0; padding: 30px 10px; display: flex; flex-direction: column; align-items: center; position: relative; }
