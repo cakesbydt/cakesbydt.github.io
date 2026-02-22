@@ -287,7 +287,7 @@
         });
     }
 
-    function createFruit(type, isTop, currentRadius) {
+    function createFruit(type, isTop) {
         const group = new THREE.Group();
         const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5));
         const geo = new THREE.SphereGeometry(isStrawberry ? (isTop ? 0.22 : 0.16) : (isTop ? 0.12 : 0.08), 16, 16);
@@ -319,7 +319,6 @@
         document.getElementById('info-display').innerHTML = `${typeLabel} | ${diameter}cm | ${layers} vrstev`;
 
         for (let i = 0; i < layers; i++) {
-            // LOGIKA PATRA: Pokud je svatební, po každých 4 vrstvách zmenšíme poloměr o 20%
             let currentRadius = baseRadius;
             if (style === 'wedding') {
                 if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
@@ -336,32 +335,42 @@
 
             if (coat !== 'naked') {
                 const isTopLayerOfTier = (style === 'wedding') ? (i === 3 || i === 7 || i === layers - 1) : (i === layers - 1);
+                
+                // BOKY
                 const coatMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, !isTopLayerOfTier), 
-                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1) })
+                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
+                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide })
                 );
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
+
+                // OPRAVA: Pevný vršek (poklička), aby nebyl krém shora průhledný
+                if (isTopLayerOfTier) {
+                    const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.03, 64);
+                    const topCapMat = new THREE.MeshPhongMaterial({ color: outerColor, transparent: false });
+                    const topCap = new THREE.Mesh(topCapGeo, topCapMat);
+                    topCap.rotation.x = -Math.PI / 2;
+                    topCap.position.y = i * h + (h / 2) + 0.005;
+                    cakeGroup.add(topCap);
+                }
             }
             
-            // Ovoce v krému (jen pro daný aktuální poloměr)
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 for (let j = 0; j < 12; j++) {
-                    const f = createFruit(fruitC, false, currentRadius);
+                    const f = createFruit(fruitC, false);
                     const ang = (j / 12) * Math.PI * 2;
                     f.position.set(Math.cos(ang) * (currentRadius - 0.1), i * h, Math.sin(ang) * (currentRadius - 0.1));
                     cakeGroup.add(f);
                 }
             }
 
-            // Ovoce na úplném vršku dortu
             if (i === layers - 1 && fruitT !== 'none') {
                 let radii = [currentRadius * 0.85];
                 if (topS === 'full') radii = [currentRadius * 0.3, currentRadius * 0.6, currentRadius * 0.85];
                 radii.forEach(r => {
                     const count = Math.floor(r * 12) + 1;
                     for(let j=0; j<count; j++) {
-                        const f = createFruit(fruitT, true, currentRadius);
+                        const f = createFruit(fruitT, true);
                         const ang = (j/count) * Math.PI * 2;
                         f.position.set(Math.cos(ang)*r, (i*h)+0.35, Math.sin(ang)*r);
                         cakeGroup.add(f);
