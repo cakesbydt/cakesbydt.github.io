@@ -5,6 +5,7 @@
     <title>3D Konfigurátor | Cakes by DT</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
         :root { --primary: #ad1457; --primary-dark: #880e4f; --bg: #fff5f8; --border: #fce7f3; --accent: #f9a8d4; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; }
         
@@ -22,7 +23,25 @@
 
         /* Hlavní část */
         .obsah { flex: 1; padding: 50px 60px; background: white; overflow-y: auto; }
-        h1 { color: var(--primary); margin: 0 0 10px; font-size: 38px; font-weight: 800; }
+        /* Styl pro nové motto */
+.hlavni-motto { 
+    font-family: 'Dancing Script', cursive; 
+    color: var(--primary); 
+    margin: 0 0 25px 0; 
+    font-size: 52px; 
+    text-align: center;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+/* Úprava doplňků nad sebou */
+.doplnky-seznam { display: flex; flex-direction: column; gap: 12px; }
+.doplnek-blok { border: 1px solid #eee; border-radius: 15px; background: #fcfcfc; transition: all 0.3s ease; overflow: hidden; }
+.doplnek-hlavicka { display: flex; align-items: center; gap: 12px; padding: 18px; cursor: pointer; font-weight: 600; font-size: 15px; }
+.doplnek-hlavicka input { width: 18px; height: 18px; accent-color: var(--primary); }
+.doplnek-poznamka { max-height: 0; padding: 0 18px; opacity: 0; transition: all 0.3s ease; }
+.doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); }
+.doplnek-blok.aktivni .doplnek-poznamka { max-height: 120px; padding: 10px 18px 18px 18px; opacity: 1; }
         h3 { color: var(--primary); font-size: 14px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 
         .sekce { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
@@ -79,7 +98,7 @@
     </div>
 
     <div class="obsah">
-        <h1>Konfigurátor dortu</h1>
+        <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
         
         <div class="sekce">
             <h3>🎂 Základní parametry</h3>
