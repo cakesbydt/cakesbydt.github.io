@@ -3,82 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cakes by DT | 360° Viewer</title>
+    <title>Cakes by DT | Real 3D 360°</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ad1457; --bg: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 15px; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 10px; overflow-x: hidden; }
         
-        .karta { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; backdrop-filter: blur(10px); }
-        h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2rem; margin: 0; }
-        .ig { color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600; opacity: 0.6; }
+        .karta { background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; backdrop-filter: blur(10px); }
+        h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.8rem; margin: 0; }
+        .ig { color: var(--primary); text-decoration: none; font-size: 12px; font-weight: 600; opacity: 0.6; }
 
-        .scena { 
-            height: 320px; margin: 20px 0; 
-            display: flex; align-items: center; justify-content: center; 
-            position: relative;
-            perspective: 1000px; /* Důležité pro 3D prostor */
-        }
+        .scena { height: 300px; margin: 15px 0; display: flex; align-items: center; justify-content: center; perspective: 1200px; }
         
-        .glow { position: absolute; width: 230px; height: 230px; background: white; border-radius: 50%; box-shadow: 0 0 40px rgba(255,255,255,0.8); border: 8px solid rgba(255,255,255,0.4); }
-
-        /* KONTEJNER DORTU - ZDE SE DĚJE ROTACE */
+        /* HLAVNÍ ROTUJÍCÍ OBJEKT */
         .dort-telo { 
             position: relative; 
-            z-index: 2; 
-            display: flex; 
-            flex-direction: column-reverse; 
-            align-items: center; 
+            width: 200px; height: 160px;
             transform-style: preserve-3d;
-            transition: transform 0.1s linear; /* Hladký pohyb při posouvání slideru */
+            transition: transform 0.1s linear;
+            transform: rotateX(-15deg) rotateY(0deg);
         }
 
-        /* JEDNOTLIVÁ VRSTVA */
-        .patro {
-            position: relative;
-            width: var(--w);
-            height: 40px; 
-            background: var(--color);
-            transform-style: preserve-3d;
-            /* Gradient reaguje na rotaci - simuluje fixní světlo v místnosti */
-            background: linear-gradient(90deg, 
-                rgba(0,0,0,0.15) 0%, 
-                rgba(255,255,255,0.2) 25%, 
-                rgba(255,255,255,0) 50%, 
-                rgba(0,0,0,0.12) 100%), var(--color);
-        }
-
-        .patro:first-child { border-radius: 0 0 50% 50% / 0 0 15px 15px; }
-
-        /* HORNÍ ELIPSA */
-        .patro.vrchni::before {
-            content: '';
+        /* VRSTVA DORTU */
+        .vrstva {
             position: absolute;
-            top: -15px; left: 0;
-            width: 100%; height: 30px;
-            border-radius: 50%;
-            background: var(--color);
-            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%), var(--color);
-            box-shadow: inset 0 2px 5px rgba(255,255,255,0.4);
+            left: 50%;
+            transform-style: preserve-3d;
+            width: var(--w);
+            height: 40px;
+            margin-left: calc(var(--w) / -2);
+            bottom: var(--bottom);
         }
 
-        /* JAHODY - upraveny pro rotaci */
-        .dekorace { 
-            position: absolute; top: -35px; left: 50%; 
-            transform: translateX(-50%); 
-            z-index: 20; font-size: 40px; 
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.15));
+        /* BOKY DORTU (Vytvoříme 12 ploch pro iluzi válce) */
+        .bok {
+            position: absolute;
+            width: calc(var(--w) * 0.28); /* Šířka segmentu */
+            height: 40px;
+            background: var(--color);
+            left: 50%;
+            margin-left: calc(var(--w) * -0.14);
+            /* Gradient pro simulaci stínu na válci */
+            background: linear-gradient(to right, rgba(0,0,0,0.1), transparent, rgba(0,0,0,0.1)), var(--color);
             backface-visibility: hidden;
         }
 
-        /* OVLÁDÁNÍ */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .box { background: #fff; padding: 12px; border-radius: 18px; text-align: left; border: 1px solid rgba(0,0,0,0.04); }
-        label { font-size: 9px; font-weight: 700; color: #ccc; text-transform: uppercase; display: block; }
-        select { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; outline: none; color: #444; }
+        /* HORNÍ PLOCHA (Víko) - Pouze pro úplně horní vrstvu */
+        .vicko {
+            position: absolute;
+            width: var(--w);
+            height: var(--w);
+            background: var(--color);
+            border-radius: 50%;
+            transform: rotateX(90deg) translateZ(20px);
+            top: -50%;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+            background: radial-gradient(circle at center, rgba(255,255,255,0.3), transparent), var(--color);
+        }
+
+        /* JAHODY */
+        .strawberries {
+            position: absolute;
+            top: -50px; left: 50%;
+            transform: translateX(-50%) translateZ(0);
+            font-size: 40px;
+            z-index: 100;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+            pointer-events: none;
+        }
+
+        /* UI OVLÁDÁNÍ */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .box { background: #fff; padding: 10px; border-radius: 15px; text-align: left; border: 1px solid rgba(0,0,0,0.05); }
+        label { font-size: 8px; font-weight: 700; color: #bbb; text-transform: uppercase; display: block; }
+        select { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 13px; font-weight: 600; outline: none; color: #444; }
         
         .tahlo { width: 100%; accent-color: var(--primary); margin: 15px 0 5px 0; cursor: pointer; }
-        .tlacitko { width: 100%; padding: 18px; background: linear-gradient(90deg, #ad1457, #ff1744); color: white; border: none; border-radius: 20px; font-weight: 700; font-size: 16px; margin-top: 20px; cursor: pointer; box-shadow: 0 10px 25px rgba(173, 20, 87, 0.3); }
+        .tlacitko { width: 100%; padding: 15px; background: linear-gradient(90deg, #ad1457, #ff1744); color: white; border: none; border-radius: 20px; font-weight: 700; font-size: 15px; margin-top: 15px; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
@@ -88,18 +89,17 @@
     <a href="#" class="ig">📸 @cakesbydt_</a>
 
     <div class="scena">
-        <div class="glow"></div>
         <div class="dort-telo" id="vizual"></div>
     </div>
 
     <input type="range" min="0" max="360" value="0" class="tahlo" oninput="otoc(this.value)">
-    <div style="font-size: 10px; color: #ccc; letter-spacing: 1px;">OTÁČET DORTEM O 360°</div>
+    <div style="font-size: 10px; color: #bbb;">OTÁČET DORTEM O 360°</div>
 
     <div class="grid">
         <div class="box"><label>Velikost</label>
-            <select id="s" onchange="uprav()"><option value="180">15 cm</option><option value="220" selected>20 cm</option><option value="260">25 cm</option></select>
+            <select id="s" onchange="uprav()"><option value="160">15 cm</option><option value="200" selected>20 cm</option><option value="240">25 cm</option></select>
         </div>
-        <div class="box"><label>Patra</label>
+        <div class="box"><label>Vrstvy</label>
             <select id="l" onchange="uprav()"><option value="3">3 vrstvy</option><option value="4" selected>4 vrstvy</option><option value="5">5 vrstev</option></select>
         </div>
     </div>
@@ -117,10 +117,9 @@
 </div>
 
 <script>
-    // Funkce pro rotaci kolem svislé osy (Y)
     function otoc(v) {
-        // Držíme mírný náklon X (-5 stupňů), aby byl vidět vršek, a rotujeme Y
-        document.getElementById('vizual').style.transform = `rotateX(-5deg) rotateY(${v}deg)`;
+        // Mírný náklon X pro lepší 3D dojem
+        document.getElementById('vizual').style.transform = `rotateX(-15deg) rotateY(${v}deg)`;
     }
 
     function uprav() {
@@ -133,24 +132,37 @@
         plocha.innerHTML = "";
 
         for (let i = 0; i < pocet; i++) {
-            const div = document.createElement('div');
-            div.className = 'patro';
-            if (i == pocet - 1) div.classList.add('vrchni');
-            
-            div.style.setProperty('--w', sirka + 'px');
-            div.style.setProperty('--color', i % 2 === 0 ? barvaK : barvaN);
-            div.style.zIndex = pocet - i;
-            
-            if (i == pocet - 1) {
-                const jahody = document.createElement('div');
-                jahody.className = 'dekorace';
-                jahody.innerHTML = "🍓🍓🍓";
-                div.appendChild(jahody);
+            const v = document.createElement('div');
+            v.className = 'vrstva';
+            v.style.setProperty('--w', sirka + 'px');
+            v.style.setProperty('--bottom', (i * 40) + 'px');
+            v.style.setProperty('--color', i % 2 === 0 ? barvaK : barvaN);
+
+            // Vytvoření 12 segmentů boku pro efekt válce
+            for (let j = 0; j < 12; j++) {
+                const bok = document.createElement('div');
+                bok.className = 'bok';
+                const rotace = j * 30;
+                const hloubka = sirka / 2;
+                bok.style.transform = `rotateY(${rotace}deg) translateZ(${hloubka}px)`;
+                v.appendChild(bok);
             }
-            plocha.appendChild(div);
+
+            // Horní plocha pouze pro poslední vrstvu
+            if (i == pocet - 1) {
+                const vicko = document.createElement('div');
+                vicko.className = 'vicko';
+                v.appendChild(vicko);
+
+                const straw = document.createElement('div');
+                straw.className = 'strawberries';
+                straw.innerHTML = "🍓🍓🍓";
+                // Jahody se musí točit proti pohybu dortu, aby byly vždy k nám, nebo být součástí 3D
+                v.appendChild(straw);
+            }
+
+            plocha.appendChild(v);
         }
-        // Reset rotace při změně parametrů
-        otoc(0);
     }
     window.onload = uprav;
 </script>
