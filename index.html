@@ -2,37 +2,63 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Konfigurátor | Cakes by DT</title>
+    <title>3D Konfigurátor | Cakes by DT</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root { --primary: #ad1457; --primary-dark: #880e4f; --bg: #fff5f8; --border: #fce7f3; --accent: #f9a8d4; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; }
+        
         .hlavni-wrapper { display: flex; width: 100%; max-width: 1200px; background: white; box-shadow: 0 20px 60px rgba(173,20,87,0.1); margin: 40px 20px; border-radius: 30px; overflow: hidden; }
+        
+        /* Levý panel */
         .levy-panel { flex: 0 0 320px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; align-items: center; padding: 60px 20px; color: white; box-sizing: border-box; }
         .logo-vlevo { width: 260px; height: auto; border-radius: 20px; border: 4px solid rgba(255,255,255,0.2); }
+
+        /* Hlavní část */
         .obsah { flex: 1; padding: 50px 60px; background: white; overflow-y: auto; }
         h1 { color: var(--primary); margin: 0 0 10px; font-size: 38px; font-weight: 800; }
         h3 { color: var(--primary); font-size: 14px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+
         .sekce { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
         .flex { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .flex > div { flex: 1; min-width: 140px; }
+        .flex > div { flex: 1; min-width: 130px; }
+        
         label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
         select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; }
-        #canvas-container { width: 100%; height: 450px; background: radial-gradient(#ffffff, #f9f9f9); border-radius: 25px; border: 2px dashed var(--accent); cursor: grab; margin: 20px 0; }
-        .doplnky-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
+
+        /* 3D SCÉNA */
+        #canvas-container { 
+            width: 100%; 
+            height: 450px; 
+            background: radial-gradient(#ffffff, #f9f9f9); 
+            border-radius: 25px; 
+            border: 2px dashed var(--accent);
+            cursor: move;
+            margin: 20px 0;
+        }
+
+        /* DOPLŇKY */
+        .doplnky-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
         .doplnek-blok { border: 1px solid #eee; border-radius: 15px; padding: 15px; background: #fcfcfc; transition: 0.3s; }
         .doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); }
         .doplnek-hlavicka { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; font-size: 14px; }
         .doplnek-poznamka { margin-top: 10px; display: none; }
         .doplnek-blok.aktivni .doplnek-poznamka { display: block; }
+
         .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; margin-top: 20px; }
+
+        @media (max-width: 950px) {
+            .hlavni-wrapper { flex-direction: column; margin: 0; }
+            .levy-panel { width: 100%; padding: 30px; }
+            .doplnky-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <div class="hlavni-wrapper">
     <div class="levy-panel">
-        <img src="logo.jpg" alt="Logo" class="logo-vlevo">
+        <img src="logo.jpg" alt="Logo Cakes by DT" class="logo-vlevo">
         <p style="margin-top:30px; text-align:center; opacity:0.8; font-style: italic;">"Upečeme vám vzpomínku..."</p>
     </div>
 
@@ -40,12 +66,12 @@
         <h1>Konfigurátor dortu</h1>
         
         <div class="sekce">
-            <h3>🎂 Design a Tvar</h3>
+            <h3>🎂 Základní nastavení</h3>
             <div class="flex">
                 <div>
-                    <label>Styl dortu</label>
+                    <label>Styl růstu</label>
                     <select id="style" onchange="updateCake()">
-                        <option value="tower" selected>Tower (Rovný)</option>
+                        <option value="tower">Tower (Rovný)</option>
                         <option value="wedding">Svatební (Kaskáda)</option>
                     </select>
                 </div>
@@ -67,29 +93,28 @@
                     </select>
                 </div>
                 <div>
-                    <label>Krém (náplň)</label>
+                    <label>Krém</label>
                     <select id="creamColor" onchange="updateCake()">
-                        <option value="0xffffff">Smetanový / Bílý</option>
-                        <option value="0xfff4e0">Vanilkový</option>
-                        <option value="0xfce4ec">Jahodový (Růžový)</option>
-                        <option value="0x6d4c41">Pařížský (Tmavý)</option>
+                        <option value="0xffffff">Bílý</option>
+                        <option value="0xfce4ec">Růžový</option>
                         <option value="0xdcedc8">Pistáciový</option>
+                        <option value="0x6d4c41">Pařížský</option>
                     </select>
                 </div>
                 <div>
                     <label>3D Ovoce</label>
                     <select id="fruit" onchange="updateCake()">
-                        <option value="none">Bez ovoce</option>
+                        <option value="none">Žádné</option>
                         <option value="strawberries" selected>Jahody</option>
                         <option value="blueberries">Borůvky</option>
-                        <option value="mix">Mix ovoce</option>
+                        <option value="mix">Mix</option>
                     </select>
                 </div>
             </div>
         </div>
 
         <div id="canvas-container"></div>
-        <p style="text-align:center; font-size:12px; color:#999;">Použijte myš k otáčení modelem</p>
+        <p style="text-align: center; color: #999; font-size: 11px;">Táhněte myší pro otáčení a náklon dortu</p>
 
         <div class="sekce">
             <h3>🎁 Doplňky</h3>
@@ -100,7 +125,7 @@
                 </div>
                 <div class="doplnek-blok" id="blok-figurka">
                     <label class="doplnek-hlavicka"><input type="checkbox" onchange="toggleBlok(this, 'figurka')"> Figurka</label>
-                    <div class="doplnek-poznamka"><textarea rows="1" placeholder="Jaká?"></textarea></div>
+                    <div class="doplnek-poznamka"><textarea rows="1" placeholder="Popis..."></textarea></div>
                 </div>
                 <div class="doplnek-blok" id="blok-zapich">
                     <label class="doplnek-hlavicka"><input type="checkbox" onchange="toggleBlok(this, 'zapich')"> Zápich</label>
@@ -109,13 +134,14 @@
             </div>
         </div>
 
-        <button class="btn" onclick="alert('Děkujeme! Poptávka byla zpracována.')">ODESLAT POPTÁVKU</button>
+        <button class="btn" onclick="alert('Poptávka odeslána!')">ODESLAT POPTÁVKU</button>
     </div>
 </div>
 
 <script>
     let scene, camera, renderer, cakeGroup;
     const container = document.getElementById('canvas-container');
+    let isDragging = false, prevX = 0, prevY = 0;
 
     function toggleBlok(cb, id) {
         document.getElementById('blok-' + id).classList.toggle('aktivni', cb.checked);
@@ -124,7 +150,7 @@
     function init3D() {
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(0, 6, 13);
+        camera.position.set(0, 5, 12);
         camera.lookAt(0, 2, 0);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -144,80 +170,79 @@
     }
 
     function createStrawberry() {
-        const strawberry = new THREE.Group();
-        const bodyGeo = new THREE.SphereGeometry(0.22, 12, 12);
-        bodyGeo.scale(0.8, 1.3, 0.8);
-        const bodyMat = new THREE.MeshPhongMaterial({ color: 0xff1744, shininess: 80 });
-        const body = new THREE.Mesh(bodyGeo, bodyMat);
-        strawberry.add(body);
-        const leafGeo = new THREE.ConeGeometry(0.1, 0.12, 6);
-        const leafMat = new THREE.MeshPhongMaterial({ color: 0x2e7d32 });
-        const leaves = new THREE.Mesh(leafGeo, leafMat);
-        leaves.position.y = 0.22;
-        strawberry.add(leaves);
-        return strawberry;
+        const s = new THREE.Group();
+        const body = new THREE.Mesh(
+            new THREE.SphereGeometry(0.22, 12, 12),
+            new THREE.MeshPhongMaterial({ color: 0xff1744, shininess: 80 })
+        );
+        body.scale.set(0.8, 1.3, 0.8);
+        s.add(body);
+        const leaf = new THREE.Mesh(
+            new THREE.ConeGeometry(0.1, 0.12, 6),
+            new THREE.MeshPhongMaterial({ color: 0x2e7d32 })
+        );
+        leaf.position.y = 0.22;
+        s.add(leaf);
+        return s;
     }
 
     function createBlueberry() {
-        const geo = new THREE.SphereGeometry(0.16, 16, 16);
-        const mat = new THREE.MeshPhongMaterial({ color: 0x1a237e, shininess: 40 });
-        return new THREE.Mesh(geo, mat);
+        return new THREE.Mesh(
+            new THREE.SphereGeometry(0.16, 16, 16),
+            new THREE.MeshPhongMaterial({ color: 0x1a237e, shininess: 40 })
+        );
     }
 
     function updateCake() {
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
-
         const layerCount = parseInt(document.getElementById('layers').value);
         const fruitType = document.getElementById('fruit').value;
-        const flavorColor = parseInt(document.getElementById('flavor').value);
-        const creamColor = parseInt(document.getElementById('creamColor').value);
+        const flav = parseInt(document.getElementById('flavor').value);
+        const cream = parseInt(document.getElementById('creamColor').value);
         const style = document.getElementById('style').value;
         
-        const layerHeight = 0.5;
+        const layerH = 0.5;
+        let lastR = 3;
 
         for (let i = 0; i < layerCount; i++) {
-            const yPos = i * layerHeight;
-            const isKorpus = i % 2 === 0;
-            
-            let currentRadius = 3;
-            if (style === 'wedding') {
-                currentRadius = 3 - (Math.floor(i / 2) * 0.4);
-            }
+            let r = 3;
+            if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
+            lastR = r;
 
-            const geo = new THREE.CylinderGeometry(currentRadius, currentRadius, layerHeight, 45);
-            // Změna: Pokud to není korpus, použije se vybraná barva krému
-            const mat = new THREE.MeshPhongMaterial({ color: isKorpus ? flavorColor : creamColor });
-            const mesh = new THREE.Mesh(geo, mat);
-            mesh.position.y = yPos;
+            const mesh = new THREE.Mesh(
+                new THREE.CylinderGeometry(r, r, layerH, 45),
+                new THREE.MeshPhongMaterial({ color: i % 2 === 0 ? flav : cream })
+            );
+            mesh.position.y = i * layerH;
             cakeGroup.add(mesh);
 
             if (i === layerCount - 1 && fruitType !== "none") {
-                const fruitCount = Math.floor(currentRadius * 5); 
-                for (let j = 0; j < fruitCount; j++) {
-                    let fruit;
-                    const finalType = (fruitType === 'mix') ? (j % 2 === 0 ? 'strawberries' : 'blueberries') : fruitType;
-                    fruit = (finalType === 'strawberries') ? createStrawberry() : createBlueberry();
-                    
-                    const angle = (j / fruitCount) * Math.PI * 2;
-                    const dist = currentRadius * 0.75;
-                    fruit.position.set(Math.cos(angle) * dist, yPos + 0.35, Math.sin(angle) * dist);
-                    fruit.rotation.y = Math.random() * Math.PI;
-                    cakeGroup.add(fruit);
+                const count = Math.floor(r * 5);
+                for (let j = 0; j < count; j++) {
+                    let f = (fruitType === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : 
+                            (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
+                    const ang = (j / count) * Math.PI * 2;
+                    f.position.set(Math.cos(ang) * r * 0.75, (i * layerH) + 0.3, Math.sin(ang) * r * 0.75);
+                    cakeGroup.add(f);
                 }
             }
         }
     }
 
-    let isDragging = false, prevX = 0;
-    container.onmousedown = () => isDragging = true;
+    // OVLÁDÁNÍ MYŠÍ (ROTACE + NÁKLON)
+    container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
     window.onmouseup = () => isDragging = false;
     window.onmousemove = (e) => {
-        if (isDragging) cakeGroup.rotation.y += (e.clientX - prevX) * 0.01;
-        prevX = e.clientX;
+        if (isDragging) {
+            cakeGroup.rotation.y += (e.clientX - prevX) * 0.01;
+            cakeGroup.rotation.x += (e.clientY - prevY) * 0.01;
+            cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x));
+            prevX = e.clientX; prevY = e.clientY;
+        }
     };
 
-    window.onload = init3D;
     function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
+    window.onload = init3D;
 </script>
 </body>
 </html>
