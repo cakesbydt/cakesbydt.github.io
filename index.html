@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cakes by DT | Premium 3D</title>
+    <title>Cakes by DT | Real 3D Cake</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #ad1457; --sweet-pink: #fce7f3; --bg: #fff5f8; }
@@ -12,16 +12,16 @@
         .karta { 
             background: white; padding: 30px; border-radius: 35px; 
             box-shadow: 0 20px 50px rgba(173, 20, 87, 0.1); 
-            width: 100%; max-width: 500px; text-align: center;
+            width: 100%; max-width: 450px; text-align: center;
         }
 
         h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2.2rem; margin: 0; }
         .ig { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.6; display: block; margin-bottom: 20px; }
 
-        /* VYLEPŠENÝ 3D DISPLAY */
+        /* VIZUALIZACE */
         .display-area {
             background: radial-gradient(circle, #ffffff 0%, #fdf2f7 100%);
-            height: 320px; border-radius: 25px;
+            height: 350px; border-radius: 25px;
             display: flex; align-items: center; justify-content: center;
             position: relative; overflow: hidden;
             border: 1px solid rgba(0,0,0,0.03);
@@ -31,59 +31,76 @@
             position: relative;
             display: flex; flex-direction: column-reverse;
             align-items: center;
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
-            transition: transform 0.3s ease;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+            transform: translateY(20px);
         }
 
-        /* Styl pro jedno "buclaté" patro */
+        /* PATRO DORTU */
         .layer {
             position: relative;
-            height: 45px;
-            border-radius: 100px / 25px; /* Vytváří 3D elipsu */
-            margin-bottom: -20px; /* Překryv pro efekt spojitosti */
-            border: 1px solid rgba(0,0,0,0.05);
+            height: 40px; /* Výška viditelného boku */
             width: var(--w);
             background: var(--color);
-            /* Gradient pro simulaci světla z boku */
+            margin-bottom: 0px; 
+            z-index: var(--z);
+            /* Bok dortu s gradientem */
             background: linear-gradient(90deg, 
-                rgba(0,0,0,0.1) 0%, 
-                rgba(255,255,255,0.2) 20%, 
+                rgba(0,0,0,0.15) 0%, 
+                rgba(255,255,255,0.2) 25%, 
                 rgba(255,255,255,0) 50%, 
-                rgba(0,0,0,0.1) 100%), var(--color);
-            box-shadow: 
-                inset 0 -8px 10px rgba(0,0,0,0.1),
-                inset 0 4px 6px rgba(255,255,255,0.4);
+                rgba(0,0,0,0.15) 100%), var(--color);
         }
 
-        /* Vršek dortu */
-        .layer:last-child {
-            margin-bottom: 0;
-            display: flex; justify-content: center; align-items: center;
+        /* Horní plocha (elipsa) */
+        .layer::after {
+            content: '';
+            position: absolute;
+            top: -15px; /* Polovina výšky elipsy */
+            left: 0;
+            width: 100%;
+            height: 30px; /* Výška elipsy určuje "strmost" pohledu */
+            background: inherit;
+            border-radius: 50%;
+            background: var(--color);
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%), var(--color);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
         }
-        
+
+        /* Spodní zaoblení (aby to nebylo dole uříznuté) */
+        .layer:first-child::before {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: inherit;
+            border-radius: 50%;
+            z-index: -1;
+            filter: brightness(0.9);
+        }
+
+        /* DEKORACE */
         .top-decor {
-            position: absolute; top: -10px;
-            font-size: 35px; filter: drop-shadow(0 3px 2px rgba(0,0,0,0.2));
-            white-space: nowrap; pointer-events: none;
+            position: absolute;
+            top: -25px;
+            z-index: 100;
+            font-size: 40px;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+            white-space: nowrap;
         }
 
         /* OVLÁDÁNÍ */
         .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
         .box { background: #fffcfd; padding: 12px; border-radius: 20px; border: 1px solid var(--sweet-pink); text-align: left; }
-        label { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        select, input[type="text"] { 
-            width: 100%; border: none; background: transparent; 
-            font-family: inherit; font-size: 14px; font-weight: 600; color: #444; outline: none;
-        }
+        label { font-size: 10px; font-weight: 700; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 4px; }
+        select { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; outline: none; }
 
         .btn { 
             width: 100%; padding: 18px; background: var(--primary); color: white; border: none; 
             border-radius: 20px; font-weight: 700; margin-top: 25px; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(173, 20, 87, 0.3); transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(173, 20, 87, 0.3);
         }
-        .btn:hover { transform: translateY(-3px); }
-
-        .slider { width: 80%; accent-color: var(--primary); margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -93,20 +110,16 @@
     <a href="#" class="ig">📸 @cakesbydt_</a>
 
     <div class="display-area">
-        <div class="cake-container" id="cake-visual">
-            </div>
+        <div class="cake-container" id="cake-visual"></div>
     </div>
-
-    <input type="range" min="-20" max="20" value="0" class="slider" oninput="tilt(this.value)">
-    <div style="font-size: 10px; color: #bbb; text-transform: uppercase; letter-spacing: 1px;">Naklonit pohled</div>
 
     <div class="controls">
         <div class="box">
             <label>Průměr dortu</label>
             <select id="size" onchange="render()">
-                <option value="160">15 cm (malý)</option>
-                <option value="200" selected>20 cm (střední)</option>
-                <option value="240">25 cm (velký)</option>
+                <option value="160">15 cm</option>
+                <option value="200" selected>20 cm</option>
+                <option value="240">25 cm</option>
             </select>
         </div>
         <div class="box">
@@ -123,7 +136,7 @@
         <div class="box">
             <label>Korpus</label>
             <select id="cColor" onchange="render()">
-                <option value="#f3e5ab">Světlý piškot</option>
+                <option value="#f3e5ab">Světlý</option>
                 <option value="#5d4037">Čokoládový</option>
                 <option value="#e19d7d">Ořechový</option>
             </select>
@@ -138,20 +151,10 @@
         </div>
     </div>
 
-    <div class="box" style="margin-top: 15px;">
-        <label>Vaše jméno</label>
-        <input type="text" placeholder="Zadejte jméno...">
-    </div>
-
-    <button class="btn" onclick="alert('Poptávka odeslána!')">ODESLAT POPTÁVKU</button>
+    <button class="btn" onclick="alert('Mňam!')">ODESLAT POPTÁVKU</button>
 </div>
 
 <script>
-    function tilt(val) {
-        const cake = document.getElementById('cake-visual');
-        cake.style.transform = `perspective(1000px) rotateX(${val}deg)`;
-    }
-
     function render() {
         const container = document.getElementById('cake-visual');
         const size = document.getElementById('size').value;
@@ -166,21 +169,17 @@
             div.className = 'layer';
             div.style.setProperty('--w', size + 'px');
             div.style.setProperty('--color', i % 2 === 0 ? colorC : colorF);
-            div.style.zIndex = layerCount - i;
+            div.style.setProperty('--z', layerCount - i);
             
-            // Na úplný vrch přidáme jahody
             if (i == layerCount - 1) {
                 const decor = document.createElement('div');
                 decor.className = 'top-decor';
                 decor.innerHTML = "🍓🍓🍓";
                 div.appendChild(decor);
             }
-
             container.appendChild(div);
         }
     }
-
-    // Inicializace
     window.onload = render;
 </script>
 
