@@ -9,45 +9,44 @@
         
         .karta { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 600px; display: flex; flex-direction: column; align-items: stretch; }
         
-        /* LOGO A HLAVIČKA */
         .header { text-align: center; margin-bottom: 20px; }
         .logo-img { max-width: 140px; height: auto; border-radius: 50%; border: 3px solid #fce7f3; }
         h1 { color: var(--primary); margin: 10px 0 5px; }
 
         /* 3D SCÉNA */
-        .scena-wrapper { background: #fff; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 10px 0 20px 0; padding: 40px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .scena-wrapper { background: #fff; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 10px 0; padding: 40px 10px; display: flex; flex-direction: column; align-items: center; position: relative; }
         .scena { height: 350px; perspective: 1000px; display: flex; align-items: center; justify-content: center; width: 100%; }
         .dort-telo { position: relative; width: 160px; transform-style: preserve-3d; transition: transform 0.1s linear; }
 
-        /* VRSTVY - Výška fixně 10px (1.5cm) */
+        /* VÝŠKOMĚR */
+        .vyska-info { 
+            background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px; 
+            font-weight: bold; font-size: 14px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(173, 20, 87, 0.3);
+        }
+
         .vrstva { position: absolute; width: 100%; height: 10px; transform-style: preserve-3d; bottom: var(--bottom); }
         .segment { 
             position: absolute; width: var(--segW); height: 10px; left: 50%; margin-left: calc(var(--segW)/-2); 
             background: linear-gradient(to right, rgba(0,0,0,0.1), transparent, rgba(0,0,0,0.1)), var(--color); 
-            border: 0.1px solid rgba(0,0,0,0.02); 
         }
         
-        /* VÍČKO */
         .vicko { 
             position: absolute; width: var(--w); height: var(--w); background: var(--topColor); border-radius: 50%; 
             left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(90deg) translateZ(5px); 
             transform-style: preserve-3d; 
         }
 
-        /* OVOCE */
         .deco-3d { position: absolute; width: 28px; height: 35px; transform-style: preserve-3d; transform-origin: center bottom; }
         .deco-face { position: absolute; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; transform-origin: bottom center; }
         .face-2 { transform: rotateY(90deg); }
 
-        /* FORMULÁŘ */
         .sekce { background: #fffcfd; padding: 15px; border-radius: 15px; border: 1px solid #fce7f3; margin-bottom: 15px; text-align: left; }
-        h3 { color: var(--primary); font-size: 16px; margin: 0 0 10px; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
         .flex { display: flex; gap: 10px; }
         .flex > div { flex: 1; }
         label { display: block; font-size: 12px; font-weight: bold; color: var(--primary); margin-bottom: 4px; }
-        select, input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #f9a8d4; box-sizing: border-box; }
+        select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #f9a8d4; cursor: pointer; }
 
-        .tahlo { width: 80%; accent-color: var(--primary); cursor: pointer; margin-top: 20px; }
+        .tahlo { width: 80%; accent-color: var(--primary); cursor: pointer; }
     </style>
 </head>
 <body>
@@ -59,29 +58,32 @@
     </div>
 
     <div class="sekce">
-        <h3>🎂 Parametry (vrstvy po 1.5 cm)</h3>
         <div class="flex">
             <div>
-                <label>Počet pater korpusu</label>
+                <label>Počet vrstev korpusu</label>
                 <select id="patra" onchange="kresliDort()">
-                    <option value="2">2 vrstvy korpusu</option>
-                    <option value="4" selected>4 vrstvy korpusu</option>
-                    <option value="6">6 vrstev korpusu</option>
-                    <option value="8">8 vrstev korpusu</option>
+                    <option value="2">2 vrstvy</option>
+                    <option value="3">3 vrstvy</option>
+                    <option value="4" selected>4 vrstvy</option>
+                    <option value="5">5 vrstev</option>
+                    <option value="6">6 vrstev</option>
                 </select>
             </div>
             <div>
-                <label>Barva korpusu</label>
+                <label>Vzhled dortu</label>
                 <select id="korpus" onchange="kresliDort()">
-                    <option value="#f3e5ab">Světlý</option>
                     <option value="#4e342e" selected>Čokoládový</option>
+                    <option value="#f3e5ab">Světlý piškot</option>
                 </select>
             </div>
         </div>
     </div>
 
     <div class="scena-wrapper">
+        <div class="vyska-info">Celková výška dortu: <span id="cm-vyska">0</span> cm</div>
+        
         <div class="scena"><div class="dort-telo" id="vizual"></div></div>
+        
         <input type="range" min="0" max="360" value="45" class="tahlo" oninput="otoc(this.value)">
         <div style="font-size: 11px; color: #ad1457; margin-top: 8px; font-weight: bold;">OTÁČEJTE PRO NÁHLED</div>
     </div>
@@ -100,19 +102,23 @@
         const plocha = document.getElementById('vizual');
         const pCount = parseInt(document.getElementById('patra').value);
         const cK = document.getElementById('korpus').value;
-        const cN = "#f8bbd0"; // Barva krému
+        const cN = "#f8bbd0"; 
         
         plocha.innerHTML = "";
         const sirka = 160;
-        const vyskaVrstvy = 10; // 1.5cm v realitě = 10px v kódu
+        const vyskaPX = 10;
+        const vyskaCM = 1.5;
 
-        // Vytvoříme střídavě korpus a krém (celkem pCount korpusů + krémy mezi nimi a nahoře)
+        // Celkový počet vrstev (korpus + krém)
         const pocetVrstev = pCount * 2; 
+        
+        // VÝPOČET CELKOVÉ VÝŠKY
+        document.getElementById('cm-vyska').innerText = (pocetVrstev * vyskaCM).toFixed(1);
 
         for (let i = 0; i < pocetVrstev; i++) {
             const v = document.createElement('div');
             v.className = 'vrstva';
-            v.style.setProperty('--bottom', (i * vyskaVrstvy) + 'px');
+            v.style.setProperty('--bottom', (i * vyskaPX) + 'px');
             v.style.setProperty('--color', (i % 2 === 0) ? cK : cN);
             v.style.setProperty('--segW', (Math.PI * sirka / 32 + 2) + 'px');
 
