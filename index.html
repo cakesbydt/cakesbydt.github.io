@@ -10,6 +10,7 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; }
         .hlavni-wrapper { display: flex; width: 100%; max-width: 1200px; background: white; box-shadow: 0 20px 60px rgba(173,20,87,0.1); margin: 40px 20px; border-radius: 30px; overflow: hidden; }
         
+        /* LEVÝ PANEL */
         .levy-panel { flex: 0 0 320px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; align-items: center; padding: 40px 25px; color: white; box-sizing: border-box; }
         .logo-vlevo { width: 150px; height: 150px; background: rgba(255,255,255,0.2); border-radius: 50%; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; font-family: 'Pacifico'; font-size: 20px; border: 3px solid rgba(255,255,255,0.4); text-align: center; }
         .kontaktni-form { width: 100%; }
@@ -17,6 +18,7 @@
         .input-group label { display: block; font-size: 11px; margin-bottom: 5px; font-weight: bold; opacity: 0.8; text-transform: uppercase; }
         .input-group input { width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.15); color: white; font-family: inherit; }
 
+        /* OBSAH */
         .obsah { flex: 1; padding: 40px 50px; background: white; overflow-y: auto; }
         .hlavni-motto { font-family: 'Pacifico', cursive; color: var(--primary); margin: 0 0 25px 0; font-size: 42px; text-align: center; font-weight: 400; }
         h3 { color: var(--primary); font-size: 13px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; letter-spacing: 1px; }
@@ -24,14 +26,25 @@
         .flex { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .flex > div { flex: 1; min-width: 140px; }
         label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
-        select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; outline: none; background: white; }
+        select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; outline: none; background: white; box-sizing: border-box; }
 
-        #canvas-container { width: 100%; height: 450px; background: radial-gradient(#ffffff, #fefefe); border-radius: 25px; border: 2px dashed var(--accent); cursor: move; touch-action: none; position: relative; }
+        /* 3D CANVAS */
+        #canvas-container { width: 100%; height: 400px; background: radial-gradient(#ffffff, #fefefe); border-radius: 25px; border: 2px dashed var(--accent); cursor: move; touch-action: none; position: relative; }
         .ovladani-3d { margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 20px; border: 1px solid var(--border); }
         .ovladani-3d label { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--primary); font-weight: bold; }
         .slider { width: 100%; height: 8px; background: #eee; border-radius: 5px; outline: none; accent-color: var(--primary); cursor: pointer; }
 
-        .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 15px rgba(173,20,87,0.2); }
+        /* DOPLŇKY */
+        .doplnky-seznam { display: flex; flex-direction: column; gap: 12px; }
+        .doplnek-blok { border: 1px solid #eee; border-radius: 15px; background: #fcfcfc; transition: 0.3s ease; overflow: hidden; }
+        .doplnek-hlavicka { display: flex; align-items: center; gap: 12px; padding: 18px; cursor: pointer; font-weight: 600; font-size: 15px; color: #444; }
+        .doplnek-hlavicka input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+        .doplnek-poznamka { max-height: 0; padding: 0 18px; opacity: 0; transition: all 0.4s ease; background: white; }
+        .doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); }
+        .doplnek-blok.aktivni .doplnek-hlavicka { color: var(--primary); }
+        .doplnek-blok.aktivni .doplnek-poznamka { max-height: 150px; padding: 5px 18px 18px 18px; opacity: 1; }
+
+        .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 15px rgba(173,20,87,0.2); margin-top: 10px; }
         .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
         @media (max-width: 950px) {
@@ -78,7 +91,39 @@
             <label>↕️ Náklon: <input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></label>
         </div>
 
-        <button class="btn" onclick="alert('Poptávka byla odeslána!')">ODESLAT POPTÁVKU</button>
+        <div class="sekce">
+            <h3>🎁 Doplňky k dortu</h3>
+            <div class="doplnky-seznam">
+                <div class="doplnek-blok" id="blok-papir">
+                    <label class="doplnek-hlavicka">
+                        <input type="checkbox" onchange="toggleDoplnek(this, 'papir')"> Jedlý papír s motivem
+                    </label>
+                    <div class="doplnek-poznamka">
+                        <textarea rows="2" placeholder="Popište motiv nebo nahrajte odkaz..."></textarea>
+                    </div>
+                </div>
+
+                <div class="doplnek-blok" id="blok-figurka">
+                    <label class="doplnek-hlavicka">
+                        <input type="checkbox" onchange="toggleDoplnek(this, 'figurka')"> Figurka na dort
+                    </label>
+                    <div class="doplnek-poznamka">
+                        <textarea rows="2" placeholder="Jaká figurka by to měla být? (postavička, zvířátko...)"></textarea>
+                    </div>
+                </div>
+
+                <div class="doplnek-blok" id="blok-zapich">
+                    <label class="doplnek-hlavicka">
+                        <input type="checkbox" onchange="toggleDoplnek(this, 'zapich')"> Vlastní zápich (jméno/číslo)
+                    </label>
+                    <div class="doplnek-poznamka">
+                        <textarea rows="2" placeholder="Text na zápich (např. 'Vše nejlepší, Emičko 5')..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="alert('Poptávka byla odeslána k nacenění!')">ODESLAT POPTÁVKU</button>
     </div>
 </div>
 
@@ -86,6 +131,11 @@
     let scene, camera, renderer, cakeGroup;
     const container = document.getElementById('canvas-container');
     let isDragging = false, prevX = 0, prevY = 0;
+
+    function toggleDoplnek(checkbox, id) {
+        const blok = document.getElementById('blok-' + id);
+        blok.classList.toggle('aktivni', checkbox.checked);
+    }
 
     function init3D() {
         scene = new THREE.Scene();
@@ -112,7 +162,6 @@
     }
 
     // --- MODELY OVOCE ---
-
     function createStrawberryTop() {
         const group = new THREE.Group();
         const points = [];
@@ -218,22 +267,14 @@
 
     window.onload = init3D;
 
-    // --- OPRAVENÉ OVLÁDÁNÍ MYŠÍ (VČETNĚ NÁKLONU) ---
     container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
     window.onmousemove = (e) => {
         if (isDragging) {
-            // Rotace kolem osy Y (doleva/doprava)
             cakeGroup.rotation.y += (e.clientX - prevX) * 0.01;
-            // Náklon kolem osy X (nahoru/dolů)
             cakeGroup.rotation.x += (e.clientY - prevY) * 0.01;
-            
-            // Omezení náklonu, aby se dort nepřeklopil úplně
             cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x));
-            
-            // Aktualizace sliderů
             document.getElementById('rotateY').value = cakeGroup.rotation.y;
             document.getElementById('rotateX').value = cakeGroup.rotation.x;
-            
             prevX = e.clientX; prevY = e.clientY;
         }
     };
