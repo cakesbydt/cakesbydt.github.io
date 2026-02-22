@@ -3,104 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cakes by DT | Real 3D Cake</title>
+    <title>Cakes by DT | 3D Sweet Experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #ad1457; --sweet-pink: #fce7f3; --bg: #fff5f8; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
-        
-        .karta { 
-            background: white; padding: 30px; border-radius: 35px; 
-            box-shadow: 0 20px 50px rgba(173, 20, 87, 0.1); 
-            width: 100%; max-width: 450px; text-align: center;
+        :root { 
+            --primary: #ad1457; 
+            --accent: #ff007f;
+            --glass: rgba(255, 255, 255, 0.85);
         }
 
-        h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2.2rem; margin: 0; }
-        .ig { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.6; display: block; margin-bottom: 20px; }
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px; margin: 0;
+        }
+        
+        .karta { 
+            background: var(--glass); 
+            padding: 30px; border-radius: 40px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15); 
+            width: 100%; max-width: 420px; text-align: center;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.4);
+        }
 
-        /* VIZUALIZACE */
+        h1 { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 2.4rem; margin: 0; }
+        .ig { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 600; opacity: 0.7; }
+
+        /* 3D DISPLAY AREA */
         .display-area {
-            background: radial-gradient(circle, #ffffff 0%, #fdf2f7 100%);
-            height: 350px; border-radius: 25px;
+            height: 300px; margin: 25px 0;
             display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden;
-            border: 1px solid rgba(0,0,0,0.03);
+            position: relative;
+        }
+
+        /* Světelný kruh za dortem */
+        .glow {
+            position: absolute;
+            width: 250px; height: 250px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(255,255,255,0.8), inset 0 0 60px rgba(255,255,255,1);
+            border: 8px solid rgba(255,255,255,0.4);
+            z-index: 0;
         }
 
         .cake-container {
-            position: relative;
+            position: relative; z-index: 1;
             display: flex; flex-direction: column-reverse;
             align-items: center;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
-            transform: translateY(20px);
+            transition: transform 0.3s ease;
         }
 
-        /* PATRO DORTU */
+        /* BUCLATÉ PATRO */
         .layer {
             position: relative;
-            height: 40px; /* Výška viditelného boku */
-            width: var(--w);
+            height: 35px; width: var(--w);
             background: var(--color);
-            margin-bottom: 0px; 
-            z-index: var(--z);
-            /* Bok dortu s gradientem */
+            margin-bottom: -5px; /* Sjednocení do jednoho bloku */
+            /* Bok dortu s hloubkou */
             background: linear-gradient(90deg, 
-                rgba(0,0,0,0.15) 0%, 
-                rgba(255,255,255,0.2) 25%, 
+                rgba(0,0,0,0.2) 0%, 
+                rgba(255,255,255,0.3) 20%, 
                 rgba(255,255,255,0) 50%, 
                 rgba(0,0,0,0.15) 100%), var(--color);
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1);
         }
 
-        /* Horní plocha (elipsa) */
+        /* Horní zaoblení každé vrstvy */
         .layer::after {
-            content: '';
-            position: absolute;
-            top: -15px; /* Polovina výšky elipsy */
-            left: 0;
-            width: 100%;
-            height: 30px; /* Výška elipsy určuje "strmost" pohledu */
-            background: inherit;
+            content: ''; position: absolute;
+            top: -15px; left: 0;
+            width: 100%; height: 30px;
             border-radius: 50%;
-            background: var(--color);
-            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.05) 100%), var(--color);
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+            background: inherit;
+            box-shadow: inset 0 5px 10px rgba(255,255,255,0.4);
         }
 
-        /* Spodní zaoblení (aby to nebylo dole uříznuté) */
-        .layer:first-child::before {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 0;
-            width: 100%;
-            height: 30px;
-            background: inherit;
-            border-radius: 50%;
-            z-index: -1;
-            filter: brightness(0.9);
+        /* Poslední patro - vršek */
+        .layer:last-child::after {
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0.1) 100%), var(--color);
         }
 
-        /* DEKORACE */
         .top-decor {
-            position: absolute;
-            top: -25px;
-            z-index: 100;
-            font-size: 40px;
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+            position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+            z-index: 100; font-size: 40px; 
+            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.2));
             white-space: nowrap;
         }
 
         /* OVLÁDÁNÍ */
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px; }
-        .box { background: #fffcfd; padding: 12px; border-radius: 20px; border: 1px solid var(--sweet-pink); text-align: left; }
-        label { font-size: 10px; font-weight: 700; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        select { width: 100%; border: none; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; outline: none; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .box { 
+            background: white; padding: 15px; border-radius: 20px; 
+            text-align: left; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        label { font-size: 10px; font-weight: 700; color: #aaa; text-transform: uppercase; display: block; }
+        select { 
+            width: 100%; border: none; background: transparent; 
+            font-family: inherit; font-size: 14px; font-weight: 600; outline: none;
+            cursor: pointer; padding-top: 5px;
+        }
+
+        .slider { width: 100%; accent-color: var(--primary); margin: 20px 0 5px 0; cursor: pointer; }
 
         .btn { 
-            width: 100%; padding: 18px; background: var(--primary); color: white; border: none; 
-            border-radius: 20px; font-weight: 700; margin-top: 25px; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(173, 20, 87, 0.3);
+            width: 100%; padding: 20px; background: linear-gradient(90deg, #ad1457, #ff007f); 
+            color: white; border: none; border-radius: 25px; 
+            font-weight: 700; font-size: 16px; margin-top: 20px; cursor: pointer;
+            box-shadow: 0 10px 30px rgba(173, 20, 87, 0.4); transition: 0.3s;
         }
+        .btn:hover { transform: scale(1.02); filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -110,51 +125,39 @@
     <a href="#" class="ig">📸 @cakesbydt_</a>
 
     <div class="display-area">
+        <div class="glow"></div>
         <div class="cake-container" id="cake-visual"></div>
     </div>
 
+    <input type="range" min="-15" max="15" value="0" class="slider" oninput="tilt(this.value)">
+    <div style="font-size: 10px; color: #888; letter-spacing: 1px; margin-bottom: 20px;">NAKLONIT POHLED</div>
+
     <div class="controls">
-        <div class="box">
-            <label>Průměr dortu</label>
-            <select id="size" onchange="render()">
-                <option value="160">15 cm</option>
-                <option value="200" selected>20 cm</option>
-                <option value="240">25 cm</option>
-            </select>
+        <div class="box"><label>Průměr dortu</label>
+            <select id="size" onchange="render()"><option value="160">15 cm</option><option value="200" selected>20 cm</option><option value="240">25 cm</option></select>
         </div>
-        <div class="box">
-            <label>Vrstvy</label>
-            <select id="layers" onchange="render()">
-                <option value="3">3 vrstvy</option>
-                <option value="4" selected>4 vrstvy</option>
-                <option value="5">5 vrstev</option>
-            </select>
+        <div class="box"><label>Vrstvy</label>
+            <select id="layers" onchange="render()"><option value="3">3 vrstvy</option><option value="4" selected>4 vrstvy</option><option value="5">5 vrstev</option></select>
         </div>
     </div>
 
     <div class="controls">
-        <div class="box">
-            <label>Korpus</label>
-            <select id="cColor" onchange="render()">
-                <option value="#f3e5ab">Světlý</option>
-                <option value="#5d4037">Čokoládový</option>
-                <option value="#e19d7d">Ořechový</option>
-            </select>
+        <div class="box"><label>Korpus</label>
+            <select id="cColor" onchange="render()"><option value="#f3e5ab">Světlý</option><option value="#5d4037">Ořechový</option><option value="#ad1457">Malinový</option></select>
         </div>
-        <div class="box">
-            <label>Krém</label>
-            <select id="fColor" onchange="render()">
-                <option value="#ffb6c1">Jahodový</option>
-                <option value="#ffffff" selected>Vanilkový</option>
-                <option value="#8d6e63">Kávový</option>
-            </select>
+        <div class="box"><label>Krém</label>
+            <select id="fColor" onchange="render()"><option value="#ffb6c1" selected>Jahodový</option><option value="#ffffff">Vanilkový</option><option value="#8d6e63">Kávový</option></select>
         </div>
     </div>
 
-    <button class="btn" onclick="alert('Mňam!')">ODESLAT POPTÁVKU</button>
+    <button class="btn" onclick="alert('Poptávka odeslána!')">ODESLAT POPTÁVKU</button>
 </div>
 
 <script>
+    function tilt(val) {
+        document.getElementById('cake-visual').style.transform = `perspective(1000px) rotateX(${val}deg)`;
+    }
+
     function render() {
         const container = document.getElementById('cake-visual');
         const size = document.getElementById('size').value;
@@ -169,7 +172,7 @@
             div.className = 'layer';
             div.style.setProperty('--w', size + 'px');
             div.style.setProperty('--color', i % 2 === 0 ? colorC : colorF);
-            div.style.setProperty('--z', layerCount - i);
+            div.style.zIndex = layerCount - i;
             
             if (i == layerCount - 1) {
                 const decor = document.createElement('div');
