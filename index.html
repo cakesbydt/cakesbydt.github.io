@@ -5,110 +5,51 @@
     <title>Dortový konfigurátor</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #fff5f8; display: flex; justify-content: center; padding: 20px; }
-        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 500px; }
+        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 450px; text-align: center; }
         
-        /* Box pro náhled dortu - teď se natahuje podle výšky */
-        .nahled-box { 
-            margin: 20px auto; padding: 20px; background: #fafafa; border: 2px dashed #f9a8d4; border-radius: 15px;
-            display: flex; flex-direction: column-reverse; align-items: center; min-height: 100px; transition: 0.5s;
+        /* Box pro náhled dortu */
+        #box { 
+            margin: 20px auto; padding: 20px; background: #ffffff; border: 2px dashed #f9a8d4; border-radius: 15px;
+            display: flex; flex-direction: column-reverse; align-items: center; min-height: 100px;
         }
 
         /* Vrstvy dortu */
-        .v-korpus { height: 20px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; }
-        .v-krem { height: 20px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; }
+        .v-korpus { height: 20px; background-color: #f3e5ab; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 1px; }
+        .v-krem { height: 18px; background-color: #fffde7; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; }
 
-        label { display: block; margin-top: 15px; font-weight: bold; color: #ad1457; font-size: 14px; }
-        select, input[type="text"], input[type="color"], input[type="number"] { 
-            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; box-sizing: border-box; 
-        }
-        .row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .row > div { flex: 1; }
-        h1 { color: #ad1457; text-align: center; margin: 0 0 20px 0; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #ad1457; text-align: left; }
+        select, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; box-sizing: border-box; }
         .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
-<body onload="uprav()">
+<body>
 
 <div class="karta">
-    <h1>🍰 Konfigurátor dortu</h1>
+    <h1>🍰 Konfigurátor</h1>
 
-    <div class="row">
-        <div>
-            <label>Průměr (cm)</label>
-            <select id="p" onchange="uprav()">
-                <option value="150">15 cm</option>
-                <option value="200" selected>20 cm</option>
-                <option value="250">25 cm</option>
-                <option value="300">30 cm</option>
-            </select>
-        </div>
-        <div>
-            <label>Počet pater (výška)</label>
-            <input type="number" id="vyska" value="3" min="1" max="6" onchange="uprav()">
-        </div>
+    <label>Průměr (šířka)</label>
+    <select id="p" onchange="uprav()">
+        <option value="150">15 cm</option>
+        <option value="200" selected>20 cm</option>
+        <option value="250">25 cm</option>
+        <option value="300">30 cm</option>
+    </select>
+
+    <label>Počet pater (výška)</label>
+    <input type="number" id="v" value="3" min="1" max="8" onchange="uprav()">
+
+    <label>Barva korpusu a krému</label>
+    <div style="display:flex; gap:10px;">
+        <input type="color" id="ck" value="#f3e5ab" onchange="uprav()">
+        <input type="color" id="cn" value="#fffde7" onchange="uprav()">
     </div>
 
-    <div class="row">
-        <div>
-            <label>Korpus</label>
-            <select id="k" onchange="uprav()">
-                <option value="#f3e5ab">Světlý piškot</option>
-                <option value="#4e342e">Čokoládový</option>
-                <option value="#d7ccc8">Ořechový</option>
-            </select>
-        </div>
-        <div>
-            <label>Náplň</label>
-            <select id="n" onchange="uprav()">
-                <option value="#fffde7">Vanilka</option>
-                <option value="#795548">Pařížský</option>
-                <option value="#f8bbd0">Ovocný</option>
-            </select>
-        </div>
+    <div id="box">
+        <div class="v-korpus" style="width: 200px;"></div>
+        <div class="v-krem" style="width: 190px;"></div>
+        <div class="v-korpus" style="width: 200px;"></div>
+        <div class="v-krem" style="width: 190px;"></div>
+        <div class="v-korpus" style="width: 200px;"></div>
     </div>
-
-    <label>Vnější barva krému</label>
-    <input type="color" id="barva-vnejsi" value="#ffffff" onchange="uprav()">
-
-    <label>Poznámky (ovoce, papír, figurka...)</label>
-    <input type="text" id="poznamka" placeholder="Vše co má manželka vědět...">
-
-    <div class="nahled-box" id="box">
-        </div>
     
-    <p id="info-vyska" style="text-align:center; color: #999; font-size: 12px;"></p>
-
-    <button class="btn" onclick="odeslat()">Odeslat objednávku</button>
-</div>
-
-<script>
-    function uprav() {
-        const plocha = document.getElementById('box');
-        const sirka = document.getElementById('p').value;
-        const pocetPater = document.getElementById('vyska').value;
-        const barvaKorpus = document.getElementById('k').value;
-        const barvaKrem = document.getElementById('n').value;
-        const barvaVnejsi = document.getElementById('barva-vnejsi').value;
-
-        // Nastavení vnější barvy "potření"
-        plocha.style.backgroundColor = barvaVnejsi;
-        
-        // Vymazání staré grafiky
-        plocha.innerHTML = "";
-
-        // Generování vrstev podle počtu pater
-        for (let i = 0; i < pocetPater; i++) {
-            // Korpus (2cm)
-            let divK = document.createElement('div');
-            divK.className = 'v-korpus';
-            divK.style.width = sirka + "px";
-            divK.style.backgroundColor = barvaKorpus;
-            plocha.appendChild(divK);
-
-            // Pokud to není poslední (horní) patro, přidej krém
-            if (i < pocetPater - 1) {
-                let divN = document.createElement('div');
-                divN.className = 'v-krem';
-                divN.style.width = (sirka - 10) + "px";
-                divN.style.backgroundColor = barvaKrem;
-                plocha.appendChild(
+    <button class="btn"
