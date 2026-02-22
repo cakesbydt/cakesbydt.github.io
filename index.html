@@ -19,7 +19,8 @@
 
         .obsah { flex: 1; padding: 40px 50px; background: white; overflow-y: auto; }
         .hlavni-motto { font-family: 'Pacifico', cursive; color: var(--primary); margin: 0 0 25px 0; font-size: 42px; text-align: center; font-weight: 400; }
-        h3 { color: var(--primary); font-size: 13px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; letter-spacing: 1px; }
+        h3 { color: var(--primary); font-size: 13px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center; }
+        .vyska-badge { background: var(--bg); color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 12px; border: 1px solid var(--border); }
         .sekce { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
         .flex { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
         .flex > div { flex: 1; min-width: 140px; }
@@ -54,10 +55,13 @@
         <h1 class="hlavni-motto">Váš sladký sen</h1>
         
         <div class="sekce">
-            <h3>🎂 Základní styl a korpus</h3>
+            <h3>
+                <span>🎂 Základní styl a korpus</span>
+                <span id="vyska-display" class="vyska-badge">Celková výška: ~14 cm</span>
+            </h3>
             <div class="flex">
                 <div><label>Styl dortu</label><select id="style" onchange="updateCake()"><option value="tower">Moderní Tower</option><option value="wedding">Svatební kaskáda</option></select></div>
-                <div><label>Vrstvy</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
+                <div><label>Vrstvy (1.5 cm / vrstva)</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option><option value="16">16 vrstev</option></select></div>
                 <div><label>Barva korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x4e342e">Čokoládový (tmavý)</option><option value="0xf3e5ab">Vanilkový (světlý)</option><option value="0x6a1b1b">Red Velvet (tmavě červený)</option></select></div>
             </div>
         </div>
@@ -150,7 +154,12 @@
         const flavorColor = parseInt(document.getElementById('flavor').value);
         const innerCreamColor = parseInt(document.getElementById('innerCream').value);
         const outerCreamColor = parseInt(document.getElementById('outerCream').value);
-        const h = 0.5;
+        
+        // Aktualizace textového výpočtu výšky
+        const realHeight = (layers * 1.5) + (fruitT !== 'none' ? 2.5 : 0.5);
+        document.getElementById('vyska-display').innerText = `Celková výška: ~${realHeight.toFixed(1)} cm`;
+
+        const h = 0.5; // vizuální výška jedné vrstvy v 3D
 
         for (let i = 0; i < layers; i++) {
             let r = 3;
@@ -178,15 +187,12 @@
                 cakeGroup.add(coating);
             }
 
-            // PODMÍNKA PRO OVOCE V KRÉMU
-            // Generuje se pouze pokud není dort plně potažený
             if (isCreamLayer && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 const count = Math.floor(r * 12);
                 for (let j = 0; j < count; j++) {
                     let f = (fruitC === 'mix') ? (j % 2 === 0 ? createStrawberryCream() : createBlueberry()) : 
                             (fruitC === 'strawberries' ? createStrawberryCream() : createBlueberry());
                     const ang = (j / count) * Math.PI * 2;
-                    // Vyladěná pozice r - 0.05 pro přirozený vzhled
                     const fruitDist = r - 0.05; 
                     f.position.set(Math.cos(ang) * fruitDist, i * h, Math.sin(ang) * fruitDist);
                     f.rotation.y = ang;
@@ -194,7 +200,6 @@
                 }
             }
 
-            // Ovoce navrchu (vždy viditelné)
             if (i === layers - 1 && fruitT !== 'none') {
                 const radii = (topS === 'full') ? [0.6, 1.2, 1.8, 2.4] : [r * 0.85];
                 radii.forEach(rStep => {
