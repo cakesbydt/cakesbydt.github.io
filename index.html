@@ -5,40 +5,86 @@
     <title>Dortový konfigurátor</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #fff5f8; display: flex; justify-content: center; padding: 20px; }
-        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 520px; }
+        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 550px; }
         h1 { color: #ad1457; text-align: center; margin-bottom: 20px; }
         
+        /* MODERNÍ NÁHLED DORTU */
         #box-dortu { 
-            margin: 40px auto 20px auto; padding: 40px 20px 20px 20px; background: #ffffff; border: 2px dashed #f9a8d4; border-radius: 15px;
-            display: flex; flex-direction: column-reverse; align-items: center; min-height: 160px; position: relative;
+            margin: 50px auto 20px auto; padding: 40px 20px 20px 20px; 
+            background: radial-gradient(circle, #ffffff 0%, #fff0f5 100%); 
+            border: 2px solid #f9a8d4; border-radius: 20px;
+            display: flex; flex-direction: column-reverse; align-items: center; 
+            min-height: 220px; position: relative;
+            box-shadow: inset 0 0 15px rgba(249, 168, 212, 0.2);
         }
 
-        .v-korpus { height: 22px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 2px; position: relative; z-index: 2; }
-        .v-krem { height: 20px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; position: relative; display: flex; justify-content: space-around; align-items: center; }
+        /* Vylepšený korpus s 3D efektem */
+        .v-korpus { 
+            height: 28px; 
+            border-radius: 6px; 
+            margin-top: 2px; 
+            position: relative; 
+            z-index: 2; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1), inset 0 2px 2px rgba(255,255,255,0.3);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
 
-        .kousek-ovoce { width: 6px; height: 6px; background: #ff4d4d; border-radius: 50%; box-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
-        .jahody-top { position: absolute; bottom: 100%; width: 100%; display: flex; justify-content: center; font-size: 24px; margin-bottom: 2px; z-index: 10; pointer-events: none; }
+        /* Vylepšený krém (nápň) */
+        .v-krem { 
+            height: 22px; 
+            border-radius: 12px; 
+            margin-bottom: -2px; 
+            position: relative; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center;
+            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
 
-        .sekce { text-align: left; margin-bottom: 15px; padding: 10px; background: #fffcfd; border-radius: 10px; border: 1px solid #fce7f3; }
+        /* Kousky ovoce v krému */
+        .kousek-ovoce { 
+            width: 8px; 
+            height: 8px; 
+            background: #ff4d4d; 
+            border-radius: 50%; 
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            filter: blur(0.3px);
+        }
+        
+        /* Větší jahody na vršku */
+        .jahody-top { 
+            position: absolute; 
+            bottom: 105%; 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            font-size: 32px; 
+            filter: drop-shadow(0 4px 3px rgba(0,0,0,0.2));
+            z-index: 10; 
+            pointer-events: none; 
+        }
+
+        /* Zbytek formuláře */
+        .sekce { text-align: left; margin-bottom: 15px; padding: 15px; background: #fffcfd; border-radius: 12px; border: 1px solid #fce7f3; }
         label { display: block; font-weight: bold; color: #ad1457; font-size: 13px; margin-bottom: 5px; }
         .ch-radek { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
         .ch-radek input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
-        
-        input, select, textarea { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; }
+        input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; }
         .flex { display: flex; gap: 10px; }
         .flex > div { flex: 1; }
-        
-        .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; }
-        h3 { color: #ad1457; font-size: 16px; margin: 0 0 10px 0; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
+        .btn { width: 100%; padding: 18px; background: #db2777; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; transition: 0.3s; }
+        .btn:hover { background: #ad1457; transform: scale(1.02); }
+        h3 { color: #ad1457; font-size: 16px; margin: 0 0 10px 0; border-bottom: 2px solid #f9a8d4; padding-bottom: 5px; }
     </style>
 </head>
 <body>
 
 <div class="karta">
-    <h1>🍰 Konfigurátor dortu</h1>
+    <h1>🎂 Moderní konfigurátor</h1>
 
     <div class="sekce">
-        <h3>👤 Kontaktní údaje</h3>
+        <h3>👤 Kontakt</h3>
         <input type="text" id="jmeno" placeholder="Jméno a příjmení">
         <div class="flex" style="margin-top:5px">
             <input type="tel" id="telefon" placeholder="Telefon">
@@ -50,14 +96,14 @@
         <div>
             <label>Průměr</label>
             <select id="sirka" onchange="aktualizuj()">
-                <option value="160">15 cm</option>
-                <option value="220" selected>20 cm</option>
-                <option value="280">25 cm</option>
-                <option value="340">30 cm</option>
+                <option value="180">15 cm</option>
+                <option value="240" selected>20 cm</option>
+                <option value="300">25 cm</option>
+                <option value="360">30 cm</option>
             </select>
         </div>
         <div>
-            <label>Počet pater</label>
+            <label>Patra</label>
             <input type="number" id="patra" value="3" min="2" max="6" oninput="aktualizuj()">
         </div>
     </div>
@@ -66,57 +112,34 @@
         <div>
             <label>Korpus</label>
             <select id="korpus" onchange="aktualizuj()">
-                <option value="#f3e5ab">Světlý piškot</option>
-                <option value="#4e342e">Čokoládový</option>
-                <option value="#d7ccc8">Ořechový</option>
+                <option value="#fdf5e6">Světlý piškot</option>
+                <option value="#5d4037">Čokoládový</option>
+                <option value="#d2b48c">Ořechový</option>
             </select>
         </div>
         <div>
             <label>Náplň</label>
             <select id="krem" onchange="aktualizuj()">
-                <option value="#fffde7">Vanilkový</option>
-                <option value="#795548">Pařížský</option>
-                <option value="#f8bbd0">Ovocný</option>
+                <option value="#fffdeb">Vanilkový</option>
+                <option value="#8d6e63">Pařížský</option>
+                <option value="#fce4ec">Ovocný</option>
             </select>
         </div>
     </div>
 
     <div class="sekce">
-        <h3>✨ Dekorace a doplňky</h3>
-        <div class="ch-radek">
-            <input type="checkbox" id="ov-krem" onchange="aktualizuj()"> <span>Ovoce v krému (ANO)</span>
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="ov-dort" onchange="aktualizuj()"> <span>Ovoce na dortu (ANO)</span>
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="papir-ch"> <span>Jedlý papír:</span>
-            <input type="text" id="papir-txt" placeholder="Jaký motiv?">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="marc-ch"> <span>Marcipán. figurka:</span>
-            <input type="text" id="marc-txt" placeholder="Jaká + velikost?">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="plas-ch"> <span>Plastová figurka:</span>
-            <input type="text" id="plas-txt" placeholder="Jaká + velikost?">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="cislo-ch"> <span>Číslo (věk):</span>
-            <input type="number" id="cislo-txt" placeholder="Věk?">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="zapich-ch"> <span>Zápich (text):</span>
-            <input type="text" id="zapich-txt" placeholder="Text zápichu">
-        </div>
-        
-        <label style="margin-top:10px;">Ostatní poznámky</label>
-        <textarea id="poznamka" placeholder="Doplňující informace pro manželku..."></textarea>
+        <h3>✨ Dekorace</h3>
+        <div class="ch-radek"><input type="checkbox" id="ov-krem" onchange="aktualizuj()"> <span>Ovoce v krému</span></div>
+        <div class="ch-radek"><input type="checkbox" id="ov-dort" onchange="aktualizuj()"> <span>Ovoce na dortu</span></div>
+        <div class="ch-radek"><input type="checkbox" id="papir-ch"> <span>Jedlý papír: <input type="text" id="papir-txt" placeholder="..."></span></div>
+        <div class="ch-radek"><input type="checkbox" id="marc-ch"> <span>Figurka: <input type="text" id="marc-txt" placeholder="..."></span></div>
+        <div class="ch-radek"><input type="checkbox" id="zapich-ch"> <span>Zápich: <input type="text" id="zapich-txt" placeholder="..."></span></div>
+        <textarea id="poznamka" style="margin-top:10px;" placeholder="Další poznámky..."></textarea>
     </div>
 
     <div id="box-dortu"></div>
     
-    <button class="btn" onclick="poslatMail()">Odeslat poptávku</button>
+    <button class="btn" onclick="poslatMail()">ODESLAT POPTÁVKU</button>
 </div>
 
 <script>
@@ -132,10 +155,11 @@
         plocha.innerHTML = "";
 
         for (let i = 0; i < p; i++) {
+            // Korpus s gradientem pro 3D efekt
             let korp = document.createElement('div');
             korp.className = 'v-korpus';
             korp.style.width = s + "px";
-            korp.style.backgroundColor = cK;
+            korp.style.background = `linear-gradient(to bottom, ${cK}, ${adjustColor(cK, -20)})`;
             
             if (i == p - 1 && ovoceNahoře) {
                 let jahody = document.createElement('div');
@@ -143,19 +167,20 @@
                 jahody.innerHTML = "🍓🍓🍓";
                 korp.appendChild(jahody);
             }
-            
             plocha.appendChild(korp);
 
+            // Krém
             if (i < p - 1) {
                 let napl = document.createElement('div');
                 napl.className = 'v-krem';
-                napl.style.width = (s - 10) + "px";
-                napl.style.backgroundColor = cN;
+                napl.style.width = (s - 15) + "px";
+                napl.style.background = `linear-gradient(to bottom, ${cN}, ${adjustColor(cN, -10)})`;
                 
                 if (ovoceUvnitr) {
-                    for(let j=0; j<4; j++) {
+                    for(let j=0; j<5; j++) {
                         let tecka = document.createElement('div');
                         tecka.className = 'kousek-ovoce';
+                        tecka.style.marginLeft = Math.random() * 10 + "px";
                         napl.appendChild(tecka);
                     }
                 }
@@ -164,36 +189,17 @@
         }
     }
 
+    // Pomocná funkce pro ztmavení barev pro 3D efekt
+    function adjustColor(color, amount) {
+        return '#' + color.replace(/^#/, '').replace(/../g, color => ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2));
+    }
+
     function poslatMail() {
         const jmeno = document.getElementById('jmeno').value;
-        if(!jmeno) { alert("Prosím vyplňte jméno."); return; }
-        
-        const getVal = (idCh, idTxt) => {
-            const ch = document.getElementById(idCh).checked;
-            const txt = idTxt ? document.getElementById(idTxt).value : "";
-            return ch ? `ANO (${txt})` : "NE";
-        };
-
-        const prumer = document.getElementById('sirka').options[document.getElementById('sirka').selectedIndex].text;
-        
-        const bodyText = `Nová poptávka od: ${jmeno}%0A` +
-                         `Telefon: ${document.getElementById('telefon').value}%0A` +
-                         `----------------------------%0A` +
-                         `Dort: ${prumer}, ${document.getElementById('patra').value} pater%0A` +
-                         `Korpus: ${document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text}%0A` +
-                         `Náplň: ${document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text}%0A` +
-                         `----------------------------%0A` +
-                         `Ovoce v krému: ${document.getElementById('ov-krem').checked ? "ANO" : "NE"}%0A` +
-                         `Ovoce na dortu: ${document.getElementById('ov-dort').checked ? "ANO" : "NE"}%0A` +
-                         `Jedlý papír: ${getVal('papir-ch', 'papir-txt')}%0A` +
-                         `Marcipán. figurka: ${getVal('marc-ch', 'marc-txt')}%0A` +
-                         `Plastová figurka: ${getVal('plas-ch', 'plas-txt')}%0A` +
-                         `Číslo (věk): ${getVal('cislo-ch', 'cislo-txt')}%0A` +
-                         `Zápich: ${getVal('zapich-ch', 'zapich-txt')}%0A` +
-                         `----------------------------%0A` +
-                         `Poznámka: ${document.getElementById('poznamka').value}`;
-
-        window.location.href = `mailto:DOMII.TRNOVSKA@SEZNAM.CZ?subject=Dort_Poptavka_${encodeURIComponent(jmeno)}&body=${bodyText}`;
+        const telo = `Poptávka od: ${jmeno}%0A` +
+                     `Dort: ${document.getElementById('sirka').value}px, ${document.getElementById('patra').value} pater%0A` +
+                     `Ovoce v krému: ${document.getElementById('ov-krem').checked ? "ANO" : "NE"}`;
+        window.location.href = `mailto:DOMII.TRNOVSKA@SEZNAM.CZ?subject=Dort&body=${telo}`;
     }
 
     window.onload = aktualizuj;
