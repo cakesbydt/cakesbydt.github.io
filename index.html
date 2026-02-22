@@ -8,25 +8,30 @@
         .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 520px; }
         h1 { color: #ad1457; text-align: center; margin-bottom: 20px; }
         
+        /* Box pro náhled dortu - zvětšený prostor nahoře pro ovoce */
         #box-dortu { 
-            margin: 20px auto; padding: 20px; background: #ffffff; border: 2px dashed #f9a8d4; border-radius: 15px;
-            display: flex; flex-direction: column-reverse; align-items: center; min-height: 120px; transition: 0.3s;
+            margin: 40px auto 20px auto; padding: 40px 20px 20px 20px; background: #ffffff; border: 2px dashed #f9a8d4; border-radius: 15px;
+            display: flex; flex-direction: column-reverse; align-items: center; min-height: 160px; position: relative;
         }
 
-        .v-korpus { height: 20px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 2px; }
-        .v-krem { height: 18px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; }
+        /* Vrstvy dortu */
+        .v-korpus { height: 22px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 2px; position: relative; z-index: 2; }
+        .v-krem { height: 20px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; position: relative; display: flex; justify-content: space-around; align-items: center; }
 
-        .sekce { text-align: left; margin-bottom: 15px; padding: 10px; background: #fffcfd; border-radius: 10px; }
+        /* Kousky ovoce v krému */
+        .kousek-ovoce { width: 6px; height: 6px; background: #ff4d4d; border-radius: 50%; box-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        
+        /* Ovoce na vršku */
+        .jahody-top { position: absolute; bottom: 100%; width: 100%; display: flex; justify-content: center; font-size: 24px; margin-bottom: 2px; z-index: 10; pointer-events: none; }
+
+        .sekce { text-align: left; margin-bottom: 15px; padding: 10px; background: #fffcfd; border-radius: 10px; border: 1px solid #fce7f3; }
         label { display: block; font-weight: bold; color: #ad1457; font-size: 13px; margin-bottom: 5px; }
         .ch-radek { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .ch-radek input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
-        .ch-radek input[type="text"], .ch-radek input[type="number"] { flex: 1; padding: 5px; border-radius: 5px; border: 1px solid #f9a8d4; }
-        
-        select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; font-family: inherit; }
+        input, select, textarea { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; }
         
         .flex { display: flex; gap: 10px; }
         .flex > div { flex: 1; }
-        
         .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; }
         h3 { color: #ad1457; font-size: 16px; margin: 0 0 10px 0; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
     </style>
@@ -34,29 +39,29 @@
 <body>
 
 <div class="karta">
-    <h1>🍰 Podrobná objednávka</h1>
+    <h1>🍰 Konfigurátor s náhledem</h1>
 
     <div class="sekce">
-        <h3>👤 Kontaktní údaje</h3>
+        <h3>👤 Kontakt</h3>
         <input type="text" id="jmeno" placeholder="Jméno a příjmení">
-        <div class="flex" style="margin-top: 5px;">
-            <input type="email" id="zakaznik-email" placeholder="E-mail">
+        <div class="flex" style="margin-top:5px">
             <input type="tel" id="telefon" placeholder="Telefon">
+            <input type="email" id="email-zak" placeholder="E-mail">
         </div>
     </div>
 
     <div class="sekce flex">
         <div>
-            <label>Průměr (šířka)</label>
+            <label>Průměr</label>
             <select id="sirka" onchange="aktualizuj()">
-                <option value="150">15 cm</option>
-                <option value="200" selected>20 cm</option>
-                <option value="250">25 cm</option>
-                <option value="300">30 cm</option>
+                <option value="160">15 cm</option>
+                <option value="220" selected>20 cm</option>
+                <option value="280">25 cm</option>
+                <option value="340">30 cm</option>
             </select>
         </div>
         <div>
-            <label>Počet pater (výška)</label>
+            <label>Počet pater</label>
             <input type="number" id="patra" value="3" min="2" max="6" oninput="aktualizuj()">
         </div>
     </div>
@@ -71,7 +76,7 @@
             </select>
         </div>
         <div>
-            <label>Náplň (krém)</label>
+            <label>Náplň</label>
             <select id="krem" onchange="aktualizuj()">
                 <option value="#fffde7">Vanilkový</option>
                 <option value="#795548">Pařížský</option>
@@ -81,43 +86,31 @@
     </div>
 
     <div class="sekce">
-        <h3>✨ Dekorace a přání</h3>
-        
+        <h3>✨ Doplňky a dekorace</h3>
         <div class="ch-radek">
-            <input type="checkbox" id="ov-krem"> <span>Ovoce v krému</span>
+            <input type="checkbox" id="ov-krem" onchange="aktualizuj()"> <span>Ovoce v krému (uvnitř)</span>
         </div>
         <div class="ch-radek">
-            <input type="checkbox" id="ov-dort"> <span>Ovoce na dortu</span>
+            <input type="checkbox" id="ov-dort" onchange="aktualizuj()"> <span>Ovoce na dortu (nahoře)</span>
         </div>
         <div class="ch-radek">
-            <input type="checkbox" id="papir-ch"> <span>Jedlý papír:</span>
+            <input type="checkbox" id="papir-ch"> <span>Jedlý papír</span>
             <input type="text" id="papir-txt" placeholder="Jaký motiv?">
         </div>
         <div class="ch-radek">
-            <input type="checkbox" id="marc-ch"> <span>Marcipán. figurka:</span>
+            <input type="checkbox" id="marc-ch"> <span>Marcipán. figurka</span>
             <input type="text" id="marc-txt" placeholder="Jaká + velikost?">
         </div>
         <div class="ch-radek">
-            <input type="checkbox" id="plas-ch"> <span>Plastová figurka:</span>
-            <input type="text" id="plas-txt" placeholder="Jaká + velikost?">
+            <input type="checkbox" id="zapich-ch"> <span>Zápich / Číslo</span>
+            <input type="text" id="zapich-txt" placeholder="Text nebo věk">
         </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="cislo-ch"> <span>Číslo:</span>
-            <input type="number" id="cislo-txt" placeholder="Věk?">
-        </div>
-        <div class="ch-radek">
-            <input type="checkbox" id="zapich-ch"> <span>Zápich:</span>
-            <input type="text" id="zapich-txt" placeholder="Text zápichu?">
-        </div>
-        
-        <label style="margin-top:10px;">Obecná poznámka</label>
-        <textarea id="poznamka" style="width:100%;" placeholder="Napište cokoliv dalšího..."></textarea>
+        <textarea id="poznamka" style="margin-top:10px;" placeholder="Další poznámky pro manželku..."></textarea>
     </div>
 
     <div id="box-dortu"></div>
-    <p id="vyska-info" style="font-size: 11px; color: #999; text-align: center;"></p>
     
-    <button class="btn" onclick="poslatMail()">Odeslat podrobnou poptávku</button>
+    <button class="btn" onclick="poslatMail()">Odeslat poptávku</button>
 </div>
 
 <script>
@@ -127,22 +120,44 @@
         const p = document.getElementById('patra').value;
         const cK = document.getElementById('korpus').value;
         const cN = document.getElementById('krem').value;
-
-        document.getElementById('vyska-info').innerText = "Vizuální náhled - výška cca " + (p * 4) + " cm";
+        
+        const ovoceUvnitr = document.getElementById('ov-krem').checked;
+        const ovoceNahoře = document.getElementById('ov-dort').checked;
 
         plocha.innerHTML = "";
+
         for (let i = 0; i < p; i++) {
+            // Vytvoření korpusu
             let korp = document.createElement('div');
             korp.className = 'v-korpus';
             korp.style.width = s + "px";
             korp.style.backgroundColor = cK;
+            
+            // Pokud je to vrchní vrstva, přidáme jahody
+            if (i == p - 1 && ovoceNahoře) {
+                let jahody = document.createElement('div');
+                jahody.className = 'jahody-top';
+                jahody.innerHTML = "🍓🍓🍓";
+                korp.appendChild(jahody);
+            }
+            
             plocha.appendChild(korp);
 
+            // Vytvoření krému
             if (i < p - 1) {
                 let napl = document.createElement('div');
                 napl.className = 'v-krem';
                 napl.style.width = (s - 10) + "px";
                 napl.style.backgroundColor = cN;
+                
+                // Pokud je zaškrtnuto ovoce v krému, přidáme tečky
+                if (ovoceUvnitr) {
+                    for(let j=0; j<4; j++) {
+                        let tecka = document.createElement('div');
+                        tecka.className = 'kousek-ovoce';
+                        napl.appendChild(tecka);
+                    }
+                }
                 plocha.appendChild(napl);
             }
         }
@@ -150,38 +165,17 @@
 
     function poslatMail() {
         const jmeno = document.getElementById('jmeno').value;
-        if (!jmeno) { alert("Doplňte jméno."); return; }
-
-        const prumer = document.getElementById('sirka').options[document.getElementById('sirka').selectedIndex].text;
-        const patra = document.getElementById('patra').value;
+        if(!jmeno) { alert("Prosím vyplňte jméno."); return; }
         
-        // Pomocná funkce pro text z checkboxů
-        const getVal = (idCh, idTxt) => {
-            const ch = document.getElementById(idCh).checked;
-            const txt = idTxt ? document.getElementById(idTxt).value : "";
-            return ch ? `ANO (${txt})` : "NE";
-        };
+        const prumer = document.getElementById('sirka').options[document.getElementById('sirka').selectedIndex].text;
+        const bodyText = `Nová objednávka od: ${jmeno}%0A` +
+                         `Telefon: ${document.getElementById('telefon').value}%0A` +
+                         `Dort: ${prumer}, ${document.getElementById('patra').value} pater%0A` +
+                         `Ovoce v krému: ${document.getElementById('ov-krem').checked ? "ANO" : "NE"}%0A` +
+                         `Ovoce nahoře: ${document.getElementById('ov-dort').checked ? "ANO" : "NE"}%0A` +
+                         `Poznámka: ${document.getElementById('poznamka').value}`;
 
-        const mailBody = `Nová poptávka:%0A
-        ----------------------------------%0A
-        Zákazník: ${jmeno} (${document.getElementById('telefon').value})%0A
-        ----------------------------------%0A
-        Dort: ${prumer}, ${patra} pater%0A
-        Korpus: ${document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text}%0A
-        Náplň: ${document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text}%0A
-        ----------------------------------%0A
-        DEKORACE:%0A
-        - Ovoce v krému: ${document.getElementById('ov-krem').checked ? "ANO" : "NE"}%0A
-        - Ovoce na dortu: ${document.getElementById('ov-dort').checked ? "ANO" : "NE"}%0A
-        - Jedlý papír: ${getVal('papir-ch', 'papir-txt')}%0A
-        - Marcipán. figurka: ${getVal('marc-ch', 'marc-txt')}%0A
-        - Plastová figurka: ${getVal('plas-ch', 'plas-txt')}%0A
-        - Číslo (věk): ${getVal('cislo-ch', 'cislo-txt')}%0A
-        - Zápich (text): ${getVal('zapich-ch', 'zapich-txt')}%0A
-        ----------------------------------%0A
-        POZNÁMKA: ${document.getElementById('poznamka').value || "žádná"}`;
-
-        window.location.href = `mailto:DOMII.TRNOVSKA@SEZNAM.CZ?subject=Dort_Poptavka_${encodeURIComponent(jmeno)}&body=${mailBody}`;
+        window.location.href = `mailto:DOMII.TRNOVSKA@SEZNAM.CZ?subject=Dort_Poptavka&body=${bodyText}`;
     }
 
     window.onload = aktualizuj;
