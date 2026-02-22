@@ -2,24 +2,43 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Dortový konfigurátor</title>
+    <title>Dortový konfigurátor | Cakes by DT</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #fff5f8; display: flex; justify-content: center; padding: 20px; }
-        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 550px; }
-        h1 { color: #ad1457; text-align: center; margin-bottom: 20px; }
+        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 580px; }
         
+        /* LOGO SEKCE */
+        .logo-container { text-align: center; margin-bottom: 10px; }
+        .logo-img { 
+            max-width: 140px; 
+            height: auto; 
+            border-radius: 50%; 
+            border: 3px solid #fce7f3;
+            padding: 5px;
+            background: #fff;
+        }
+
+        h1 { color: #ad1457; text-align: center; margin: 10px 0 5px 0; }
+        .ig-odkaz { text-align: center; margin-bottom: 20px; }
+        .ig-odkaz a { color: #db2777; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.3s; display: inline-flex; align-items: center; gap: 5px; }
+        .ig-odkaz a:hover { color: #ad1457; }
+
+        /* GALERIE */
+        .galerie { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .galerie img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; border: 2px solid #fce7f3; transition: transform 0.3s; }
+        .galerie img:hover { transform: scale(1.05); cursor: pointer; }
+
+        /* NÁHLED DORTU */
         #box-dortu { 
             margin: 40px auto 20px auto; padding: 40px 20px 20px 20px; background: #ffffff; border: 2px dashed #f9a8d4; border-radius: 15px;
             display: flex; flex-direction: column-reverse; align-items: center; min-height: 200px; position: relative;
         }
-
         .v-korpus { height: 24px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 2px; position: relative; z-index: 2; transition: 0.3s; }
         .v-krem { height: 20px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; position: relative; display: flex; justify-content: space-around; align-items: center; }
-
         .kousek-ovoce { width: 7px; height: 7px; border-radius: 50%; box-shadow: 1px 1px 2px rgba(0,0,0,0.2); transition: 0.5s; }
-        
         .jahody-top { position: absolute; bottom: 105%; width: 100%; display: flex; justify-content: center; font-size: 28px; margin-bottom: 2px; z-index: 10; pointer-events: none; }
 
+        /* FORMULÁŘ */
         .sekce { text-align: left; margin-bottom: 15px; padding: 12px; background: #fffcfd; border-radius: 12px; border: 1px solid #fce7f3; }
         label { display: block; font-weight: bold; color: #ad1457; font-size: 13px; margin-bottom: 5px; }
         .ch-radek { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 13px; }
@@ -29,17 +48,33 @@
         .flex { display: flex; gap: 10px; }
         .flex > div { flex: 1; }
         
-        .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; }
+        .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 15px; transition: 0.2s; }
+        .btn:hover { background: #ad1457; transform: scale(1.01); }
+        
         h3 { color: #ad1457; font-size: 16px; margin: 0 0 10px 0; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
+        .footer-ig { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
     </style>
 </head>
 <body>
 
 <div class="karta">
-    <h1>🍰 Konfigurátor dortu</h1>
+    <div class="logo-container">
+        <img src="https://img.freepik.com/premium-vector/elegant-cake-logo-design-bakery-logo-vector_564346-30.jpg" alt="Cakes by DT logo" class="logo-img">
+    </div>
+
+    <h1>🍰 Cakes by DT</h1>
+    <div class="ig-odkaz">
+        <a href="https://www.instagram.com/_cakesbydt_/" target="_blank">📸 @_cakesbydt_</a>
+    </div>
+
+    <div class="galerie">
+        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=300&q=80" alt="Dort 1">
+        <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=300&q=80" alt="Dort 2">
+        <img src="https://images.unsplash.com/photo-1535141192574-5d4897c82536?auto=format&fit=crop&w=300&q=80" alt="Dort 3">
+    </div>
 
     <div class="sekce">
-        <h3>👤 Kontakt</h3>
+        <h3>👤 Kontaktní údaje</h3>
         <input type="text" id="jmeno" placeholder="Jméno a příjmení">
         <div class="flex" style="margin-top:5px">
             <input type="tel" id="telefon" placeholder="Telefon">
@@ -116,6 +151,10 @@
     <div id="box-dortu"></div>
     
     <button class="btn" onclick="poslatMail()">ODESLAT POPTÁVKU</button>
+
+    <div class="footer-ig">
+        Sledujte moji práci na <a href="https://www.instagram.com/_cakesbydt_/" target="_blank">Instagramu</a>
+    </div>
 </div>
 
 <script>
@@ -126,7 +165,7 @@
         if (text.includes("hrozn")) return { barva: "#8bc34a", emoji: "🍇" };
         if (text.includes("kiwi")) return { barva: "#4caf50", emoji: "🥝" };
         if (text.includes("čoko") || text.includes("coko")) return { barva: "#3e2723", emoji: "🍫" };
-        return { barva: "#ff4d4d", emoji: "🍓" }; // Výchozí jahody
+        return { barva: "#ff4d4d", emoji: "🍓" };
     }
 
     function aktualizuj() {
