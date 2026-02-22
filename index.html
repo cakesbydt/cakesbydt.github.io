@@ -436,21 +436,44 @@
                 }
             }
 
-            // 4. OVOCE NA VRŠKU (Poslední vrstva)
-            if (i === layers - 1 && fruitT !== 'none') {
-                let radii = [currentRadius * 0.85]; // Výchozí poloměr pro ovoce (věneček)
-                if (topS === 'full') radii = [currentRadius * 0.3, currentRadius * 0.6, currentRadius * 0.85]; // Tři kruhy pro plné zaplnění
+           // ... (předchozí část kódu zůstává stejná) ...
+
+            // 4. OVOCE NA VRŠKU A NA PATRECH
+            // Logika: Chceme ovoce na úplném vršku NEBO na vrchní vrstvě nižšího patra u svatebního dortu
+            const isTopSurface = (i === layers - 1); // Úplný vršek dortu
+            const isTierSurface = (style === 'wedding' && (i === 3 || i === 7)); // Vršek 1. a 2. patra
+
+            if ((isTopSurface || isTierSurface) && fruitT !== 'none') {
                 
+                // Určíme, jak moc budeme danou plochu zaplňovat
+                let radii = [currentRadius * 0.85]; // Základní věneček na kraji
+                
+                // Pokud je vybráno "Plné zaplnění", přidáme další kruhy ovoce směrem do středu
+                // Ale u nižších pater svatebního dortu dáváme jen věneček, aby ovoce "nelezlo" do patra nad ním
+                if (topS === 'full' && isTopSurface) {
+                    radii = [currentRadius * 0.3, currentRadius * 0.6, currentRadius * 0.85];
+                }
+
                 radii.forEach(r => {
-                    const count = Math.floor(r * 12) + 1;
+                    // Počet kusů ovoce na kružnici (čím větší poloměr, tím více ovoce)
+                    const count = Math.floor(r * 12) + 1; 
+                    
                     for(let j=0; j<count; j++) {
                         const f = createFruit(fruitT, true);
-                        const ang = (j/count) * Math.PI * 2;
-                        f.position.set(Math.cos(ang)*r, (i*h)+0.35, Math.sin(ang)*r);
+                        const ang = (j/count) * Math.PI * 2; // Rozmístění do kruhu (360 stupňů)
+                        
+                        // Pozice: r je poloměr, (i*h)+0.35 je výška nad vrstvou, ang je úhel
+                        f.position.set(
+                            Math.cos(ang) * r, 
+                            (i * h) + 0.35, 
+                            Math.sin(ang) * r
+                        );
+                        
                         cakeGroup.add(f);
                     }
                 });
             }
+// ... (zbytek kódu zůstává stejný) ...
         }
     }
 
