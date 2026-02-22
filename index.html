@@ -5,63 +5,90 @@
     <title>Dortový konfigurátor</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #fff5f8; display: flex; justify-content: center; padding: 20px; }
+        .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 450px; text-align: center; }
         
-        /* Hlavní karta (ta, co vidíš na obrázku) */
-        .karta { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
-            width: 450px; 
-            text-align: center;
-        }
-
-        /* Oblast pro dort - teď je UVNITŘ karty */
-        #prostor-pro-dort {
-            margin: 20px auto;
-            min-height: 200px;
+        /* Box pro náhled dortu */
+        .nahled-box { 
+            margin: 20px auto; 
+            padding: 20px; 
+            background: #fafafa; 
+            border: 2px dashed #f9a8d4; 
+            border-radius: 15px;
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column-reverse; /* Vrstvy odspodu */
             align-items: center;
-            background: #fafafa;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px dashed #ffc1e3;
+            min-height: 150px;
         }
 
-        /* Styl vrstev */
-        .vrstva { border: 1px solid rgba(0,0,0,0.1); margin-bottom: -1px; transition: 0.3s; }
-        .korpus { height: 20px; border-radius: 4px; }
-        .krem { height: 15px; border-radius: 10px; opacity: 0.9; }
+        /* Definice vrstev */
+        .v-korpus { height: 20px; background-color: #f3e5ab; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; transition: 0.3s; }
+        .v-krem { height: 15px; background-color: #fffde7; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; transition: 0.3s; }
 
         .ovladani { text-align: left; }
         label { display: block; margin-top: 15px; font-weight: bold; color: #d63384; }
-        select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; cursor: pointer; }
-        
-        h1 { color: #ad1457; margin-bottom: 25px; }
+        select { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; }
     </style>
 </head>
-<body onload="stavba()">
+<body>
 
 <div class="karta">
     <h1>Konfigurátor</h1>
 
     <div class="ovladani">
-        <label>1. Průměr (šířka)</label>
-        <select id="volba-prumer" onchange="stavba()">
+        <label>Průměr (šířka)</label>
+        <select id="p" onchange="uprav()">
             <option value="150">15 cm</option>
             <option value="220" selected>20 cm</option>
-            <option value="280">25 cm</option>
-            <option value="340">30 cm</option>
+            <option value="300">25 cm</option>
         </select>
 
-        <label>2. Korpus</label>
-        <select id="volba-korpus" onchange="stavba()">
+        <label>Korpus</label>
+        <select id="k" onchange="uprav()">
             <option value="#f3e5ab">Světlý piškot</option>
             <option value="#4e342e">Čokoládový</option>
             <option value="#d7ccc8">Ořechový</option>
         </select>
 
-        <label>3. Náplň (krém)</label>
-        <select id="volba-krem" onchange="stavba()">
-            <option value="#
+        <label>Náplň (krém)</label>
+        <select id="n" onchange="uprav()">
+            <option value="#fffde7">Vanilkový</option>
+            <option value="#795548">Pařížský</option>
+            <option value="#f8bbd0">Ovocný</option>
+        </select>
+    </div>
+
+    <div class="nahled-box">
+        <div id="k1" class="v-korpus" style="width: 220px;"></div>
+        <div id="n1" class="v-krem" style="width: 210px;"></div>
+        <div id="k2" class="v-korpus" style="width: 220px;"></div>
+        <div id="n2" class="v-krem" style="width: 210px;"></div>
+        <div id="k3" class="v-korpus" style="width: 220px;"></div>
+    </div>
+    
+    <p style="color: #999; font-size: 13px;">Náhled vnitřního složení</p>
+</div>
+
+<script>
+    function uprav() {
+        const sirka = document.getElementById('p').value;
+        const bKorpus = document.getElementById('k').value;
+        const bKrem = document.getElementById('n').value;
+
+        // Upravíme šířku a barvu všech vrstev ručně
+        const korpusy = [document.getElementById('k1'), document.getElementById('k2'), document.getElementById('k3')];
+        const kremy = [document.getElementById('n1'), document.getElementById('n2')];
+
+        korpusy.forEach(el => {
+            el.style.width = sirka + "px";
+            el.style.backgroundColor = bKorpus;
+        });
+
+        kremy.forEach(el => {
+            el.style.width = (sirka - 10) + "px";
+            el.style.backgroundColor = bKrem;
+        });
+    }
+</script>
+
+</body>
+</html>
