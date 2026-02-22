@@ -10,7 +10,6 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; }
         .hlavni-wrapper { display: flex; width: 100%; max-width: 1200px; background: white; box-shadow: 0 20px 60px rgba(173,20,87,0.1); margin: 40px 20px; border-radius: 30px; overflow: hidden; }
         
-        /* LEVÝ PANEL */
         .levy-panel { flex: 0 0 320px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; align-items: center; padding: 40px 25px; color: white; box-sizing: border-box; }
         .logo-vlevo { width: 150px; height: 150px; background: rgba(255,255,255,0.2); border-radius: 50%; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; font-family: 'Pacifico'; font-size: 20px; border: 3px solid rgba(255,255,255,0.4); text-align: center; }
         .kontaktni-form { width: 100%; }
@@ -18,7 +17,6 @@
         .input-group label { display: block; font-size: 11px; margin-bottom: 5px; font-weight: bold; opacity: 0.8; text-transform: uppercase; }
         .input-group input { width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.15); color: white; font-family: inherit; }
 
-        /* OBSAH A OVLÁDÁNÍ */
         .obsah { flex: 1; padding: 40px 50px; background: white; overflow-y: auto; }
         .hlavni-motto { font-family: 'Pacifico', cursive; color: var(--primary); margin: 0 0 25px 0; font-size: 42px; text-align: center; font-weight: 400; }
         h3 { color: var(--primary); font-size: 13px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; letter-spacing: 1px; }
@@ -115,20 +113,15 @@
 
     // --- MODELY OVOCE ---
 
-    // Vylepšená jahoda pro vršek
     function createStrawberryTop() {
         const group = new THREE.Group();
         const points = [];
         for (let i = 0; i < 10; i++) {
             points.push(new THREE.Vector2(Math.sin(i * 0.3) * 0.22 + 0.01, (i - 5) * 0.08));
         }
-        const body = new THREE.Mesh(
-            new THREE.LatheGeometry(points, 16),
-            new THREE.MeshPhongMaterial({ color: 0xe53935, shininess: 90 })
-        );
+        const body = new THREE.Mesh(new THREE.LatheGeometry(points, 16), new THREE.MeshPhongMaterial({ color: 0xe53935, shininess: 90 }));
         body.rotation.x = Math.PI;
         group.add(body);
-
         const leafMat = new THREE.MeshPhongMaterial({ color: 0x388e3c });
         for(let i=0; i<6; i++) {
             const leaf = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 3), leafMat);
@@ -141,13 +134,9 @@
         return group;
     }
 
-    // Původní čistá jahoda pro krém
     function createStrawberryCream() {
         const group = new THREE.Group();
-        const body = new THREE.Mesh(
-            new THREE.SphereGeometry(0.22, 12, 12),
-            new THREE.MeshPhongMaterial({ color: 0xff1744 })
-        );
+        const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), new THREE.MeshPhongMaterial({ color: 0xff1744 }));
         body.scale.set(0.8, 1.3, 0.8);
         group.add(body);
         return group;
@@ -157,9 +146,9 @@
         const group = new THREE.Group();
         const body = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), new THREE.MeshPhongMaterial({ color: 0x283593 }));
         group.add(body);
-        const top = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.01, 8, 8), new THREE.MeshPhongMaterial({ color: 0x1a237e }));
+        const top = new THREE.Mesh(new THREE.TorusGeometry(0.033, 0.011, 8, 8), new THREE.MeshPhongMaterial({ color: 0x1a237e }));
         top.rotation.x = Math.PI/2;
-        top.position.y = 0.09;
+        top.position.y = 0.1;
         group.add(top);
         return group;
     }
@@ -179,30 +168,26 @@
             let r = 3;
             if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
             const isCream = i % 2 === 1;
-            const currentR = isCream ? r * 0.98 : r;
-            
             const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(currentR, currentR, h, 40),
+                new THREE.CylinderGeometry(isCream ? r * 0.98 : r, isCream ? r * 0.98 : r, h, 40),
                 new THREE.MeshPhongMaterial({ color: isCream ? cream : flav })
             );
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
-            // OVOCE V KRÉMU
             if (isCream && fruitC !== 'none' && i < layers - 1) {
                 const count = Math.floor(r * 10);
                 for (let j = 0; j < count; j++) {
                     let f = (fruitC === 'mix') ? (j % 2 === 0 ? createStrawberryCream() : createBlueberry()) : 
                             (fruitC === 'strawberries' ? createStrawberryCream() : createBlueberry());
                     const ang = (j / count) * Math.PI * 2;
-                    f.scale.set(0.4, 0.4, 0.15); // Zploštění aby nevyčnívalo
+                    f.scale.set(0.4, 0.4, 0.15);
                     f.rotation.y = ang; 
                     f.position.set(Math.cos(ang) * (r * 0.98), i * h, Math.sin(ang) * (r * 0.98));
                     cakeGroup.add(f);
                 }
             }
 
-            // OVOCE NAVRCHU
             if (i === layers - 1 && fruitT !== 'none') {
                 const radii = (topS === 'full') ? [0.6, 1.2, 1.8, 2.4] : [2.5];
                 radii.forEach(rStep => {
@@ -232,21 +217,33 @@
     }
 
     window.onload = init3D;
+
+    // --- OPRAVENÉ OVLÁDÁNÍ MYŠÍ (VČETNĚ NÁKLONU) ---
+    container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
+    window.onmousemove = (e) => {
+        if (isDragging) {
+            // Rotace kolem osy Y (doleva/doprava)
+            cakeGroup.rotation.y += (e.clientX - prevX) * 0.01;
+            // Náklon kolem osy X (nahoru/dolů)
+            cakeGroup.rotation.x += (e.clientY - prevY) * 0.01;
+            
+            // Omezení náklonu, aby se dort nepřeklopil úplně
+            cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x));
+            
+            // Aktualizace sliderů
+            document.getElementById('rotateY').value = cakeGroup.rotation.y;
+            document.getElementById('rotateX').value = cakeGroup.rotation.x;
+            
+            prevX = e.clientX; prevY = e.clientY;
+        }
+    };
+    window.onmouseup = () => isDragging = false;
+
     window.onresize = () => {
         camera.aspect = container.clientWidth / container.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(container.clientWidth, container.clientHeight);
     };
-
-    container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
-    window.onmousemove = (e) => {
-        if (isDragging) {
-            cakeGroup.rotation.y += (e.clientX - prevX) * 0.01;
-            document.getElementById('rotateY').value = cakeGroup.rotation.y;
-            prevX = e.clientX; prevY = e.clientY;
-        }
-    };
-    window.onmouseup = () => isDragging = false;
 </script>
 </body>
 </html>
