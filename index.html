@@ -109,7 +109,6 @@
             border: 2px solid transparent; transition: 0.4s;
         }
         
-        /* Změna barvy rámečku při zaškrtnutí */
         .doplnek-item:has(input[type="checkbox"]:checked) { 
             border-color: var(--gold); background: #fffdf2; transform: scale(1.01); 
         }
@@ -123,7 +122,6 @@
             transition: all 0.4s ease; 
         }
         
-        /* ZOBRAZENÍ POZNÁMKY PŘI ZAŠKRTNUTÍ */
         .doplnek-item:has(input[type="checkbox"]:checked) .extra-input { 
             max-height: 100px; opacity: 1; margin-top: 20px; 
         }
@@ -166,6 +164,13 @@
         <div class="sekce">
             <h3>1. Architektura korpusu</h3>
             <div class="flex">
+                <div style="flex-basis: 100%; margin-bottom: 20px;">
+                    <label>Typ události / Styl dortu</label>
+                    <select id="cakeStyle" onchange="updateCake()">
+                        <option value="classic">🎂 Klasický narozeninový / Oslava</option>
+                        <option value="wedding">💍 Svatební Luxury Edition</option>
+                    </select>
+                </div>
                 <div><label>Průměr dortu</label><select id="diameter" onchange="updateCake()"><option value="15">15 cm (Mini)</option><option value="20" selected>20 cm (Classic)</option><option value="24">24 cm (Grand)</option></select></div>
                 <div><label>Počet pater</label><select id="layers" onchange="updateCake()"><option value="4">4 vrstvy</option><option value="6">6 vrstev</option><option value="8" selected>8 vrstev</option><option value="12">12 vrstev</option></select></div>
                 <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake()"><option value="0x3d2b1f">Belgická Čokoláda</option><option value="0xfff4e0">Madagaskarská Vanilka</option></select></div>
@@ -308,7 +313,9 @@
         const radius = diameter / 6.5;
         const h = 0.5;
         
-        document.getElementById('info-display').innerHTML = `KONFIGURACE: ${diameter}cm | ${layers} vrstev`;
+        // Změna textu info badge
+        const type = document.getElementById('cakeStyle').value === 'wedding' ? 'Svatební' : 'Klasický';
+        document.getElementById('info-display').innerHTML = `${type} | ${diameter}cm | ${layers} vrstev`;
 
         for (let i = 0; i < layers; i++) {
             const isCream = i % 2 === 1;
