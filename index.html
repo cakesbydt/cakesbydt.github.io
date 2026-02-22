@@ -148,13 +148,13 @@
 
     function createStrawberryCream() {
         const group = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 12), new THREE.MeshPhongMaterial({ color: 0xff1744 }));
-        body.scale.set(0.8, 1.0, 0.8); group.add(body); return group;
+        const body = new THREE.Mesh(new THREE.SphereGeometry(0.18, 12, 12), new THREE.MeshPhongMaterial({ color: 0xff1744 }));
+        body.scale.set(0.7, 0.9, 0.7); group.add(body); return group;
     }
 
     function createBlueberry() {
         const group = new THREE.Group();
-        group.add(new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 12), new THREE.MeshPhongMaterial({ color: 0x283593 })));
+        group.add(new THREE.Mesh(new THREE.SphereGeometry(0.09, 12, 12), new THREE.MeshPhongMaterial({ color: 0x283593 })));
         return group;
     }
 
@@ -176,7 +176,6 @@
             if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
             const isCreamLayer = i % 2 === 1;
             
-            // Základní válec
             const segmentR = (coat === 'full') ? r - 0.02 : r;
             const segment = new THREE.Mesh(
                 new THREE.CylinderGeometry(segmentR, segmentR, h, 45),
@@ -185,7 +184,6 @@
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
-            // Vnější potažení
             if (coat !== 'naked') {
                 const isTopLayer = (i === layers - 1);
                 const coatOpacity = coat === 'semi' ? 0.6 : 1.0;
@@ -199,22 +197,21 @@
                 cakeGroup.add(coating);
             }
 
-            // OVOCE V KRÉMU - OPRAVA VIDITELNOSTI
+            // OVOCE V KRÉMU - ZAPUŠTĚNÉ
             if (isCreamLayer && fruitC !== 'none' && i < layers - 1) {
-                const count = Math.floor(r * 12); // více kousků
+                const count = Math.floor(r * 12);
                 for (let j = 0; j < count; j++) {
                     let f = (fruitC === 'mix') ? (j % 2 === 0 ? createStrawberryCream() : createBlueberry()) : 
                             (fruitC === 'strawberries' ? createStrawberryCream() : createBlueberry());
                     const ang = (j / count) * Math.PI * 2;
-                    // Posuneme ovoce mírně vně poloměru korpusu, aby "vyykukovalo" z krému
-                    const fruitDist = r + 0.04; 
+                    // Poloměr je teď jen o kousíček větší než válec, aby ovoce prosvítalo nebo jemně vyčnívalo
+                    const fruitDist = r + 0.01; 
                     f.position.set(Math.cos(ang) * fruitDist, i * h, Math.sin(ang) * fruitDist);
                     f.rotation.y = ang;
                     cakeGroup.add(f);
                 }
             }
 
-            // Ovoce navrchu
             if (i === layers - 1 && fruitT !== 'none') {
                 const radii = (topS === 'full') ? [0.6, 1.2, 1.8, 2.4] : [r * 0.85];
                 radii.forEach(rStep => {
