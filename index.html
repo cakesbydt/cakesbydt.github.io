@@ -1,58 +1,121 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <title>Cakes by DT | Profesionální Konfigurátor</title>
+    <meta charset="UTF-8"> <title>Cakes by DT | Profesionální Konfigurátor</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Segoe+UI:wght@400;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
     <style>
-        :root { --primary: #ad1457; --primary-dark: #880e4f; --bg: #fff5f8; --border: #fce7f3; --accent: #f9a8d4; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 0; margin: 0; min-height: 100vh; }
-        .hlavni-wrapper { display: flex; width: 100%; max-width: 1200px; background: white; box-shadow: 0 20px 60px rgba(173,20,87,0.1); margin: 40px 20px; border-radius: 30px; overflow: hidden; }
+        :root { 
+            --primary: #ad1457; /* Hlavní vínová barva */
+            --primary-dark: #880e4f; /* Tmavší odstín pro efekty */
+            --bg: #fff5f8; /* Světle růžové pozadí stránky */
+            --border: #fce7f3; /* Barva ohraničení sekcí */
+        }
         
-        .levy-panel { flex: 0 0 320px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; flex-direction: column; align-items: center; padding: 40px 25px; color: white; box-sizing: border-box; }
-        .logo-vlevo { width: 140px; height: 140px; background: rgba(255,255,255,0.2); border-radius: 50%; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; font-family: 'Pacifico'; font-size: 20px; border: 3px solid rgba(255,255,255,0.4); text-align: center; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; /* Moderní bezpatkové písmo */
+            background-color: var(--bg); /* Aplikace barvy pozadí */
+            display: flex; /* Zapnutí pružného rozložení */
+            justify-content: center; /* Vycentrování obsahu vodorovně */
+            margin: 0; /* Zrušení výchozích okrajů prohlížeče */
+            min-height: 100vh; /* Výška přes celou obrazovku */
+        }
         
-        .kontaktni-form { width: 100%; }
+        /* Hlavní bílý box obalující celý obsah */
+        .hlavni-wrapper { 
+            display: flex; /* Panel vlevo a obsah vpravo */
+            width: 100%; /* Roztažení na šířku */
+            max-width: 1200px; /* Maximální šířka pro velké monitory */
+            background: white; /* Bílé pozadí vnitřku */
+            box-shadow: 0 20px 60px rgba(173,20,87,0.1); /* Jemný stín pod boxem */
+            margin: 40px 20px; /* Odsazení od krajů prohlížeče */
+            border-radius: 30px; /* Zaoblené rohy celého wrapperu */
+            overflow: hidden; /* Oříznutí obsahu u rohů */
+        }
+        
+        /* Levý barevný panel s logem a kontaktem */
+        .levy-panel { 
+            flex: 0 0 320px; /* Pevná šířka panelu 320px */
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); /* Přechod barev */
+            display: flex; /* Uspořádání prvků pod sebe */
+            flex-direction: column; /* Vertikální směr prvků */
+            align-items: center; /* Centrování na střed */
+            padding: 40px 25px; /* Vnitřní odsazení */
+            color: white; /* Bílý text v panelu */
+            box-sizing: border-box; /* Zahrnutí paddingu do šířky */
+        }
+
+        /* Kruhové logo vlevo */
+        .logo-vlevo { 
+            width: 140px; height: 140px; 
+            background: rgba(255,255,255,0.2); /* Průhledné bílé pozadí */
+            border-radius: 50%; /* Kruhový tvar */
+            margin-bottom: 30px; /* Mezi logem a formulářem */
+            display: flex; align-items: center; justify-content: center; /* Centrování textu uvnitř */
+            font-family: 'Pacifico'; font-size: 20px; text-align: center; 
+            border: 3px solid rgba(255,255,255,0.4); /* Světlý okraj loga */
+        }
+
+        /* Skupiny vstupních polí (label + input) */
         .input-group { width: 100%; margin-bottom: 18px; }
-        .input-group label { display: block; font-size: 11px; margin-bottom: 5px; font-weight: bold; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px; }
-        .input-group input { width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none; box-sizing: border-box; background: rgba(255,255,255,0.15); color: white; font-family: inherit; }
-        .input-group input::placeholder { color: rgba(255,255,255,0.5); }
-        .input-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        .input-group label { display: block; font-size: 11px; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
+        .input-group input { 
+            width: 100%; padding: 12px; border-radius: 10px; border: none; 
+            background: rgba(255,255,255,0.15); /* Poloprůhledné pozadí polí */
+            color: white; font-family: inherit; box-sizing: border-box; 
+        }
 
+        /* Pravá část s konfigurátorem */
         .obsah { flex: 1; padding: 40px 50px; background: white; overflow-y: auto; }
-        .hlavni-motto { font-family: 'Pacifico', cursive; color: var(--primary); margin: 0 0 25px 0; font-size: 42px; text-align: center; }
-        h3 { color: var(--primary); font-size: 13px; margin: 0 0 20px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; letter-spacing: 1px; }
+        .hlavni-motto { font-family: 'Pacifico', cursive; color: var(--primary); text-align: center; font-size: 42px; margin-bottom: 25px; }
+        
+        /* Nadpisy sekcí (1., 2., 3...) */
+        h3 { color: var(--primary); font-size: 13px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 20px; }
         .sekce { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 25px; }
-        .flex { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .flex > div { flex: 1; min-width: 130px; }
         
-        label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
-        select, input[type="text"], textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; font-size: 14px; outline: none; box-sizing: border-box; }
-        textarea { resize: vertical; min-height: 80px; }
-        
-        .doplnek-item { margin-bottom: 12px; }
-        .checkbox-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; text-transform: none; color: #333; font-weight: 600; }
-        .checkbox-label input { width: 18px; height: 18px; accent-color: var(--primary); }
-        .extra-input { max-height: 0; overflow: hidden; transition: 0.3s ease-out; opacity: 0; margin-top: 8px; }
-        input[type="checkbox"]:checked ~ .extra-input { max-height: 100px; opacity: 1; }
+        /* Pomocná třída pro řazení prvků vedle sebe */
+        .flex { display: flex; gap: 15px; flex-wrap: wrap; } 
+        .flex > div { flex: 1; min-width: 130px; } /* Prvky se dělí o prostor */
 
+        /* Stylování selectů (výběrů) a textových polí */
+        label { display: block; font-size: 11px; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; }
+        select, input[type="text"], textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e0e0e0; font-family: inherit; }
+
+        /* Logika vysouvacího pole pro doplňky */
+        .extra-input { 
+            max-height: 0; /* Výchozí stav: nulová výška (skryto) */
+            overflow: hidden; /* Skryje text uvnitř */
+            transition: 0.3s ease-out; /* Plynulé vysunutí */
+            opacity: 0; /* Neviditelné */
+            margin-top: 8px; 
+        }
+        /* Když je checkbox před tímto divem zaškrtnut, změň styl: */
+        input[type="checkbox"]:checked ~ .extra-input { 
+            max-height: 100px; /* Nastaví výšku pro zobrazení */
+            opacity: 1; /* Zviditelní pole */
+        }
+
+        /* Kontejner pro 3D grafiku */
         #canvas-container { 
             width: 100%; height: 450px; 
-            background: radial-gradient(circle, #ffffff 0%, #ececec 100%); 
-            position: relative; cursor: move; border-radius: 25px; margin-bottom: 20px;
+            background: radial-gradient(circle, #ffffff 0%, #ececec 100%); /* Efekt podsvícení pod dortem */
+            position: relative; cursor: move; border-radius: 25px; margin-bottom: 20px; 
         }
+        /* Štítek s rozměry plovoucí v 3D okně */
         .info-badge-float { 
-            position: absolute; bottom: 20px; right: 20px; 
-            background: rgba(255, 255, 255, 0.95); color: var(--primary); 
-            padding: 12px 22px; border-radius: 50px; font-size: 13px; font-weight: 800;
-            border: 2px solid var(--primary); z-index: 10; line-height: 1.4;
+            position: absolute; bottom: 20px; right: 20px; background: white; 
+            color: var(--primary); padding: 12px 22px; border-radius: 50px; 
+            font-weight: 800; border: 2px solid var(--primary); z-index: 10; 
         }
 
-        .ovladani-3d { margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 20px; }
-        .slider { width: 100%; height: 8px; background: #ddd; border-radius: 5px; outline: none; accent-color: var(--primary); cursor: pointer; }
-        .btn { width: 100%; padding: 22px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; margin-top: 10px; transition: 0.3s; }
-        .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        /* Hlavní tlačítko Odeslat */
+        .btn { 
+            width: 100%; padding: 22px; background: var(--primary); color: white; 
+            border: none; border-radius: 18px; cursor: pointer; font-weight: 800; 
+            font-size: 18px; transition: 0.3s; 
+        }
+        .btn:hover { background: var(--primary-dark); transform: translateY(-2px); } /* Efekt při najetí myší */
     </style>
 </head>
 <body>
@@ -60,24 +123,11 @@
 <div class="hlavni-wrapper">
     <div class="levy-panel">
         <div class="logo-vlevo">Cakes<br>by DT</div>
-        
         <div class="kontaktni-form">
-            <div class="input-group">
-                <label>Jméno a příjmení</label>
-                <input type="text" placeholder="Jan Novák">
-            </div>
-            <div class="input-group">
-                <label>E-mail</label>
-                <input type="email" placeholder="jan@seznam.cz">
-            </div>
-            <div class="input-group">
-                <label>Telefon</label>
-                <input type="tel" placeholder="+420 123 456 789">
-            </div>
-            <div class="input-group">
-                <label>Datum vyzvednutí</label>
-                <input type="date">
-            </div>
+            <div class="input-group"><label>Jméno a příjmení</label><input type="text" placeholder="Jan Novák"></div>
+            <div class="input-group"><label>E-mail</label><input type="email" placeholder="jan@seznam.cz"></div>
+            <div class="input-group"><label>Telefon</label><input type="tel" placeholder="+420 123 456 789"></div>
+            <div class="input-group"><label>Datum vyzvednutí</label><input type="date"></div>
         </div>
     </div>
 
@@ -126,7 +176,7 @@
             <h3>✨ 4. Doplňky a Poznámky</h3>
             <div class="doplnek-item">
                 <label class="checkbox-label"><input type="checkbox"> Jedlý papír</label>
-                <div class="extra-input"><input type="text" placeholder="Popište motiv (např. Tlapková patrola)..."></div>
+                <div class="extra-input"><input type="text" placeholder="Popište motiv (např. Minecraft, fotka)..."></div>
             </div>
             <div class="doplnek-item">
                 <label class="checkbox-label"><input type="checkbox"> Figurka</label>
@@ -138,7 +188,7 @@
             </div>
             <div style="margin-top: 20px;">
                 <label>Další požadavky a detaily</label>
-                <textarea placeholder="Upřesněte barvy, čas vyzvednutí nebo jiné detaily..."></textarea>
+                <textarea placeholder="Upřesněte barvy, styl nebo jiné detaily..."></textarea>
             </div>
         </div>
 
@@ -147,45 +197,51 @@
 </div>
 
 <script>
+    // 1. Nastavení globálních proměnných pro 3D scénu
     let scene, camera, renderer, cakeGroup;
-    const container = document.getElementById('canvas-container');
-    let isDragging = false, prevX = 0, prevY = 0;
+    const container = document.getElementById('canvas-container'); // Odkaz na kontejner v HTML
+    let isDragging = false, prevX = 0, prevY = 0; // Pomocné proměnné pro otáčení myší
 
+    // 2. Hlavní funkce, která připraví 3D prostor
     function init3D() {
-        scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(0, 5, 12);
-        camera.lookAt(0, 2, 0);
+        scene = new THREE.Scene(); // Vytvoření prázdného 3D světa
+        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000); // Nastavení perspektivy
+        camera.position.set(0, 5, 12); // Umístění kamery (x=0, y=5, z=12)
+        camera.lookAt(0, 2, 0); // Kamera míří na střed dortu
 
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(renderer.domElement);
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Vykreslovač s vyhlazováním a průhledností
+        renderer.setSize(container.clientWidth, container.clientHeight); // Nastavení velikosti podle okna
+        renderer.setPixelRatio(window.devicePixelRatio); // Ostré zobrazení na mobilech/retina displejích
+        container.appendChild(renderer.domElement); // Přidání 3D plátna do HTML
         
-        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-        const light1 = new THREE.DirectionalLight(0xffffff, 0.7); light1.position.set(5, 10, 7); scene.add(light1);
-        const light2 = new THREE.PointLight(0xffffff, 0.4); light2.position.set(-5, 5, -5); scene.add(light2);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6)); // Celkové jemné osvětlení scény
+        const light1 = new THREE.DirectionalLight(0xffffff, 0.7); light1.position.set(5, 10, 7); scene.add(light1); // Hlavní světlo (slunce)
+        const light2 = new THREE.PointLight(0xffffff, 0.4); light2.position.set(-5, 5, -5); scene.add(light2); // Pomocné světlo zezadu
 
-        cakeGroup = new THREE.Group();
-        scene.add(cakeGroup);
-        updateCake();
-        animate();
+        cakeGroup = new THREE.Group(); // Vytvoření prázdné skupiny pro díly dortu
+        scene.add(cakeGroup); // Přidání skupiny do scény
+        updateCake(); // Volání funkce pro první vykreslení dortu
+        animate(); // Spuštění nekonečné smyčky vykreslování
     }
 
+    // 3. Funkce pro tvorbu 3D kousku ovoce
     function createFruit(type, isTop) {
-        const group = new THREE.Group();
-        const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5));
+        const group = new THREE.Group(); // Skupina pro jeden plod
+        const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5)); // Náhodný výběr u mixu
+        // Geometrie (koule): Jahoda je větší, borůvka menší
         const geometry = new THREE.SphereGeometry(isStrawberry ? (isTop ? 0.22 : 0.16) : (isTop ? 0.11 : 0.08), 12, 12);
-        const material = new THREE.MeshPhongMaterial({ color: isStrawberry ? 0xe53935 : 0x1a237e, shininess: 5 });
-        const mesh = new THREE.Mesh(geometry, material);
-        if(isStrawberry) mesh.scale.set(0.8, 1.1, 0.8);
+        const material = new THREE.MeshPhongMaterial({ color: isStrawberry ? 0xe53935 : 0x1a237e, shininess: 5 }); // Červená nebo tmavě modrá
+        const mesh = new THREE.Mesh(geometry, material); // Spojení tvaru a barvy
+        if(isStrawberry) mesh.scale.set(0.8, 1.1, 0.8); // Jahodu trochu svisle protáhneme
         group.add(mesh);
-        return group;
+        return group; // Vrátí hotový model ovoce
     }
 
+    // 4. HLAVNÍ FUNKCE: Postaví dort podle výběru uživatele
     function updateCake() {
-        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
+        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]); // Smaže starý dort před novým vykreslením
         
+        // Načtení všech aktuálních hodnot z formuláře
         const layers = parseInt(document.getElementById('layers').value);
         const diameter = parseInt(document.getElementById('diameter').value);
         const coat = document.getElementById('coating').value;
@@ -196,49 +252,52 @@
         const innerColor = parseInt(document.getElementById('innerCream').value);
         const outerColor = parseInt(document.getElementById('outerCream').value);
         
-        const baseRadius = diameter / 6.5; 
-        const realHeight = (layers * 1.5 + (fruitT !== 'none' ? 2.5 : 0.5)).toFixed(1);
-        document.getElementById('info-display').innerHTML = `Výška: ~${realHeight} cm<br>Průměr: ${diameter} cm`;
+        const baseRadius = diameter / 6.5; // Přepočet průměru v cm na 3D souřadnice
+        const realHeight = (layers * 1.5 + (fruitT !== 'none' ? 2.5 : 0.5)).toFixed(1); // Výpočet reálné výšky pro text
+        document.getElementById('info-display').innerHTML = `Výška: ~${realHeight} cm<br>Průměr: ${diameter} cm`; // Aktualizace textu v badge
 
-        const h = 0.5;
-        for (let i = 0; i < layers; i++) {
-            const isCream = i % 2 === 1;
+        const h = 0.5; // Tloušťka jedné modelované vrstvy
+        for (let i = 0; i < layers; i++) { // Cyklus projde tolikrát, kolik je vrstev
+            const isCream = i % 2 === 1; // Každá lichá vrstva (1, 3, 5...) bude krém
             const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(baseRadius, baseRadius, h, 48),
-                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor, shininess: 2 })
+                new THREE.CylinderGeometry(baseRadius, baseRadius, h, 48), // Vytvoření válce
+                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor, shininess: 2 }) // Barva podle vrstvy
             );
-            segment.position.y = i * h;
-            cakeGroup.add(segment);
+            segment.position.y = i * h; // Posunutí vrstvy nahoru o tloušťku předešlých vrstev
+            cakeGroup.add(segment); // Přidání vrstvy do skupiny
 
+            // Pokud dort není "Naked", přidáme vnější potah (tenký válec přes korpus)
             if (coat !== 'naked') {
-                const isTopLayer = (i === layers - 1);
+                const isTopLayer = (i === layers - 1); // Zjištění, zda je to úplně horní vrstva
                 const coating = new THREE.Mesh(
-                    new THREE.CylinderGeometry(baseRadius + 0.02, baseRadius + 0.02, h, 48, 1, !isTopLayer),
-                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.6 : 1), shininess: 4 })
+                    new THREE.CylinderGeometry(baseRadius + 0.02, baseRadius + 0.02, h, 48, 1, !isTopLayer), // O chlup širší válec
+                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.6 : 1), shininess: 4 }) // Průhlednost pro polonaháče
                 );
                 coating.position.y = i * h;
                 cakeGroup.add(coating);
             }
 
+            // Přidání ovoce do krému (vnitřek), pokud je vybráno a krém je vidět
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
-                const count = Math.floor(baseRadius * 12);
+                const count = Math.floor(baseRadius * 12); // Počet plodů podle velikosti dortu
                 for (let j = 0; j < count; j++) {
                     const f = createFruit(fruitC, false);
-                    const ang = (j / count) * Math.PI * 2;
+                    const ang = (j / count) * Math.PI * 2; // Rozmístění do kruhu
                     f.position.set(Math.cos(ang) * (baseRadius - 0.05), i * h, Math.sin(ang) * (baseRadius - 0.05));
                     cakeGroup.add(f);
                 }
             }
 
+            // Přidání ovoce na úplný vršek dortu
             if (i === layers - 1 && fruitT !== 'none') {
-                let radii = [baseRadius * 0.85];
-                if (topS === 'full') radii = [baseRadius * 0.3, baseRadius * 0.6, baseRadius * 0.85];
+                let radii = [baseRadius * 0.85]; // Výchozí kruh po obvodu
+                if (topS === 'full') radii = [baseRadius * 0.3, baseRadius * 0.6, baseRadius * 0.85]; // Pokud je zaplněný, přidej další 2 kruhy
                 radii.forEach(rStep => {
                     const count = Math.floor(rStep * 9);
                     for(let j=0; j<count; j++) {
                         const f = createFruit(fruitT, true);
                         const ang = (j/count) * Math.PI * 2;
-                        f.position.set(Math.cos(ang)*rStep, (i*h)+0.3, Math.sin(ang)*rStep);
+                        f.position.set(Math.cos(ang)*rStep, (i*h)+0.3, Math.sin(ang)*rStep); // Umístění nad dort
                         cakeGroup.add(f);
                     }
                 });
@@ -246,13 +305,19 @@
         }
     }
 
+    // 5. Propojení sliderů s rotací modelu
     function manualControl() {
         cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
         cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
     }
+
+    // 6. Nekonečná animace (vykresluje scénu 60x za sekundu)
     function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
+    
+    // Spuštění startu po načtení okna
     window.onload = init3D;
 
+    // 7. Logika pro otáčení dortu tažením myši přímo v okně
     container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
     window.onmousemove = (e) => {
         if (isDragging) {
@@ -261,7 +326,7 @@
             prevX = e.clientX; prevY = e.clientY;
         }
     };
-    window.onmouseup = () => isDragging = false;
+    window.onmouseup = () => isDragging = false; // Zastavení otáčení při puštění myši
 </script>
 </body>
 </html>
