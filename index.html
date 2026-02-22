@@ -145,7 +145,7 @@
         for (let i = 0; i < vrstvyCelkem; i++) {
             const v = document.createElement('div');
             v.className = 'vrstva';
-            v.style.setProperty('--bottom', (i * 35) + 'px');
+            v.style.setProperty('--bottom', (i * 20) + 'px');
             v.style.setProperty('--color', (i % 2 === 0) ? cK : cN);
             // Math.PI * sirka / segmenty + trocha přesahu (2.5) pro smazání mezer
             v.style.setProperty('--segW', (Math.PI * sirka / 32 + 2.5) + 'px');
