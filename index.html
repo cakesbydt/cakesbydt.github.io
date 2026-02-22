@@ -164,20 +164,31 @@
         for (let i = 0; i < layerCount; i++) {
             let r = 3;
             if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
-            const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, layerH, 45), new THREE.MeshPhongMaterial({ color: i % 2 === 0 ? flav : cream }));
+            const isCreamLayer = (i % 2 === 1);
+            
+            const mesh = new THREE.Mesh(new THREE.CylinderGeometry(r, r, layerH, 45), new THREE.MeshPhongMaterial({ color: !isCreamLayer ? flav : cream }));
             mesh.position.y = i * layerH;
             cakeGroup.add(mesh);
 
             if (fruitType !== "none") {
                 const isTop = (i === layerCount - 1);
-                const isStep = (style === 'wedding' && i % 2 === 1 && i < layerCount - 1);
-                if (isTop || isStep) {
-                    const count = Math.floor(r * 6);
+                const isStep = (style === 'wedding' && isCreamLayer && i < layerCount - 1);
+                const isInCream = isCreamLayer && i < layerCount - 1;
+
+                if (isTop || isStep || isInCream) {
+                    const count = isInCream && !isStep ? Math.floor(r * 4) : Math.floor(r * 6);
                     for (let j = 0; j < count; j++) {
                         let f = (fruitType === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
                         const ang = (j / count) * Math.PI * 2;
-                        const spread = isTop ? 0.7 : 0.9;
-                        f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.32, Math.sin(ang) * r * spread);
+                        
+                        if (isInCream && !isStep && !isTop) {
+                            f.scale.set(0.6, 0.6, 0.6);
+                            f.position.set(Math.cos(ang) * (r * 0.95), (i * layerH), Math.sin(ang) * (r * 0.95));
+                        } else {
+                            const spread = isTop ? 0.7 : 0.9;
+                            f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.32, Math.sin(ang) * r * spread);
+                        }
+                        
                         f.rotation.y = Math.random() * Math.PI;
                         cakeGroup.add(f);
                     }
@@ -186,7 +197,6 @@
         }
     }
 
-    // INTERAKCE MYŠ + TOUCH
     const handleMove = (x, y) => {
         if (isDragging) {
             cakeGroup.rotation.y += (x - prevX) * 0.01;
