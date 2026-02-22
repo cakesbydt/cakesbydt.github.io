@@ -2,135 +2,217 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Cakes by DT | Real 3D</title>
+    <title>3D Cake Configurator | Cakes by DT</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        body { margin: 0; background: #fff5f8; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; }
-        #canvas-container { width: 800px; height: 500px; background: white; margin-top: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); cursor: move; }
-        .ui { background: white; padding: 20px; border-radius: 20px; margin-top: 20px; display: flex; gap: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        select { padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
-        h1 { color: #ad1457; margin-top: 20px; }
+        :root { --primary: #ad1457; --accent: #f9a8d4; --bg: #fff5f8; }
+        body { margin: 0; background: var(--bg); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; }
+        
+        .hlavni-wrapper { display: flex; width: 1100px; background: white; margin: 30px; border-radius: 25px; box-shadow: 0 15px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        .obsah { flex: 1; padding: 40px; display: flex; flex-direction: column; }
+        
+        /* 3D KONTEJNER */
+        #cake-display { 
+            width: 100%; 
+            height: 400px; 
+            background: radial-gradient(#ffffff, #f0f0f0); 
+            border-radius: 20px; 
+            border: 2px solid #eee;
+            cursor: grab;
+            margin-bottom: 25px;
+        }
+
+        /* DOPLŇKY MŘÍŽKA */
+        .doplnky-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+        .doplnek-item { 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            border-radius: 12px; 
+            text-align: center; 
+            font-weight: bold; 
+            cursor: pointer;
+            background: #fafafa;
+            transition: 0.2s;
+        }
+        .doplnek-item.active { 
+            border-color: var(--primary); 
+            background: var(--bg); 
+            color: var(--primary);
+        }
+
+        .controls { display: flex; gap: 20px; margin-bottom: 20px; }
+        .control-group { flex: 1; }
+        label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #555; }
+        select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; }
+        h1 { color: var(--primary); margin: 0 0 10px 0; }
     </style>
 </head>
 <body>
 
-    <h1>3D Konfigurátor Dortu</h1>
-
-    <div id="canvas-container"></div>
-
-    <div class="ui">
-        <div>
-            <label>Ovoce:</label>
-            <select id="fruitType" onchange="updateCake()">
-                <option value="none">Žádné</option>
-                <option value="strawberries" selected>3D Jahody</option>
-                <option value="blueberries">3D Borůvky</option>
-                <option value="mix">3D Mix</option>
-            </select>
+<div class="hlavni-wrapper">
+    <div class="obsah">
+        <h1>Konfigurátor Cakes by DT</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Vrstvy dortu</label>
+                <select id="layers" onchange="initCake()">
+                    <option value="1">1 Patro</option>
+                    <option value="2">2 Patra</option>
+                    <option value="3" selected>3 Patra</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>3D Ovoce</label>
+                <select id="fruit" onchange="initCake()">
+                    <option value="none">Bez ovoce</option>
+                    <option value="strawberries" selected>3D Jahody</option>
+                    <option value="blueberries">3D Borůvky</option>
+                    <option value="mix">3D Mix</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Příchuť (barva)</label>
+                <select id="flavor" onchange="initCake()">
+                    <option value="0x4e342e">Čokoláda</option>
+                    <option value="0xf3e5ab">Vanilka</option>
+                    <option value="0xd32f2f">Red Velvet</option>
+                </select>
+            </div>
         </div>
-        <div>
-            <label>Korpus:</label>
-            <select id="cakeColor" onchange="updateCake()">
-                <option value="0x4e342e">Čokoládový</option>
-                <option value="0xf3e5ab">Světlý</option>
-            </select>
+
+        <div id="cake-display"></div>
+
+        <h3>Doplňky k objednávce</h3>
+        <div class="doplnky-grid">
+            <div class="doplnek-item" onclick="this.classList.toggle('active')">Jedlý papír</div>
+            <div class="doplnek-item" onclick="this.classList.toggle('active')">Figurka</div>
+            <div class="doplnek-item" onclick="this.classList.toggle('active')">Zápich</div>
         </div>
     </div>
-
-    <p style="color: #888; font-size: 14px;">Tahem myši dortem otáčejte</p>
+</div>
 
 <script>
-    let scene, camera, renderer, cake;
+    let scene, camera, renderer, cakeGroup;
+    const container = document.getElementById('cake-display');
 
     function init() {
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff);
-
-        camera = new THREE.PerspectiveCamera(45, 800 / 500, 0.1, 1000);
-        camera.position.set(0, 5, 10);
+        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 6, 12);
         camera.lookAt(0, 0, 0);
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(800, 500);
-        renderer.shadowMap.enabled = true;
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setClearColor(0xffffff, 0); 
+        container.appendChild(renderer.domElement);
 
-        // Světla - základ pro objem
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-        scene.add(ambientLight);
+        // Osvětlení pro 3D efekt
+        const light = new THREE.DirectionalLight(0xffffff, 1.2);
+        light.position.set(5, 10, 7);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
-        const pointLight = new THREE.PointLight(0xffffff, 0.8);
-        pointLight.position.set(5, 10, 5);
-        pointLight.castShadow = true;
-        scene.add(pointLight);
+        cakeGroup = new THREE.Group();
+        scene.add(cakeGroup);
 
-        cake = new THREE.Group();
-        scene.add(cake);
-
-        updateCake();
+        initCake();
         animate();
     }
 
     function createStrawberry() {
-        const group = new THREE.Group();
-        // Tělo jahody (deformovaná koule do špičky)
-        const bodyGeo = new THREE.SphereGeometry(0.25, 16, 16);
-        bodyGeo.scale(0.8, 1.2, 0.8);
-        const bodyMat = new THREE.MeshPhongMaterial({ color: 0xff0000, shininess: 30 });
+        const strawberry = new THREE.Group();
+        // Tělo jahody (kužel s oblou základnou)
+        const bodyGeo = new THREE.SphereGeometry(0.25, 12, 12);
+        bodyGeo.scale(0.8, 1.3, 0.8);
+        const bodyMat = new THREE.MeshPhongMaterial({ color: 0xff1744, shininess: 60 });
         const body = new THREE.Mesh(bodyGeo, bodyMat);
-        group.add(body);
+        strawberry.add(body);
 
-        // Lístky navrchu
-        const leafGeo = new THREE.ConeGeometry(0.1, 0.1, 5);
-        const leafMat = new THREE.MeshPhongMaterial({ color: 0x228b22 });
-        for(let i=0; i<4; i++) {
-            const leaf = new THREE.Mesh(leafGeo, leafMat);
-            leaf.position.y = 0.25;
-            leaf.rotation.z = (Math.PI / 4) * i;
-            group.add(leaf);
-        }
-        return group;
+        // Lístky (malý zelený klobouček)
+        const leafGeo = new THREE.ConeGeometry(0.12, 0.15, 6);
+        const leafMat = new THREE.MeshPhongMaterial({ color: 0x2e7d32 });
+        const leaves = new THREE.Mesh(leafGeo, leafMat);
+        leaves.position.y = 0.25;
+        strawberry.add(leaves);
+        
+        return strawberry;
     }
 
     function createBlueberry() {
-        const geo = new THREE.SphereGeometry(0.15, 16, 16);
-        const mat = new THREE.MeshPhongMaterial({ color: 0x1a237e, shininess: 10 });
+        const geo = new THREE.SphereGeometry(0.18, 16, 16);
+        const mat = new THREE.MeshPhongMaterial({ color: 0x1a237e, shininess: 20 });
         return new THREE.Mesh(geo, mat);
     }
 
-    function updateCake() {
-        while(cake.children.length > 0) cake.remove(cake.children[0]);
+    function initCake() {
+        // Vyčistit předchozí dort
+        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
 
-        const color = parseInt(document.getElementById('cakeColor').value);
-        const fruit = document.getElementById('fruitType').value;
+        const layerCount = parseInt(document.getElementById('layers').value);
+        const fruitType = document.getElementById('fruit').value;
+        const flavorColor = parseInt(document.getElementById('flavor').value);
 
-        // Vykreslení dortu
-        const cakeGeo = new THREE.CylinderGeometry(2.5, 2.5, 3, 40);
-        const cakeMat = new THREE.MeshPhongMaterial({ color: color });
-        const cakeMesh = new THREE.Mesh(cakeGeo, cakeMat);
-        cake.add(cakeMesh);
+        for (let i = 0; i < layerCount; i++) {
+            const radius = 3 - (i * 0.6);
+            const height = 1.2;
+            const yPos = i * height;
 
-        // Krém navrchu
-        const topGeo = new THREE.CylinderGeometry(2.51, 2.51, 0.2, 40);
-        const topMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
-        const topMesh = new THREE.Mesh(topGeo, topMat);
-        topMesh.position.y = 1.5;
-        cake.add(topMesh);
+            // Korpus (Válec)
+            const geo = new THREE.CylinderGeometry(radius, radius, height, 40);
+            const mat = new THREE.MeshPhongMaterial({ color: flavorColor });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.y = yPos;
+            cakeGroup.add(mesh);
 
-        // Rozmístění 3D ovoce
-        if (fruit !== "none") {
-            for (let i = 0; i < 12; i++) {
-                let item;
-                if (fruit === 'mix') item = i % 2 === 0 ? createStrawberry() : createBlueberry();
-                else item = fruit === 'strawberries' ? createStrawberry() : createBlueberry();
+            // Krém navrchu každého patra
+            const creamGeo = new THREE.CylinderGeometry(radius + 0.02, radius + 0.02, 0.15, 40);
+            const creamMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+            const cream = new THREE.Mesh(creamGeo, creamMat);
+            cream.position.y = yPos + (height / 2);
+            cakeGroup.add(cream);
 
-                const angle = (i / 12) * Math.PI * 2;
-                const dist = 1.8;
-                item.position.set(Math.cos(angle) * dist, 1.7, Math.sin(angle) * dist);
-                item.rotation.y = Math.random() * Math.PI;
-                cake.add(item);
+            // Ovoce pouze na vrchní patro
+            if (i === layerCount - 1 && fruitType !== "none") {
+                const fruitCount = 12;
+                for (let j = 0; j < fruitCount; j++) {
+                    let fruit;
+                    const finalType = (fruitType === 'mix') ? (j % 2 === 0 ? 'strawberries' : 'blueberries') : fruitType;
+                    
+                    fruit = (finalType === 'strawberries') ? createStrawberry() : createBlueberry();
+                    
+                    const angle = (j / fruitCount) * Math.PI * 2;
+                    const dist = radius * 0.75;
+                    fruit.position.set(Math.cos(angle) * dist, yPos + 0.7, Math.sin(angle) * dist);
+                    fruit.rotation.y = Math.random() * Math.PI;
+                    cakeGroup.add(fruit);
+                }
             }
         }
     }
 
-    // Rotace pomocí myši
+    // Rotace tahem myši
+    let isDragging = false, prevX = 0;
+    container.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            cakeGroup.rotation.y += (e.clientX - prevX) * 0.01;
+        }
+        prevX = e.clientX;
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    init();
+</script>
+</body>
+</html>
