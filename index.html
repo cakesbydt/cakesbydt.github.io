@@ -2,86 +2,156 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
+    <title>3D Konfigurátor | Cakes by DT</title>
     <style>
-        :root { --primary: #ad1457; }
-        body { background: #f0f2f5; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .karta { background: white; padding: 40px; border-radius: 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 450px; }
+        :root { --primary: #ad1457; --bg: #fff5f8; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .karta { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 600px; }
         
-        .scena { height: 350px; perspective: 1200px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .dort-telo { position: relative; width: 180px; transform-style: preserve-3d; transition: transform 0.05s linear; }
+        /* LOGO A HLAVIČKA */
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo-img { max-width: 120px; border-radius: 50%; border: 3px solid #fce7f3; }
+        h1 { color: var(--primary); margin: 10px 0 5px; }
+        .ig-odkaz a { color: #db2777; text-decoration: none; font-weight: bold; font-size: 14px; }
 
-        /* Vrstvy dortu */
-        .vrstva { position: absolute; width: 100%; height: 40px; transform-style: preserve-3d; bottom: var(--bottom); }
-        .segment { 
-            position: absolute; width: var(--segW); height: 40px; left: 50%; margin-left: calc(var(--segW)/-2); 
-            background: linear-gradient(to right, rgba(0,0,0,0.2), transparent, rgba(0,0,0,0.2)), var(--color); 
-            border: 0.1px solid rgba(0,0,0,0.05); 
-        }
-        
-        /* Víčko */
-        .vicko { position: absolute; width: var(--w); height: var(--w); background: var(--topColor); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(90deg) translateZ(20px); transform-style: preserve-3d; }
+        /* GALERIE */
+        .galerie { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0; }
+        .galerie img { width: 100%; height: 100px; object-fit: cover; border-radius: 10px; border: 2px solid #fce7f3; }
 
-        /* 3D JAHODA - OPRAVENÁ POZICE */
-        .strawberry-3d { 
-            position: absolute; 
-            width: 30px; height: 40px; 
-            transform-style: preserve-3d; 
-            pointer-events: none;
-            /* rotateX(-90) postaví jahodu, translateZ(20) ji vytáhne nad víčko */
-            transform-origin: center bottom;
-        }
-        
-        .strawberry-face {
-            position: absolute;
-            width: 100%; height: 100%;
-            background-size: contain;
-            background-repeat: no-repeat;
-            /* Důležité: rotace kolem spodní hrany */
-            transform-origin: bottom center;
-        }
+        /* 3D SCÉNA */
+        .scena-wrapper { background: #fff; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 20px 0; padding: 20px; text-align: center; }
+        .scena { height: 300px; perspective: 1000px; display: flex; align-items: center; justify-content: center; }
+        .dort-telo { position: relative; width: 150px; transform-style: preserve-3d; transition: transform 0.1s linear; }
 
+        /* 3D PRVKY DORTU */
+        .vrstva { position: absolute; width: 100%; height: 35px; transform-style: preserve-3d; bottom: var(--bottom); }
+        .segment { position: absolute; width: var(--segW); height: 35px; left: 50%; margin-left: calc(var(--segW)/-2); background: linear-gradient(to right, rgba(0,0,0,0.2), transparent, rgba(0,0,0,0.2)), var(--color); }
+        .vicko { position: absolute; width: var(--w); height: var(--w); background: var(--topColor); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(90deg) translateZ(17.5px); transform-style: preserve-3d; }
+
+        /* 3D DEKORACE */
+        .deco-3d { position: absolute; width: 25px; height: 30px; transform-style: preserve-3d; transform-origin: center bottom; }
+        .deco-face { position: absolute; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; transform-origin: bottom center; }
         .face-2 { transform: rotateY(90deg); }
 
-        /* Stín pod jahodou na víčku */
-        .stin-pod-jahodou {
-            position: absolute;
-            width: 15px; height: 8px;
-            background: rgba(0,0,0,0.15);
-            border-radius: 50%;
-            filter: blur(2px);
-            transform: translateZ(-1px); /* Těsně pod jahodu */
-        }
+        /* FORMULÁŘ */
+        .sekce { background: #fffcfd; padding: 15px; border-radius: 15px; border: 1px solid #fce7f3; margin-bottom: 15px; }
+        h3 { color: var(--primary); font-size: 16px; margin: 0 0 10px; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; }
+        .flex { display: flex; gap: 10px; margin-bottom: 10px; }
+        .flex > div { flex: 1; }
+        label { display: block; font-size: 12px; font-weight: bold; color: var(--primary); margin-bottom: 4px; }
+        input, select, textarea { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; }
+        .ch-radek { display: flex; align-items: center; gap: 10px; font-size: 13px; margin-bottom: 8px; }
+        .ch-radek input[type="checkbox"] { width: 18px; height: 18px; }
 
-        .tahlo { width: 100%; margin: 30px 0 10px 0; accent-color: var(--primary); cursor: pointer; }
+        .tahlo { width: 80%; accent-color: var(--primary); margin-top: 15px; }
+        .btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div class="karta">
-    <h2 style="color:var(--primary)">Cakes by DT</h2>
-    <div class="scena"><div class="dort-telo" id="vizual"></div></div>
-    <input type="range" min="0" max="360" value="45" class="tahlo" oninput="otoc(this.value)">
-    <p style="font-size: 11px; color: #aaa; letter-spacing: 1px; text-transform: uppercase;">Otáčejte pro prohlédnutí</p>
+    <div class="header">
+        <img src="https://img.freepik.com/premium-vector/elegant-cake-logo-design-bakery-logo-vector_564346-30.jpg" alt="Logo" class="logo-img">
+        <h1>Cakes by DT</h1>
+        <div class="ig-odkaz"><a href="https://www.instagram.com/_cakesbydt_/" target="_blank">📸 @_cakesbydt_</a></div>
+    </div>
+
+    <div class="galerie">
+        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200" alt="1">
+        <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=200" alt="2">
+        <img src="https://images.unsplash.com/photo-1535141192574-5d4897c82536?w=200" alt="3">
+    </div>
+
+    <div class="sekce">
+        <h3>👤 Kontakt</h3>
+        <input type="text" id="jmeno" placeholder="Jméno a příjmení">
+        <div class="flex" style="margin-top:8px">
+            <input type="tel" id="telefon" placeholder="Telefon">
+            <input type="email" id="email" placeholder="E-mail">
+        </div>
+    </div>
+
+    <div class="sekce">
+        <h3>🎂 Parametry dortu</h3>
+        <div class="flex">
+            <div>
+                <label>Počet pater</label>
+                <select id="patra" onchange="kresliDort()">
+                    <option value="2">2 patra</option>
+                    <option value="3" selected>3 patra</option>
+                    <option value="4">4 patra</option>
+                </select>
+            </div>
+            <div>
+                <label>Korpus</label>
+                <select id="korpus" onchange="kresliDort()">
+                    <option value="#5d4037">Čokoládový</option>
+                    <option value="#f3e5ab" selected>Světlý piškot</option>
+                    <option value="#d7ccc8">Ořechový</option>
+                </select>
+            </div>
+            <div>
+                <label>Krém</label>
+                <select id="krem" onchange="kresliDort()">
+                    <option value="#fffde7">Vanilkový</option>
+                    <option value="#f8bbd0" selected>Ovocný (růžový)</option>
+                    <option value="#795548">Pařížský</option>
+                </select>
+            </div>
+        </div>
+        <div class="ch-radek">
+            <input type="checkbox" id="ov-dort" onchange="kresliDort()" checked> 
+            <span>Ovoce na dortu:</span>
+            <input type="text" id="ov-dort-txt" placeholder="Jahody, borůvky..." oninput="kresliDort()">
+        </div>
+    </div>
+
+    <div class="scena-wrapper">
+        <div class="scena"><div class="dort-telo" id="vizual"></div></div>
+        <input type="range" min="0" max="360" value="45" class="tahlo" oninput="otoc(this.value)">
+        <div style="font-size: 10px; color: #888; margin-top: 5px;">OTÁČEJTE SLIDEREM PRO NÁHLED</div>
+    </div>
+
+    <button class="btn" onclick="odeslat()">ODESLAT POPTÁVKU</button>
 </div>
 
 <script>
-    const strawberrySVG = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M50,115 C20,115 5,85 5,55 C5,25 25,10 50,10 C75,10 95,25 95,55 C95,85 80,115 50,115 Z" fill="%23ff4d4d"/><circle cx="30" cy="40" r="3" fill="white" opacity="0.2"/><path d="M50,15 L35,-5 L50,5 L65,-5 Z" fill="%232e7d32"/></svg>')`;
+    let rotY = 45;
+    
+    // SVGs pro 3D dekorace
+    const svgs = {
+        jahoda: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120"><path d="M50,115 C20,115 5,85 5,55 C5,25 25,10 50,10 C75,10 95,25 95,55 C95,85 80,115 50,115 Z" fill="%23ff4d4d"/><path d="M50,15 L35,-5 L50,5 L65,-5 Z" fill="%232e7d32"/></svg>')`,
+        boruvka: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%233f51b5"/><circle cx="50" cy="50" r="15" fill="%231a237e" opacity="0.5"/></svg>')`,
+        coko: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" rx="5" fill="%233e2723"/><rect x="20" y="20" width="25" height="25" fill="%235d4037"/></svg>')`
+    };
 
     function otoc(v) {
+        rotY = v;
         document.getElementById('vizual').style.transform = `rotateX(-25deg) rotateY(${v}deg)`;
     }
 
-    function kresli() {
+    function kresliDort() {
         const plocha = document.getElementById('vizual');
-        const sirka = 180;
-        const barvy = ['#4e342e', '#f8bbd0']; 
-        
+        const pCount = parseInt(document.getElementById('patra').value);
+        const cK = document.getElementById('korpus').value;
+        const cN = document.getElementById('krem').value;
+        const ovoceText = document.getElementById('ov-dort-txt').value.toLowerCase();
+        const showOvoce = document.getElementById('ov-dort').checked;
+
+        // Výběr dekorace
+        let decoSVG = svgs.jahoda;
+        if(ovoceText.includes("borů") || ovoceText.includes("boruv")) decoSVG = svgs.boruvka;
+        if(ovoceText.includes("čoko") || ovoceText.includes("coko")) decoSVG = svgs.coko;
+
         plocha.innerHTML = "";
-        for (let i = 0; i < 4; i++) {
+        const sirka = 150;
+        const vrstvyCelkem = pCount * 2 - 1;
+
+        for (let i = 0; i < vrstvyCelkem; i++) {
             const v = document.createElement('div');
             v.className = 'vrstva';
-            v.style.setProperty('--bottom', (i * 40) + 'px');
-            v.style.setProperty('--color', barvy[i % 2]);
+            v.style.setProperty('--bottom', (i * 35) + 'px');
+            v.style.setProperty('--color', (i % 2 === 0) ? cK : cN);
             v.style.setProperty('--segW', (Math.PI * sirka / 24 + 2) + 'px');
 
             for (let j = 0; j < 24; j++) {
@@ -91,53 +161,48 @@
                 v.appendChild(s);
             }
 
-            if (i === 3) { // Vrchní krém
+            // Pokud je to úplně horní vrstva, přidáme víčko a dekorace
+            if (i === vrstvyCelkem - 1) {
                 const vicko = document.createElement('div');
                 vicko.className = 'vicko';
                 vicko.style.setProperty('--w', sirka + 'px');
-                vicko.style.setProperty('--topColor', '#f8bbd0');
+                vicko.style.setProperty('--topColor', (i % 2 === 0) ? cK : cN);
                 
-                const r = sirka / 3.5;
-                const pozice = [[0,0], [r,0], [-r,0], [0,r], [0,-r]];
-                
-                pozice.forEach(p => {
-                    const stredX = sirka/2 + p[0];
-                    const stredY = sirka/2 + p[1];
-                    
-                    const j3d = document.createElement('div');
-                    j3d.className = 'strawberry-3d';
-                    j3d.style.left = (stredX - 15) + 'px';
-                    j3d.style.top = (stredY - 20) + 'px';
-                    
-                    // translateZ(1) posune jahodu nad povrch víčka, aby nebyla utopená
-                    j3d.style.transform = `rotateX(-90deg) translateZ(2px)`;
+                if (showOvoce) {
+                    const r = sirka / 3.5;
+                    [[0,0], [r,0], [-r,0], [0,r], [0,-r]].forEach(pos => {
+                        const d3d = document.createElement('div');
+                        d3d.className = 'deco-3d';
+                        d3d.style.left = (sirka/2 + pos[0] - 12.5) + 'px';
+                        d3d.style.top = (sirka/2 + pos[1] - 15) + 'px';
+                        d3d.style.transform = `rotateX(-90deg) translateZ(2px)`;
 
-                    // Přidáme stín pod jahodu
-                    const stin = document.createElement('div');
-                    stin.className = 'stin-pod-jahodou';
-                    stin.style.left = '7.5px';
-                    stin.style.bottom = '-2px';
-                    j3d.appendChild(stin);
+                        const f1 = document.createElement('div');
+                        f1.className = 'deco-face';
+                        f1.style.backgroundImage = decoSVG;
+                        const f2 = document.createElement('div');
+                        f2.className = 'deco-face face-2';
+                        f2.style.backgroundImage = decoSVG;
 
-                    const f1 = document.createElement('div');
-                    f1.className = 'strawberry-face';
-                    f1.style.backgroundImage = strawberrySVG;
-                    
-                    const f2 = document.createElement('div');
-                    f2.className = 'strawberry-face face-2';
-                    f2.style.backgroundImage = strawberrySVG;
-                    
-                    j3d.appendChild(f1);
-                    j3d.appendChild(f2);
-                    vicko.appendChild(j3d);
-                });
+                        d3d.appendChild(f1); d3d.appendChild(f2);
+                        vicko.appendChild(d3d);
+                    });
+                }
                 v.appendChild(vicko);
             }
             plocha.appendChild(v);
         }
-        otoc(45);
+        otoc(rotY);
     }
-    kresli();
+
+    function odeslat() {
+        const jmeno = document.getElementById('jmeno').value;
+        if(!jmeno) { alert("Vyplňte prosím jméno."); return; }
+        alert("Poptávka byla připravena k odeslání (v reálné verzi zde bude mailto link).");
+    }
+
+    window.onload = kresliDort;
 </script>
+
 </body>
 </html>
