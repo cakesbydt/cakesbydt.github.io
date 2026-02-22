@@ -11,51 +11,50 @@
             background-color: var(--bg); 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start;
-            padding: 40px 20px; 
+            align-items: stretch; /* Aby oba sloupce mohly být stejně vysoké */
+            padding: 0; 
             margin: 0; 
+            min-height: 100vh;
         }
 
-        /* HLAVNÍ KONTEJNER PRO ROZLOŽENÍ VLEVO/VPRAVO */
+        /* HLAVNÍ KONTEJNER */
         .hlavni-wrapper {
             display: flex;
-            gap: 30px;
-            max-width: 950px;
             width: 100%;
-            align-items: flex-start;
+            max-width: 1000px;
+            background: white;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
         }
 
-        /* LEVÝ PANEL S LOGEM */
+        /* LEVÝ PANEL - LOGO PÁS ODSHORA DOLŮ */
         .levy-panel {
-            flex: 0 0 200px; /* Pevná šířka loga */
-            position: sticky;
-            top: 40px;
+            flex: 0 0 250px; 
+            background-color: var(--primary); /* Barva pásu */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 0;
         }
 
         .logo-vlevo {
-            width: 100%;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(173, 20, 87, 0.15);
-            border: 4px solid white;
+            width: 180px;
+            height: auto;
+            border-radius: 15px; /* Lehké zaoblení loga */
+            border: 3px solid rgba(255,255,255,0.2);
+        }
+
+        /* PRAVÁ STRANA S FORMULÁŘEM */
+        .obsah { 
+            flex: 1;
+            padding: 40px;
             background: white;
         }
 
-        /* PRAVÁ KARTA S FORMULÁŘEM */
-        .karta { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 25px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
-            flex: 1; /* Vyplní zbytek místa */
-            display: flex; 
-            flex-direction: column; 
-        }
-
-        .header { text-align: left; margin-bottom: 20px; }
-        h1 { color: var(--primary); margin: 0; font-size: 28px; }
+        .header { text-align: left; margin-bottom: 30px; border-bottom: 2px solid var(--bg); padding-bottom: 10px; }
+        h1 { color: var(--primary); margin: 0; font-size: 32px; }
 
         /* 3D SCÉNA */
-        .scena-wrapper { background: #fff; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 10px 0; padding: 30px 10px; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .scena-wrapper { background: #fffcfd; border: 2px dashed #f9a8d4; border-radius: 20px; margin: 20px 0; padding: 30px 10px; display: flex; flex-direction: column; align-items: center; position: relative; }
         .scena { height: 280px; perspective: 1000px; display: flex; align-items: center; justify-content: center; width: 100%; }
         .dort-telo { position: relative; width: 160px; transform-style: preserve-3d; transition: transform 0.1s linear; }
         .vyska-info { background: var(--primary); color: white; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 13px; margin-bottom: 10px; z-index: 10; }
@@ -65,15 +64,14 @@
         .segment { position: absolute; width: var(--segW); height: 10px; left: 50%; margin-left: calc(var(--segW)/-2); background: linear-gradient(to right, rgba(0,0,0,0.1), transparent, rgba(0,0,0,0.1)), var(--color); }
         .vicko { position: absolute; width: var(--w); height: var(--w); background: var(--topColor); border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%) rotateX(90deg) translateZ(5px); transform-style: preserve-3d; }
         
-        /* FORMULÁŘOVÉ PRVKY */
+        /* FORMULÁŘ */
         .sekce { background: #fffcfd; padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 15px; }
         h3 { color: var(--primary); font-size: 15px; margin: 0 0 10px; border-bottom: 1px solid #f9a8d4; padding-bottom: 5px; text-transform: uppercase; }
         .flex { display: flex; gap: 10px; margin-bottom: 10px; }
         .flex > div { flex: 1; }
         label { display: block; font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 4px; }
-        input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; font-family: inherit; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; font-family: inherit; }
         
-        /* DOPLŇKY */
         .doplnek-blok { border: 1px solid #fce7f3; border-radius: 12px; padding: 10px; margin-bottom: 10px; background: white; transition: 0.2s; }
         .doplnek-blok.aktivni { border-color: var(--primary); background: #fff5f8; }
         .doplnek-hlavicka { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: bold; color: var(--primary); }
@@ -81,14 +79,14 @@
         .doplnek-poznamka { margin-top: 8px; display: none; }
         .doplnek-blok.aktivni .doplnek-poznamka { display: block; }
 
-        .btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 18px; margin-top: 10px; transition: 0.3s; box-shadow: 0 5px 15px rgba(173, 20, 87, 0.3); }
-        .btn:hover { background: #880e4f; transform: translateY(-2px); }
+        .btn { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 18px; margin-top: 20px; transition: 0.3s; }
+        .btn:hover { background: #880e4f; transform: scale(1.02); }
         .tahlo { width: 80%; accent-color: var(--primary); cursor: pointer; margin-top: 10px; }
 
-        /* RESPONZIVITA - Pro mobily dáme logo nahoru */
-        @media (max-width: 800px) {
-            .hlavni-wrapper { flex-direction: column; align-items: center; }
-            .levy-panel { position: static; flex: 0 0 auto; width: 150px; margin-bottom: 20px; }
+        @media (max-width: 850px) {
+            .hlavni-wrapper { flex-direction: column; }
+            .levy-panel { flex: 0 0 auto; width: 100%; padding: 20px 0; }
+            .logo-vlevo { width: 120px; }
         }
     </style>
 </head>
@@ -99,10 +97,10 @@
         <img src="logo.jpg" alt="Logo Cakes by DT" class="logo-vlevo">
     </div>
 
-    <div class="karta">
+    <div class="obsah">
         <div class="header">
             <h1>Cakes by DT</h1>
-            <p style="color: #880e4f; margin: 5px 0 0 0; font-size: 14px;">Konfigurátor vašeho vysněného dortu</p>
+            <p style="color: #ad1457; margin: 5px 0 0 0;">Konfigurátor vašeho vysněného dortu</p>
         </div>
 
         <div class="sekce">
@@ -193,7 +191,7 @@
                     <input type="checkbox" id="check-papir" onchange="updateBlok('papir')"> Jedlý papír
                 </label>
                 <div class="doplnek-poznamka">
-                    <textarea id="note-papir" rows="2" placeholder="Popište motiv na papíru..."></textarea>
+                    <textarea id="note-papir" rows="2" placeholder="Upřesněte motiv na papír..."></textarea>
                 </div>
             </div>
 
@@ -202,7 +200,7 @@
                     <input type="checkbox" id="check-figurka" onchange="updateBlok('figurka')"> Figurka
                 </label>
                 <div class="doplnek-poznamka">
-                    <textarea id="note-figurka" rows="2" placeholder="Popište, jakou figurku si přejete..."></textarea>
+                    <textarea id="note-figurka" rows="2" placeholder="Jakou figurku si přejete?"></textarea>
                 </div>
             </div>
 
@@ -211,13 +209,13 @@
                     <input type="checkbox" id="check-zapich" onchange="updateBlok('zapich')"> Zápich (číslo, text)
                 </label>
                 <div class="doplnek-poznamka">
-                    <textarea id="note-zapich" rows="2" placeholder="Text nebo číslo na zápichu..."></textarea>
+                    <textarea id="note-zapich" rows="2" placeholder="Text nebo číslo na zápich..."></textarea>
                 </div>
             </div>
 
             <div style="margin-top:15px">
                 <label>Ostatní poznámky k objednávce</label>
-                <textarea id="poznamka-hlavni" rows="2" placeholder="Barvy zdobení, specifické přání..."></textarea>
+                <textarea id="poznamka-hlavni" rows="2" placeholder="Barvy zdobení, datum vyzvednutí..."></textarea>
             </div>
         </div>
 
