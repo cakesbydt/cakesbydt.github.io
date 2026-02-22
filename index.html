@@ -8,17 +8,17 @@
         .karta { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 450px; text-align: center; }
         
         /* Box pro náhled dortu */
-        #box { 
+        #box-dortu { 
             margin: 20px auto; padding: 20px; background: #ffffff; border: 2px dashed #f9a8d4; border-radius: 15px;
             display: flex; flex-direction: column-reverse; align-items: center; min-height: 100px;
         }
 
         /* Vrstvy dortu */
-        .v-korpus { height: 20px; background-color: #f3e5ab; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 1px; }
-        .v-krem { height: 18px; background-color: #fffde7; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; }
+        .v-korpus { height: 20px; border: 1px solid rgba(0,0,0,0.1); border-radius: 4px; margin-top: 2px; transition: 0.3s; }
+        .v-krem { height: 18px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; transition: 0.3s; }
 
         label { display: block; margin-top: 15px; font-weight: bold; color: #ad1457; text-align: left; }
-        select, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; box-sizing: border-box; }
+        select, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; margin-top: 5px; box-sizing: border-box; font-size: 16px; }
         .btn { width: 100%; padding: 15px; background: #db2777; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
@@ -27,8 +27,8 @@
 <div class="karta">
     <h1>🍰 Konfigurátor</h1>
 
-    <label>Průměr (šířka)</label>
-    <select id="p" onchange="uprav()">
+    <label>Průměr dortu (šířka)</label>
+    <select id="volba-sirka" oninput="prekresliDort()">
         <option value="150">15 cm</option>
         <option value="200" selected>20 cm</option>
         <option value="250">25 cm</option>
@@ -36,20 +36,55 @@
     </select>
 
     <label>Počet pater (výška)</label>
-    <input type="number" id="v" value="3" min="1" max="8" onchange="uprav()">
+    <input type="number" id="volba-patra" value="3" min="1" max="10" oninput="prekresliDort()">
 
-    <label>Barva korpusu a krému</label>
-    <div style="display:flex; gap:10px;">
-        <input type="color" id="ck" value="#f3e5ab" onchange="uprav()">
-        <input type="color" id="cn" value="#fffde7" onchange="uprav()">
-    </div>
+    <label>Barva korpusu</label>
+    <input type="color" id="barva-k" value="#f3e5ab" oninput="prekresliDort()">
 
-    <div id="box">
-        <div class="v-korpus" style="width: 200px;"></div>
-        <div class="v-krem" style="width: 190px;"></div>
-        <div class="v-korpus" style="width: 200px;"></div>
-        <div class="v-krem" style="width: 190px;"></div>
-        <div class="v-korpus" style="width: 200px;"></div>
-    </div>
+    <label>Barva náplně</label>
+    <input type="color" id="barva-n" value="#fffde7" oninput="prekresliDort()">
+
+    <div id="box-dortu">
+        </div>
     
-    <button class="btn"
+    <button class="btn" onclick="alert('Hotovo!')">Odeslat poptávku</button>
+</div>
+
+<script>
+    function prekresliDort() {
+        // 1. Získání hodnot z políček
+        const plocha = document.getElementById('box-dortu');
+        const sirka = document.getElementById('volba-sirka').value;
+        const patra = document.getElementById('volba-patra').value;
+        const barvaK = document.getElementById('barva-k').value;
+        const barvaN = document.getElementById('barva-n').value;
+
+        // 2. Vymazání starého obsahu
+        plocha.innerHTML = "";
+
+        // 3. Smyčka pro vykreslení nových vrstev
+        for (let i = 0; i < patra; i++) {
+            // Vytvoření korpusu
+            let k = document.createElement('div');
+            k.className = 'v-korpus';
+            k.style.width = sirka + "px";
+            k.style.backgroundColor = barvaK;
+            plocha.appendChild(k);
+
+            // Vytvoření krému (pokud to není úplně horní vrstva)
+            if (i < patra - 1) {
+                let n = document.createElement('div');
+                n.className = 'v-krem';
+                n.style.width = (sirka - 10) + "px";
+                n.style.backgroundColor = barvaN;
+                plocha.appendChild(n);
+            }
+        }
+    }
+
+    // Spustit hned po načtení stránky
+    window.onload = prekresliDort;
+</script>
+
+</body>
+</html>
