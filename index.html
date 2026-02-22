@@ -1,10 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Můj první web</title>
+    <meta charset="UTF-8">
+    <title>Web uživatele Trnda</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .karta {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 { color: #2c3e50; }
+        p { color: #7f8c8d; }
+        .tlacitko {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .tlacitko:hover { background-color: #2980b9; }
+    </style>
 </head>
 <body>
-    <h1>Ahoj, světe!</h1>
-    <p>Tohle je můj první web vytvořený přes GitHub.</p>
+    <div class="karta">
+        <h1>Ahoj, já jsem Trnda! 🚀</h1>
+        <p>Tohle je můj první web hostovaný na GitHubu.</p>
+        <a href="#" class="tlacitko">Klikni na mě</a>
+    </div>
 </body>
 </html>
