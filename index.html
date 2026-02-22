@@ -46,15 +46,22 @@
             box-sizing: border-box; /* Zahrnutí paddingu do šířky */
         }
 
-        /* Kruhové logo vlevo */
+        /* Kruhový kontejner pro tvůj obrázek loga */
         .logo-vlevo { 
             width: 140px; height: 140px; 
-            background: rgba(255,255,255,0.2); /* Průhledné bílé pozadí */
+            background: rgba(255,255,255,0.2); /* Průhledné bílé pozadí pod logem */
             border-radius: 50%; /* Kruhový tvar */
-            margin-bottom: 30px; /* Mezi logem a formulářem */
-            display: flex; align-items: center; justify-content: center; /* Centrování textu uvnitř */
-            font-family: 'Pacifico'; font-size: 20px; text-align: center; 
-            border: 3px solid rgba(255,255,255,0.4); /* Světlý okraj loga */
+            margin-bottom: 30px; /* Mezera pod logem */
+            display: flex; align-items: center; justify-content: center; 
+            border: 3px solid rgba(255,255,255,0.4); /* Světlý okraj kruhu */
+            overflow: hidden; /* VŠE, co přečnívá kruh, se ořízne */
+        }
+
+        /* Stylování samotného obrázku uvnitř kruhu */
+        .logo-vlevo img {
+            width: 100%; /* Vyplní šířku kruhu */
+            height: 100%; /* Vyplní výšku kruhu */
+            object-fit: cover; /* Ořízne obrázek tak, aby nebyl deformovaný */
         }
 
         /* Skupiny vstupních polí (label + input) */
@@ -122,7 +129,9 @@
 
 <div class="hlavni-wrapper">
     <div class="levy-panel">
-        <div class="logo-vlevo">Cakes<br>by DT</div>
+        <div class="logo-vlevo">
+            <img src="logo.jpg" alt="Logo Cakes by DT">
+        </div>
         <div class="kontaktni-form">
             <div class="input-group"><label>Jméno a příjmení</label><input type="text" placeholder="Jan Novák"></div>
             <div class="input-group"><label>E-mail</label><input type="email" placeholder="jan@seznam.cz"></div>
@@ -199,49 +208,47 @@
 <script>
     // 1. Nastavení globálních proměnných pro 3D scénu
     let scene, camera, renderer, cakeGroup;
-    const container = document.getElementById('canvas-container'); // Odkaz na kontejner v HTML
-    let isDragging = false, prevX = 0, prevY = 0; // Pomocné proměnné pro otáčení myší
+    const container = document.getElementById('canvas-container'); 
+    let isDragging = false, prevX = 0, prevY = 0; 
 
     // 2. Hlavní funkce, která připraví 3D prostor
     function init3D() {
-        scene = new THREE.Scene(); // Vytvoření prázdného 3D světa
-        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000); // Nastavení perspektivy
-        camera.position.set(0, 5, 12); // Umístění kamery (x=0, y=5, z=12)
-        camera.lookAt(0, 2, 0); // Kamera míří na střed dortu
+        scene = new THREE.Scene(); 
+        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000); 
+        camera.position.set(0, 5, 12); 
+        camera.lookAt(0, 2, 0); 
 
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Vykreslovač s vyhlazováním a průhledností
-        renderer.setSize(container.clientWidth, container.clientHeight); // Nastavení velikosti podle okna
-        renderer.setPixelRatio(window.devicePixelRatio); // Ostré zobrazení na mobilech/retina displejích
-        container.appendChild(renderer.domElement); // Přidání 3D plátna do HTML
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); 
+        renderer.setSize(container.clientWidth, container.clientHeight); 
+        renderer.setPixelRatio(window.devicePixelRatio); 
+        container.appendChild(renderer.domElement); 
         
-        scene.add(new THREE.AmbientLight(0xffffff, 0.6)); // Celkové jemné osvětlení scény
-        const light1 = new THREE.DirectionalLight(0xffffff, 0.7); light1.position.set(5, 10, 7); scene.add(light1); // Hlavní světlo (slunce)
-        const light2 = new THREE.PointLight(0xffffff, 0.4); light2.position.set(-5, 5, -5); scene.add(light2); // Pomocné světlo zezadu
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6)); 
+        const light1 = new THREE.DirectionalLight(0xffffff, 0.7); light1.position.set(5, 10, 7); scene.add(light1); 
+        const light2 = new THREE.PointLight(0xffffff, 0.4); light2.position.set(-5, 5, -5); scene.add(light2); 
 
-        cakeGroup = new THREE.Group(); // Vytvoření prázdné skupiny pro díly dortu
-        scene.add(cakeGroup); // Přidání skupiny do scény
-        updateCake(); // Volání funkce pro první vykreslení dortu
-        animate(); // Spuštění nekonečné smyčky vykreslování
+        cakeGroup = new THREE.Group(); 
+        scene.add(cakeGroup); 
+        updateCake(); 
+        animate(); 
     }
 
     // 3. Funkce pro tvorbu 3D kousku ovoce
     function createFruit(type, isTop) {
-        const group = new THREE.Group(); // Skupina pro jeden plod
-        const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5)); // Náhodný výběr u mixu
-        // Geometrie (koule): Jahoda je větší, borůvka menší
+        const group = new THREE.Group(); 
+        const isStrawberry = (type === 'strawberries' || (type === 'mix' && Math.random() > 0.5)); 
         const geometry = new THREE.SphereGeometry(isStrawberry ? (isTop ? 0.22 : 0.16) : (isTop ? 0.11 : 0.08), 12, 12);
-        const material = new THREE.MeshPhongMaterial({ color: isStrawberry ? 0xe53935 : 0x1a237e, shininess: 5 }); // Červená nebo tmavě modrá
-        const mesh = new THREE.Mesh(geometry, material); // Spojení tvaru a barvy
-        if(isStrawberry) mesh.scale.set(0.8, 1.1, 0.8); // Jahodu trochu svisle protáhneme
+        const material = new THREE.MeshPhongMaterial({ color: isStrawberry ? 0xe53935 : 0x1a237e, shininess: 5 }); 
+        const mesh = new THREE.Mesh(geometry, material); 
+        if(isStrawberry) mesh.scale.set(0.8, 1.1, 0.8); 
         group.add(mesh);
-        return group; // Vrátí hotový model ovoce
+        return group; 
     }
 
     // 4. HLAVNÍ FUNKCE: Postaví dort podle výběru uživatele
     function updateCake() {
-        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]); // Smaže starý dort před novým vykreslením
+        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]); 
         
-        // Načtení všech aktuálních hodnot z formuláře
         const layers = parseInt(document.getElementById('layers').value);
         const diameter = parseInt(document.getElementById('diameter').value);
         const coat = document.getElementById('coating').value;
@@ -252,52 +259,49 @@
         const innerColor = parseInt(document.getElementById('innerCream').value);
         const outerColor = parseInt(document.getElementById('outerCream').value);
         
-        const baseRadius = diameter / 6.5; // Přepočet průměru v cm na 3D souřadnice
-        const realHeight = (layers * 1.5 + (fruitT !== 'none' ? 2.5 : 0.5)).toFixed(1); // Výpočet reálné výšky pro text
-        document.getElementById('info-display').innerHTML = `Výška: ~${realHeight} cm<br>Průměr: ${diameter} cm`; // Aktualizace textu v badge
+        const baseRadius = diameter / 6.5; 
+        const realHeight = (layers * 1.5 + (fruitT !== 'none' ? 2.5 : 0.5)).toFixed(1); 
+        document.getElementById('info-display').innerHTML = `Výška: ~${realHeight} cm<br>Průměr: ${diameter} cm`; 
 
-        const h = 0.5; // Tloušťka jedné modelované vrstvy
-        for (let i = 0; i < layers; i++) { // Cyklus projde tolikrát, kolik je vrstev
-            const isCream = i % 2 === 1; // Každá lichá vrstva (1, 3, 5...) bude krém
+        const h = 0.5; 
+        for (let i = 0; i < layers; i++) { 
+            const isCream = i % 2 === 1; 
             const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(baseRadius, baseRadius, h, 48), // Vytvoření válce
-                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor, shininess: 2 }) // Barva podle vrstvy
+                new THREE.CylinderGeometry(baseRadius, baseRadius, h, 48), 
+                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor, shininess: 2 }) 
             );
-            segment.position.y = i * h; // Posunutí vrstvy nahoru o tloušťku předešlých vrstev
-            cakeGroup.add(segment); // Přidání vrstvy do skupiny
+            segment.position.y = i * h; 
+            cakeGroup.add(segment); 
 
-            // Pokud dort není "Naked", přidáme vnější potah (tenký válec přes korpus)
             if (coat !== 'naked') {
-                const isTopLayer = (i === layers - 1); // Zjištění, zda je to úplně horní vrstva
+                const isTopLayer = (i === layers - 1); 
                 const coating = new THREE.Mesh(
-                    new THREE.CylinderGeometry(baseRadius + 0.02, baseRadius + 0.02, h, 48, 1, !isTopLayer), // O chlup širší válec
-                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.6 : 1), shininess: 4 }) // Průhlednost pro polonaháče
+                    new THREE.CylinderGeometry(baseRadius + 0.02, baseRadius + 0.02, h, 48, 1, !isTopLayer), 
+                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.6 : 1), shininess: 4 }) 
                 );
                 coating.position.y = i * h;
                 cakeGroup.add(coating);
             }
 
-            // Přidání ovoce do krému (vnitřek), pokud je vybráno a krém je vidět
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
-                const count = Math.floor(baseRadius * 12); // Počet plodů podle velikosti dortu
+                const count = Math.floor(baseRadius * 12); 
                 for (let j = 0; j < count; j++) {
                     const f = createFruit(fruitC, false);
-                    const ang = (j / count) * Math.PI * 2; // Rozmístění do kruhu
+                    const ang = (j / count) * Math.PI * 2; 
                     f.position.set(Math.cos(ang) * (baseRadius - 0.05), i * h, Math.sin(ang) * (baseRadius - 0.05));
                     cakeGroup.add(f);
                 }
             }
 
-            // Přidání ovoce na úplný vršek dortu
             if (i === layers - 1 && fruitT !== 'none') {
-                let radii = [baseRadius * 0.85]; // Výchozí kruh po obvodu
-                if (topS === 'full') radii = [baseRadius * 0.3, baseRadius * 0.6, baseRadius * 0.85]; // Pokud je zaplněný, přidej další 2 kruhy
+                let radii = [baseRadius * 0.85]; 
+                if (topS === 'full') radii = [baseRadius * 0.3, baseRadius * 0.6, baseRadius * 0.85]; 
                 radii.forEach(rStep => {
                     const count = Math.floor(rStep * 9);
                     for(let j=0; j<count; j++) {
                         const f = createFruit(fruitT, true);
                         const ang = (j/count) * Math.PI * 2;
-                        f.position.set(Math.cos(ang)*rStep, (i*h)+0.3, Math.sin(ang)*rStep); // Umístění nad dort
+                        f.position.set(Math.cos(ang)*rStep, (i*h)+0.3, Math.sin(ang)*rStep); 
                         cakeGroup.add(f);
                     }
                 });
@@ -311,13 +315,11 @@
         cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
     }
 
-    // 6. Nekonečná animace (vykresluje scénu 60x za sekundu)
+    // 6. Nekonečná animace
     function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
-    
-    // Spuštění startu po načtení okna
     window.onload = init3D;
 
-    // 7. Logika pro otáčení dortu tažením myši přímo v okně
+    // 7. Logika pro otáčení myší
     container.onmousedown = (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; };
     window.onmousemove = (e) => {
         if (isDragging) {
@@ -326,7 +328,7 @@
             prevX = e.clientX; prevY = e.clientY;
         }
     };
-    window.onmouseup = () => isDragging = false; // Zastavení otáčení při puštění myši
+    window.onmouseup = () => isDragging = false; 
 </script>
 </body>
 </html>
