@@ -17,8 +17,9 @@
         .v-krem { height: 18px; border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: -1px; }
 
         .sekce { text-align: left; margin-bottom: 15px; padding: 10px; background: #fffcfd; border-radius: 10px; }
-        label { display: block; font-weight: bold; color: #ad1457; font-size: 14px; margin-bottom: 5px; }
-        select, input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; }
+        label { display: block; font-weight: bold; color: #ad1457; font-size: 13px; margin-bottom: 5px; }
+        select, input, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #f9a8d4; box-sizing: border-box; font-family: inherit; }
+        textarea { resize: vertical; min-height: 60px; }
         
         .flex { display: flex; gap: 10px; }
         .flex > div { flex: 1; }
@@ -36,15 +37,15 @@
     <div class="sekce">
         <h3>👤 Kontaktní údaje</h3>
         <label>Jméno a příjmení</label>
-        <input type="text" id="jmeno" placeholder="Jan Novák" required>
+        <input type="text" id="jmeno" placeholder="Jan Novák">
         <div class="flex" style="margin-top: 10px;">
             <div>
                 <label>E-mail</label>
-                <input type="email" id="zakaznik-email" placeholder="vas@email.cz" required>
+                <input type="email" id="zakaznik-email" placeholder="vas@email.cz">
             </div>
             <div>
                 <label>Telefon</label>
-                <input type="tel" id="telefon" placeholder="+420 123 456 789" required>
+                <input type="tel" id="telefon" placeholder="+420 123 456 789">
             </div>
         </div>
     </div>
@@ -93,8 +94,15 @@
     </div>
 
     <div class="sekce">
-        <label>Ovoce, dekorace, figurky...</label>
-        <input type="text" id="poznámka" placeholder="Např. jahody dovnitř, nápis 'Vše nejlepší'...">
+        <h3>✨ Dekorace a přísady</h3>
+        <label>Ovoce uvnitř/vně</label>
+        <input type="text" id="ovoce" placeholder="Např. jahody, maliny, borůvky...">
+        
+        <label style="margin-top:10px;">Jedlý papír / Figurky</label>
+        <input type="text" id="dekorace" placeholder="Např. Tlapková patrola, marcipánová růže...">
+        
+        <label style="margin-top:10px;">Poznámka pro cukrářku</label>
+        <textarea id="poznamka" placeholder="Doplňující informace, nápis na dort, speciální přání..."></textarea>
     </div>
 
     <div id="box-dortu"></div>
@@ -134,12 +142,10 @@
     }
 
     function poslatMail() {
-        // Načtení kontaktních údajů
         const jmeno = document.getElementById('jmeno').value;
         const emailZakaznik = document.getElementById('zakaznik-email').value;
         const telefon = document.getElementById('telefon').value;
 
-        // Validace
         if (!jmeno || !emailZakaznik || !telefon) {
             alert("Prosím vyplňte jméno, e-mail i telefon.");
             return;
@@ -149,7 +155,10 @@
         const p = document.getElementById('patra').value;
         const korp = document.getElementById('korpus').options[document.getElementById('korpus').selectedIndex].text;
         const napl = document.getElementById('krem').options[document.getElementById('krem').selectedIndex].text;
-        const pozn = document.getElementById('poznámka').value || "žádné";
+        
+        const ovoce = document.getElementById('ovoce').value || "nezaškrtnuto";
+        const deko = document.getElementById('dekorace').value || "žádné";
+        const pozn = document.getElementById('poznamka').value || "žádné";
 
         const mail = "DOMII.TRNOVSKA@SEZNAM.CZ";
         const subjekt = `Poptávka dortu - ${jmeno}`;
@@ -165,7 +174,11 @@
         - Počet pater: ${p}%0A
         - Korpus: ${korp}%0A
         - Náplň: ${napl}%0A
-        - Doplňky/Poznámka: ${pozn}`;
+        ----------------------------------%0A
+        DEKORACE A POZNÁMKY:%0A
+        - Ovoce: ${ovoce}%0A
+        - Dekorace/Figurky: ${deko}%0A
+        - Poznámka: ${pozn}`;
 
         window.location.href = `mailto:${mail}?subject=${encodeURIComponent(subjekt)}&body=${telo}`;
     }
