@@ -166,9 +166,8 @@
             if (style === 'wedding') r = 3 - (Math.floor(i / 2) * 0.4);
             
             const isCreamLayer = (i % 2 === 1);
-            
-            // TADY JE ZMĚNA: Krém (isCreamLayer) je o kousek užší než korpus, aby bylo vidět ovoce
-            const currentR = isCreamLayer ? r * 0.96 : r;
+            // Krém necháme jen o mikroskopický kousek užší, aby ovoce "vykouklo"
+            const currentR = isCreamLayer ? r * 0.98 : r;
 
             const mesh = new THREE.Mesh(
                 new THREE.CylinderGeometry(currentR, currentR, layerH, 45), 
@@ -183,21 +182,25 @@
                 const isInCream = isCreamLayer && i < layerCount - 1;
 
                 if (isTop || isStep || isInCream) {
-                    const count = isInCream && !isStep ? Math.floor(r * 8) : Math.floor(r * 6);
+                    const count = isInCream && !isStep ? Math.floor(r * 10) : Math.floor(r * 6);
                     for (let j = 0; j < count; j++) {
                         let f = (fruitType === 'mix') ? (j % 2 === 0 ? createStrawberry() : createBlueberry()) : (fruitType === 'strawberries' ? createStrawberry() : createBlueberry());
                         const ang = (j / count) * Math.PI * 2;
                         
                         if (isInCream && !isStep && !isTop) {
-                            // Ovoce v krému je teď vysunuté na úroveň korpusu (r), takže bude vidět
-                            f.scale.set(0.5, 0.5, 0.5);
-                            f.position.set(Math.cos(ang) * (r * 0.98), (i * layerH), Math.sin(ang) * (r * 0.98));
+                            // --- TRIK PRO ZAROVNÁNÍ ---
+                            // Ovoce zmenšíme a "zplácneme", aby nevyčnívalo ven
+                            f.scale.set(0.4, 0.4, 0.2); 
+                            // Natočíme ho směrem ke středu dortu
+                            f.rotation.y = ang; 
+                            // Posuneme ho tak, aby bylo vidět jen "čelo" kousku
+                            f.position.set(Math.cos(ang) * (r * 0.97), (i * layerH), Math.sin(ang) * (r * 0.97));
                         } else {
+                            // Klasické ovoce na vršku (kulaté a velké)
                             const spread = isTop ? 0.7 : 0.9;
                             f.position.set(Math.cos(ang) * r * spread, (i * layerH) + 0.32, Math.sin(ang) * r * spread);
                         }
                         
-                        f.rotation.y = Math.random() * Math.PI;
                         cakeGroup.add(f);
                     }
                 }
