@@ -31,14 +31,6 @@
         .ovladani-3d label { margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--primary); font-weight: bold; }
         .slider { width: 100%; height: 8px; background: #eee; border-radius: 5px; outline: none; accent-color: var(--primary); cursor: pointer; }
 
-        .doplnky-seznam { display: flex; flex-direction: column; gap: 12px; }
-        .doplnek-blok { border: 1px solid #eee; border-radius: 15px; background: #fcfcfc; transition: 0.3s ease; overflow: hidden; }
-        .doplnek-hlavicka { display: flex; align-items: center; gap: 12px; padding: 18px; cursor: pointer; font-weight: 600; font-size: 15px; color: #444; }
-        .doplnek-hlavicka input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
-        .doplnek-poznamka { max-height: 0; padding: 0 18px; opacity: 0; transition: all 0.4s ease; background: white; }
-        .doplnek-blok.aktivni { border-color: var(--primary); background: var(--bg); }
-        .doplnek-blok.aktivni .doplnek-poznamka { max-height: 150px; padding: 5px 18px 18px 18px; opacity: 1; }
-
         .btn { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 18px; cursor: pointer; font-weight: 800; font-size: 18px; transition: 0.3s; box-shadow: 0 4px 15px rgba(173,20,87,0.2); margin-top: 10px; }
         .btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
@@ -95,15 +87,6 @@
             <label>↕️ Náklon: <input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></label>
         </div>
 
-        <div class="sekce">
-            <h3>🎁 Doplňky</h3>
-            <div class="doplnky-seznam">
-                <div class="doplnek-blok" id="blok-papir"><label class="doplnek-hlavicka"><input type="checkbox" onchange="toggleDoplnek(this, 'papir')"> Jedlý papír</label><div class="doplnek-poznamka"><textarea rows="2" placeholder="Motiv..."></textarea></div></div>
-                <div class="doplnek-blok" id="blok-figurka"><label class="doplnek-hlavicka"><input type="checkbox" onchange="toggleDoplnek(this, 'figurka')"> Figurka</label><div class="doplnek-poznamka"><textarea rows="2" placeholder="Jaká?"></textarea></div></div>
-                <div class="doplnek-blok" id="blok-zapich"><label class="doplnek-hlavicka"><input type="checkbox" onchange="toggleDoplnek(this, 'zapich')"> Zápich</label><div class="doplnek-poznamka"><textarea rows="2" placeholder="Text..."></textarea></div></div>
-            </div>
-        </div>
-
         <button class="btn" onclick="alert('Poptávka odeslána k nacenění!')">ODESLAT POPTÁVKU</button>
     </div>
 </div>
@@ -112,8 +95,6 @@
     let scene, camera, renderer, cakeGroup;
     const container = document.getElementById('canvas-container');
     let isDragging = false, prevX = 0, prevY = 0;
-
-    function toggleDoplnek(cb, id) { document.getElementById('blok-' + id).classList.toggle('aktivni', cb.checked); }
 
     function init3D() {
         scene = new THREE.Scene();
@@ -137,11 +118,11 @@
     function createStrawberryTop() {
         const group = new THREE.Group();
         const pts = []; for (let i = 0; i < 10; i++) pts.push(new THREE.Vector2(Math.sin(i * 0.3) * 0.22 + 0.01, (i - 5) * 0.08));
-        const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 16), new THREE.MeshPhongMaterial({ color: 0xe53935, shininess: 80 }));
+        const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 16), new THREE.MeshPhongMaterial({ color: 0xe53935 }));
         body.rotation.x = Math.PI; group.add(body);
         for(let i=0; i<6; i++) {
             const l = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.2, 3), new THREE.MeshPhongMaterial({ color: 0x388e3c }));
-            l.position.y = 0.35; l.rotation.z = (i/6) * Math.PI * 2; l.rotation.x = 0.6; group.add(l);
+            l.position.y = 0.35; l.rotation.z = (i/6) * Math.PI * 2; group.add(l);
         }
         group.scale.set(1.3, 1.3, 1.3); return group;
     }
@@ -197,22 +178,23 @@
                 cakeGroup.add(coating);
             }
 
-            // OVOCE V KRÉMU - ZAPUŠTĚNÉ
-            if (isCreamLayer && fruitC !== 'none' && i < layers - 1) {
+            // PODMÍNKA PRO OVOCE V KRÉMU
+            // Generuje se pouze pokud není dort plně potažený
+            if (isCreamLayer && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 const count = Math.floor(r * 12);
                 for (let j = 0; j < count; j++) {
                     let f = (fruitC === 'mix') ? (j % 2 === 0 ? createStrawberryCream() : createBlueberry()) : 
                             (fruitC === 'strawberries' ? createStrawberryCream() : createBlueberry());
                     const ang = (j / count) * Math.PI * 2;
-                    // Poloměr je teď jen o kousíček větší než válec, aby ovoce prosvítalo nebo jemně vyčnívalo
-                   // Každý kousek bude trochu jinde, což vypadá nejpřirozeněji
-const fruitDist = r - 0.09;
+                    // Vyladěná pozice r - 0.05 pro přirozený vzhled
+                    const fruitDist = r - 0.05; 
                     f.position.set(Math.cos(ang) * fruitDist, i * h, Math.sin(ang) * fruitDist);
                     f.rotation.y = ang;
                     cakeGroup.add(f);
                 }
             }
 
+            // Ovoce navrchu (vždy viditelné)
             if (i === layers - 1 && fruitT !== 'none') {
                 const radii = (topS === 'full') ? [0.6, 1.2, 1.8, 2.4] : [r * 0.85];
                 radii.forEach(rStep => {
@@ -249,11 +231,6 @@ const fruitDist = r - 0.09;
         }
     };
     window.onmouseup = () => isDragging = false;
-    window.onresize = () => {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
-    };
 </script>
 </body>
 </html>
