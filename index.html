@@ -155,7 +155,7 @@
 
     function createBlueberry() {
         const group = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), new THREE.MeshPhongMaterial({ color: 0x283593 }));
+        const body = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), new THREE.MeshPhongMaterial({ color: 0x283593 }));
         group.add(body);
         const top = new THREE.Mesh(new THREE.TorusGeometry(0.03, 0.01, 8, 8), new THREE.MeshPhongMaterial({ color: 0x1a237e }));
         top.rotation.x = Math.PI/2;
