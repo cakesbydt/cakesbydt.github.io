@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="cs"> <head>
-    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Cakes by DT | Plná verze</title> <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Cakes by DT | Konfigurátor</title> <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
-        /* Definice globálních barev a proměnných pro design */
         :root { 
-            --primary: #bc9bc2;     /* Hlavní fialová barva */
-            --gold: #d4af37;        /* Zlatá pro detaily a ceny */
-            --glass: rgba(255, 255, 255, 0.85); /* Skleněný efekt panelů */
+            --primary: #bc9bc2;     
+            --gold: #d4af37;        
+            --glass: rgba(255, 255, 255, 0.85); 
             --pink-soft: #e8daeb;
         }
         
@@ -23,18 +22,15 @@
             min-height: 100vh;
         }
 
-        /* Dekorativní animované pozadí (barevné skvrny) */
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(45deg, #fFFFFF, #d4bdd9, #d4bdd9); }
         .blob { position: absolute; width: 500px; height: 500px; background: linear-gradient(135deg, rgba(173, 20, 87, 0.1) 0%, rgba(255, 45, 120, 0.1) 100%); filter: blur(80px); border-radius: 50%; animation: drift 20s infinite alternate; }
         @keyframes drift { from { transform: translate(-10%, -10%); } to { transform: translate(20%, 20%); } }
 
-        /* Hlavní kontejner aplikace s Glassmorphism efektem */
         .hlavni-wrapper { 
             display: flex; width: 95%; max-width: 1400px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
             border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 50px 100px rgba(0,0,0,0.1); margin: 40px 0; border-radius: 50px; overflow: hidden; animation: entrance 1s ease-out;
         }
 
-        /* Responzivní design pro mobily - změní rozložení z řádku na sloupec */
         @media (max-width: 900px) {
             .hlavni-wrapper { flex-direction: column; margin: 20px 0; border-radius: 30px; }
             .levy-panel { flex: 0 0 auto !important; width: 100% !important; padding: 40px 20px !important; }
@@ -45,7 +41,6 @@
 
         @keyframes entrance { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Stylizace levého panelu (logo, kontakt, shrnutí) */
         .levy-panel { 
             flex: 0 0 380px; background: linear-gradient(165deg, #bc9bc2 0%, #bc9bc2 50%, #d4bdd9 100%);
             display: flex; flex-direction: column; align-items: center; padding: 60px 40px; color: white; box-shadow: 20px 0 50px rgba(0,0,0,0.1);
@@ -54,17 +49,14 @@
         .logo-vlevo { width: 170px; height: 170px; background: white; border-radius: 50%; margin-bottom: 50px; border: 8px solid rgba(255, 255, 255, 0.15); overflow: hidden; transition: 0.5s; }
         .logo-vlevo img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Widget pro dynamické zobrazení aktuálního výběru a ceny */
         .side-summary { width: 100%; background: rgba(0,0,0,0.15); padding: 20px; border-radius: 20px; margin-top: 20px; border-left: 4px solid var(--gold); }
         .side-summary div { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; }
         .side-summary p { margin: 0; font-size: 13px; font-weight: 600; color: #fff; }
 
-        /* Stylizace vstupních polí formuláře */
         .input-group { width: 100%; margin-bottom: 25px; }
         .input-group label { display: block; font-size: 10px; letter-spacing: 2px; margin-bottom: 10px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.7); }
         .input-group input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box; }
 
-        /* Hlavní sekce s konfigurátorem */
         .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; }
         .hlavni-motto { font-family: 'Playfair Display', serif; font-style: italic; color: #bc9bc2; text-align: center; font-size: 62px; margin-bottom: 50px; }
         
@@ -77,26 +69,21 @@
         label { display: block; font-size: 11px; font-weight: 800; color: #999; margin-bottom: 12px; text-transform: uppercase; }
         select { width: 100%; padding: 16px; border-radius: 18px; border: 2px solid #f0f0f0; background: white; font-family: inherit; font-weight: 600; cursor: pointer; }
 
-        /* Kontejner, kde se vykresluje 3D model dortu */
-        #canvas-container { width: 100%; height: 550px; background: radial-gradient(circle at center, #f8f8f8 0%, #dcdcdc 100%); position: relative; border-radius: 50px; margin-bottom: 40px; cursor: grab; }
+        #canvas-container { width: 100%; height: 550px; background: radial-gradient(circle at center, #f8f8f8 0%, #dcdcdc 100%); position: relative; border-radius: 50px; margin-bottom: 40px; cursor: grab; touch-action: none; }
         
-        /* Plovoucí štítky uvnitř 3D okna */
         .info-badge-float { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 8px 20px; border-radius: 100px; font-weight: 800; font-size: 11px; z-index: 10; white-space: nowrap; }
         #price-display { position: absolute; top: 20px; right: 20px; background: var(--gold); color: white; padding: 10px 20px; border-radius: 15px; font-weight: 800; font-size: 14px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 10; }
 
-        /* Slidery pro manuální ovládání rotace */
         .controls-row { display: flex; gap: 40px; justify-content: center; margin-bottom: 40px; opacity: 0.6; }
         .slider { -webkit-appearance: none; width: 150px; height: 4px; background: #ccc; border-radius: 2px; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 3px solid white; cursor: pointer; }
 
-        /* Interaktivní položky doplňků s animací vysouvání */
         .doplnek-item { background: #fdfdfd; padding: 25px; border-radius: 25px; margin-bottom: 20px; border: 2px solid transparent; transition: 0.4s; }
         .doplnek-item:has(input:checked) { border-color: var(--gold); background: #fffdf2; }
         .extra-input { max-height: 0; overflow: hidden; opacity: 0; transition: 0.4s ease; }
         .doplnek-item:has(input:checked) .extra-input { max-height: 100px; opacity: 1; margin-top: 20px; }
         .extra-input input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* Hlavní tlačítko pro odeslání */
         .btn { width: 100%; padding: 30px; background: linear-gradient(90deg, #bc9bc2, #d4bdd9); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: 4px; box-shadow: 0 25px 50px rgba(173,20,87,0.3); transition: 0.5s; }
         .btn:hover { transform: translateY(-8px); }
         textarea { width: 100%; padding: 20px; border-radius: 25px; border: 2px solid #eee; margin-top: 20px; font-family: inherit; resize: none; box-sizing: border-box; }
@@ -213,7 +200,7 @@
 <script>
     let scene, camera, renderer, cakeGroup;
     let isDragging = false; 
-    let previousMousePosition = { x: 0, y: 0 };
+    let previousPosition = { x: 0, y: 0 };
     const container = document.getElementById('canvas-container');
 
     function init3D() {
@@ -241,65 +228,55 @@
         updateCake(); 
         animate(); 
 
-        // --- ZDOKONALENÉ OVLÁDÁNÍ ---
-        const handleStart = (clientX, clientY) => { 
-            isDragging = true; 
-            previousMousePosition = { x: clientX, y: clientY }; 
+        // --- OPRAVENÉ OVLÁDÁNÍ PRO MOBIL I PC ---
+        const getPoint = (e) => {
+            if (e.touches && e.touches.length > 0) {
+                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+            return { x: e.clientX, y: e.clientY };
         };
 
-        const handleMove = (clientX, clientY, e) => {
+        const handleStart = (e) => {
+            isDragging = true;
+            const point = getPoint(e);
+            previousPosition = point;
+        };
+
+        const handleMove = (e) => {
             if (!isDragging) return;
             
-            // Důležité: Zastaví skrolování a "cukání" stránky při pohybu na dortu
-            if (e.cancelable) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+            // Zákaz skrolování stránky při tahu na 3D ploše
+            if (e.cancelable) e.preventDefault();
 
-            const deltaX = clientX - previousMousePosition.x;
-            const deltaY = clientY - previousMousePosition.y;
-            
-            // Přidána citlivost pro plynulejší zážitek
-            const sensitivity = 0.008; 
-            
+            const point = getPoint(e);
+            const deltaX = point.x - previousPosition.x;
+            const deltaY = point.y - previousPosition.y;
+
+            const sensitivity = 0.007;
             cakeGroup.rotation.y += deltaX * sensitivity;
-            // Omezení vertikálního náklonu, aby se dort nepřetočil "vzhůru nohama"
+            
             let newRotX = cakeGroup.rotation.x + deltaY * sensitivity;
             cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, newRotX));
-            
-            previousMousePosition = { x: clientX, y: clientY };
-            
-            // Synchronizace sliderů
+
+            previousPosition = point;
+
+            // Sync sliderů
             document.getElementById('rotateY').value = cakeGroup.rotation.y;
             document.getElementById('rotateX').value = cakeGroup.rotation.x;
         };
 
-        // EVENTY MYŠ (PC)
-        container.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
-        window.addEventListener('mouseup', () => { isDragging = false; });
-        window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY, e));
+        const handleEnd = () => { isDragging = false; };
 
-        // EVENTY DOTYK (Mobil) - Vylepšeno pro stabilitu
-        container.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 0) {
-                const touch = e.touches[0];
-                handleStart(touch.clientX, touch.clientY);
-            }
-        }, { passive: false });
+        // Eventy pro myš
+        container.addEventListener('mousedown', handleStart);
+        window.addEventListener('mousemove', handleMove, { passive: false });
+        window.addEventListener('mouseup', handleEnd);
 
-        window.addEventListener('touchend', () => { 
-            isDragging = false; 
-        }, { passive: false });
-
-        container.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) {
-                const touch = e.touches[0];
-                handleMove(touch.clientX, touch.clientY, e);
-            }
-        }, { passive: false });
+        // Eventy pro dotyk
+        container.addEventListener('touchstart', handleStart, { passive: false });
+        container.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('touchend', handleEnd);
     }
-
-    // ... (zbytek funkcí createFruit, calculatePrice, updateCake, manualControl, animate zůstává stejný jako v předchozím kódu) ...
 
     function createFruit(type, isTop) {
         const group = new THREE.Group();
@@ -340,6 +317,7 @@
         if (coat === 'full') total += 120;
         if (document.getElementById('fruitCream').value !== 'none') total += 100;
         if (document.getElementById('fruitTop').value !== 'none') total += 150;
+        
         if (document.getElementById('c_flowers').checked) total += 350;
         if (document.getElementById('c1').checked) total += 250;
         if (document.getElementById('c2').checked) total += 400;
@@ -348,10 +326,13 @@
         const minPrice = Math.round(total * 0.95);
         const maxPrice = Math.round(total * 1.05);
 
-        document.getElementById('info-display').innerText = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm`;
-        document.getElementById('price-display').innerText = "ODHAD: " + minPrice + " - " + maxPrice + " Kč";
-        document.getElementById('side-info').innerText = `${diameter}cm | ${layers} vrstev`;
-        document.getElementById('side-price').innerText = minPrice + " - " + maxPrice + " Kč";
+        const infoText = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm | v. cca ${layers * 1.5}cm`;
+        const priceText = `${minPrice} – ${maxPrice} Kč`;
+
+        document.getElementById('info-display').innerText = infoText;
+        document.getElementById('price-display').innerText = "ODHAD: " + priceText;
+        document.getElementById('side-info').innerText = infoText;
+        document.getElementById('side-price').innerText = priceText;
     }
 
     function updateCake() {
@@ -394,158 +375,7 @@
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
             }
-            // Ovoce
-            if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
-                for (let j = 0; j < 8; j++) {
-                    const f = createFruit(fruitC, false);
-                    const ang = (j / 8) * Math.PI * 2;
-                    f.position.set(Math.cos(ang) * (currentRadius - 0.1), i * h, Math.sin(ang) * (currentRadius - 0.1));
-                    cakeGroup.add(f);
-                }
-            }
-            // Zdobení vršku
-            const isTopSurface = (i === layers - 1);
-            if (isTopSurface && fruitT !== 'none') {
-                const r = currentRadius * 0.7;
-                const count = 12;
-                for(let j=0; j<count; j++) {
-                    const f = createFruit(fruitT, true);
-                    const ang = (j/count) * Math.PI * 2;
-                    f.position.set(Math.cos(ang) * r, (i * h) + 0.3, Math.sin(ang) * r);
-                    cakeGroup.add(f);
-                }
-            }
-        }
-        calculatePrice(); 
-    }
 
-    function manualControl() {
-        if (!cakeGroup) return;
-        cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
-        cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
-    }
-
-    function animate() {
-        requestAnimationFrame(animate);
-        if (renderer && scene && camera) {
-            renderer.render(scene, camera);
-        }
-    }
-
-    window.onload = init3D;
-</script>
-
-    // Pomocná funkce pro tvorbu 3D modelů ovoce (koule s různými barvami/měřítkem)
-    function createFruit(type, isTop) {
-        const group = new THREE.Group();
-        let finalType = type;
-        if (type === 'mix') {
-            const rand = Math.random();
-            finalType = rand < 0.33 ? 'strawberries' : (rand < 0.66 ? 'blueberries' : 'raspberries');
-        }
-        
-        let geo, mat, mesh;
-        if (finalType === 'strawberries') {
-            geo = new THREE.SphereGeometry(isTop ? 0.22 : 0.16, 12, 12);
-            mat = new THREE.MeshPhongMaterial({ color: 0xd32f2f, shininess: 40 });
-            mesh = new THREE.Mesh(geo, mat);
-            mesh.scale.set(0.8, 1.3, 0.8);
-        } else if (finalType === 'raspberries') {
-            geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.13, 10, 10);
-            mat = new THREE.MeshPhongMaterial({ color: 0xe91e63, flatShading: true });
-            mesh = new THREE.Mesh(geo, mat);
-        } else {
-            geo = new THREE.SphereGeometry(isTop ? 0.12 : 0.08, 8, 8);
-            mat = new THREE.MeshPhongMaterial({ color: 0x283593, shininess: 50 });
-            mesh = new THREE.Mesh(geo, mat);
-        }
-        group.add(mesh);
-        return group;
-    }
-
-    // Logika výpočtu ceny na základě zvolených parametrů
-    function calculatePrice() {
-        const diameter = parseInt(document.getElementById('diameter').value);
-        const layers = parseInt(document.getElementById('layers').value);
-        const style = document.getElementById('cakeStyle').value;
-        const coat = document.getElementById('coating').value;
-        const flavorText = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
-        
-        let total = (diameter * 15) * (layers / 2);
-        if (style === 'wedding') total += 500; 
-        if (flavorText.includes("Ořechový")) total += 100;
-        if (coat === 'full') total += 120;
-        if (document.getElementById('fruitCream').value !== 'none') total += 100;
-        if (document.getElementById('fruitTop').value !== 'none') total += 150;
-        
-        // Přičtení doplňků (květiny, figurky atd.)
-        if (document.getElementById('c_flowers').checked) total += 350;
-        if (document.getElementById('c1').checked) total += 250;
-        if (document.getElementById('c2').checked) total += 400;
-        if (document.getElementById('c3').checked) total += 150;
-
-        // Rozptyl ceny +/- 5% pro "odhadovanou" cenu
-        const minPrice = Math.round(total * 0.95);
-        const maxPrice = Math.round(total * 1.05);
-
-        const infoText = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm | v. cca ${layers * 1.5}cm`;
-        const priceText = `${minPrice} – ${maxPrice} Kč`;
-
-        // Aktualizace všech textových polí na webu
-        document.getElementById('info-display').innerText = infoText;
-        document.getElementById('price-display').innerText = "ODHAD: " + priceText;
-        document.getElementById('side-info').innerText = infoText;
-        document.getElementById('side-price').innerText = priceText;
-    }
-
-    // Hlavní funkce pro překreslení 3D modelu dortu při každé změně v selectech
-    function updateCake() {
-        if (!cakeGroup) return;
-        // Vyčištění starého modelu před novým vykreslením
-        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
-        
-        const style = document.getElementById('cakeStyle').value;
-        const layers = parseInt(document.getElementById('layers').value);
-        const diameter = parseInt(document.getElementById('diameter').value);
-        const coat = document.getElementById('coating').value;
-        const fruitT = document.getElementById('fruitTop').value;
-        const fruitC = document.getElementById('fruitCream').value;
-        const topS = document.getElementById('topStyle').value;
-        const flavorColor = parseInt(document.getElementById('flavor').value);
-        const innerColor = parseInt(document.getElementById('innerCream').value);
-        const outerColor = parseInt(document.getElementById('outerCream').value);
-        
-        const baseRadius = diameter / 6.5; 
-        const h = 0.5; // Výška jednoho segmentu (vrstvy)
-
-        // Smyčka generující jednotlivé vrstvy dortu (korpusy a krémy)
-        for (let i = 0; i < layers; i++) {
-            let currentRadius = baseRadius;
-            // Pro svatební dort zmenšujeme poloměr s výškou (vytvoření pater)
-            if (style === 'wedding') {
-                if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
-                if (i >= 8) currentRadius = baseRadius * 0.55;
-            }
-            
-            const isCream = i % 2 === 1; // Střídání korpusu a vnitřního krému
-            const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
-                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
-            );
-            segment.position.y = i * h;
-            cakeGroup.add(segment);
-
-            // Generování vnějšího obmazu (pokud není dort nahý)
-            if (coat !== 'naked') {
-                const coatMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
-                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide })
-                );
-                coatMesh.position.y = i * h;
-                cakeGroup.add(coatMesh);
-            }
-
-            // Rozmístění ovoce do vnitřního krému (viditelné u nahých/polonahých dortů)
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 for (let j = 0; j < 8; j++) {
                     const f = createFruit(fruitC, false);
@@ -555,7 +385,6 @@
                 }
             }
 
-            // Dekorování vrchní plochy dortu nebo jednotlivých pater ovocem
             const isTopSurface = (i === layers - 1);
             const isTierSurface = (style === 'wedding' && (i === 3 || i === 7));
             if ((isTopSurface || isTierSurface) && fruitT !== 'none') {
@@ -576,14 +405,12 @@
         calculatePrice(); 
     }
 
-    // Funkce reagující na slidery pod 3D modelem
     function manualControl() {
         if (!cakeGroup) return;
         cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
         cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
     }
 
-    // Nekonečná smyčka překreslování obrazovky (zhruba 60 FPS)
     function animate() {
         requestAnimationFrame(animate);
         if (renderer && scene && camera) {
@@ -591,11 +418,9 @@
         }
     }
 
-    // Zpracování dat před odesláním formuláře na e-mail
     document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
         const s_style = document.getElementById('cakeStyle').options[document.getElementById('cakeStyle').selectedIndex].text;
         const s_diam = document.getElementById('diameter').value + " cm";
-        // Uložení konfigurace do skrytého pole, aby dorazila v e-mailu
         document.getElementById('hiddenConfig').value = `Styl: ${s_style}, Průměr: ${s_diam}`;
         document.getElementById('hiddenPrice').value = document.getElementById('side-price').innerText;
         
@@ -604,7 +429,6 @@
         btn.disabled = true;
     });
 
-    // Spuštění inicializace po načtení celého okna
     window.onload = init3D;
 </script>
 </body>
