@@ -501,44 +501,42 @@
                 }
             } */
 
-          // Ovoce uvnitř (v krému)
+         // Ovoce uvnitř (v krému)
 if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
     
-    // Definice hloubky pro jednotlivé druhy
     const fruitOffsets = {
-        'strawberries': 0.08,
+        'strawberries': 0.10,
         'raspberries': 0.09,
-        'blueberries': 0.06
+        'blueberries': 0.07
     };
 
-    for (let j = 0; j < 12; j++) { // Zvýšil jsem počet na 12 pro bohatší mix
-        // 1. Určení typu ovoce pro tento konkrétní kousek
+    // ZVÝŠENO: Z 12 na 30 kusů pro pořádnou nálož ovoce
+    for (let j = 0; j < 30; j++) { 
         let activeType = fruitC;
         if (fruitC === 'mix') {
             const types = ['strawberries', 'raspberries', 'blueberries'];
             activeType = types[Math.floor(Math.random() * types.length)];
         }
 
-        // 2. Získání základního offsetu pro daný typ
-        let baseOffset = fruitOffsets[activeType] || 0.07;
+        let baseOffset = fruitOffsets[activeType] || 0.08;
         
-        // 3. Přidání špetky chaosu (náhodný úhel a drobná změna hloubky)
-        // Náhodný úhel zajistí, že ovoce nebude v řadách nad sebou
         const randomAng = Math.random() * Math.PI * 2;
-        // Náhodný jitter způsobí, že některé kuličky koukají víc a jiné míň
-        const jitter = (Math.random() - 0.5) * 0.05; 
-        const finalOffset = baseOffset + jitter;
+        
+        // VĚTŠÍ ROZPTYL: Ovoce teď bude v rozsahu od úplného kraje až hlouběji do dortu
+        // Math.random() * 0.15 znamená, že některé kousky budou zalezlé až 15cm hluboko
+        const deepChaos = Math.random() * 0.15; 
+        const finalOffset = baseOffset + deepChaos;
 
         const f = createFruit(activeType, false);
         
         f.position.set(
             Math.cos(randomAng) * (currentRadius - finalOffset), 
-            i * h + (Math.random() - 0.5) * 0.1, // Drobný posun i nahoru/dolů v rámci krému
+            // VĚTŠÍ VERTIKÁLNÍ CHAOS: Aby ovoce vyplnilo celou výšku krémové vrstvy (h)
+            i * h + (Math.random() - 0.5) * (h * 0.8), 
             Math.sin(randomAng) * (currentRadius - finalOffset)
         );
         
-        // Náhodná rotace ovoce, aby každé mířilo jinam
-        f.rotation.set(Math.random(), Math.random(), Math.random());
+        f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
         
         cakeGroup.add(f);
     }
