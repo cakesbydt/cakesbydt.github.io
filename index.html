@@ -140,52 +140,56 @@
         .btn:hover { transform: translateY(-8px); }
         textarea { width: 100%; padding: 20px; border-radius: 25px; border: 2px solid #eee; margin-top: 20px; font-family: inherit; resize: none; box-sizing: border-box; }
 
+/* Popisek nad fotkou */
 .gallery-label { 
-    font-size: 11px; letter-spacing: 2px; font-weight: 800; 
-    color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 15px; 
+    font-size: 11px; 
+    letter-spacing: 2px; 
+    font-weight: 800; 
+    color: rgba(255,255,255,0.7); 
+    text-transform: uppercase; 
+    margin-bottom: 15px; 
 }
 
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 100px);
-    gap: 10px;
+/* Hlavní kontejner pro jednu velkou fotku */
+.single-photo-container {
+    width: 100%;
+    height: 450px; /* Tady nastavuješ výslednou výšku fotky */
+    margin-bottom: 25px;
 }
 
-.photo-slot {
+/* Samotný slot pro fotku - velký a zářící */
+.photo-slot-main {
+    width: 100%;
+    height: 100%;
     background-size: cover;
     background-position: center;
-    border-radius: 12px;
-    border: 1px solid rgba(177, 156, 217, 0.3);
-    transition: all 1s ease-in-out; /* Plynulé prolnutí */
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    border-radius: 25px; /* Krásně zaoblené rohy */
+    border: 2px solid rgba(177, 156, 217, 0.4);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 25px rgba(177, 156, 217, 0.2);
+    transition: opacity 0.8s ease-in-out, transform 0.5s ease;
+    cursor: pointer;
 }
 
-.photo-slot.large {
-    grid-column: span 2;
-    grid-row: span 2;
-    border: 2px solid rgba(177, 156, 217, 0.5); /* Silnější okraj pro hlavní fotku */
-    box-shadow: 0 0 20px rgba(177, 156, 217, 0.2);
-}
-
-.photo-slot:hover {
+.photo-slot-main:hover {
+    transform: scale(1.03); /* Jemné zvětšení při najetí */
     border-color: #b19cd9;
-    box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
-    transform: scale(1.02);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 35px rgba(177, 156, 217, 0.5);
 }
+
+/* --- Tady začíná tvé Instagram tlačítko (beze změny) --- */
 .ig-float-button {
     position: fixed;
     bottom: 30px;
     right: 30px;
     width: 60px;
     height: 60px;
-    background-color: white; /* Čistě bílý základ */
+    background-color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px rgba(177, 156, 217, 0.3); /* Levandulový stín */
-    z-index: 1000; /* Aby bylo vždy nad 3D modelem */
+    box-shadow: 0 10px 25px rgba(177, 156, 217, 0.3);
+    z-index: 1000;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 2px solid #e2dcf4;
 }
@@ -196,11 +200,10 @@
 }
 
 .ig-float-button:hover {
-    transform: scale(1.1) translateY(-5px); /* Jemné poskočení nahoru */
+    transform: scale(1.1) translateY(-5px);
     border-color: #b19cd9;
-    box-shadow: 0 0 30px rgba(177, 156, 217, 0.6); /* Výrazné levandulové podsvícení */
+    box-shadow: 0 0 30px rgba(177, 156, 217, 0.6);
 }
-
 /* Mobilní verze - o kousek menší, aby nepřekáželo */
 @media (max-width: 768px) {
     .ig-float-button {
