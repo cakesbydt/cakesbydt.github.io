@@ -150,26 +150,30 @@
     margin-bottom: 15px; 
 }
 
-/* Hlavní kontejner pro jednu velkou fotku */
 .single-photo-container {
-    width: calc(100% + 200px); /* Zvětší šířku o padding (odhadem 20px na každé straně) */
-    height: 550px;            /* Vyšší fotka vypadá v tomhle úzkém sloupci lépe */
-    margin-left: auto;   /* Automatický okraj vlevo */
-    margin-right: auto;  /* Automatický okraj vpravo -> toto ji vycentruje */
-    margin-bottom: 30px;
+    /* Místo calc použijeme procenta, aby to bylo stabilní */
+    width: 90%; 
+    
+    /* Výška - pokud chceš medvídka, nech 550px, pokud bílý dort, zkus 400px */
+    height: 500px; 
+    
+    /* Toto zajistí vycentrování */
+    margin: 20px auto 30px auto; 
+    
+    /* Důležité: aby fotka neutíkala pod pravý panel */
+    position: relative;
+    overflow: hidden; 
+    border-radius: 25px;
 }
 
-/* Samotný slot pro fotku - velký a zářící */
 .photo-slot-main {
     width: 100%;
     height: 100%;
     background-size: cover;
     background-position: center;
-    border-radius: 25px; /* Krásně zaoblené rohy */
-    border: 2px solid rgba(177, 156, 217, 0.4);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 25px rgba(177, 156, 217, 0.2);
-    transition: opacity 0.8s ease-in-out, transform 0.5s ease;
-    cursor: pointer;
+    /* Odstraň border-radius odsud, už je v kontejneru výše */
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 .photo-slot-main:hover {
