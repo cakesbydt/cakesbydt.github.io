@@ -56,7 +56,7 @@
         }
         
         /* Kruhový obal pro logo */
-        .logo-vlevo { width: 250px; height: 250px; background: white; border-radius: 50%; margin-bottom: 50px; border: 8px solid rgba(255, 255, 255, 0.15); overflow: hidden; transition: 0.5s; }
+        .logo-vlevo { width: 450px; height: 450px; background: white; border-radius: 50%; margin-bottom: 50px; border: 8px solid rgba(255, 255, 255, 0.15); overflow: hidden; transition: 0.5s; }
         .logo-vlevo img { width: 100%; height: 100%; object-fit: cover; }
 
         /* Malý panel se shrnutím výběru v levé části
@@ -64,10 +64,41 @@
         .side-summary div { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; }
         .side-summary p { margin: 0; font-size: 13px; font-weight: 600; color: #fff; } */
 
-        /* Stylování vstupních polí formuláře */
-        .input-group { width: 100%; margin-bottom: 25px; }
-        .input-group label { display: block; font-size: 10px; letter-spacing: 2px; margin-bottom: 10px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.7); }
-        .input-group input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box; }
+/* Stylování vstupních polí formuláře - ZVĚTŠENÁ VERZE */
+.input-group { 
+    width: 100%; 
+    margin-bottom: 30px; /* Trochu víc místa mezi skupinami */
+}
+
+.input-group label { 
+    display: block; 
+    font-size: 13px; /* Zvětšeno z 10px na 13px */
+    letter-spacing: 2px; 
+    margin-bottom: 12px; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    color: rgba(255,255,255,0.9); /* Více bílá pro lepší čitelnost */
+}
+
+.input-group input { 
+    width: 100%; 
+    padding: 18px 20px; /* Větší vnitřní prostor (padding) */
+    border-radius: 18px; /* O něco kulatější rohy pro modernější vzhled */
+    border: 1px solid rgba(255,255,255,0.2); 
+    background: rgba(0,0,0,0.3); /* Trochu tmavší pro lepší kontrast textu */
+    color: white; 
+    font-size: 16px; /* Zvětšený text uvnitř políčka (aby se dobře psalo) */
+    outline: none; 
+    box-sizing: border-box; 
+    transition: all 0.3s ease; /* Plynulý přechod při kliknutí */
+}
+
+/* Efekt při kliknutí do políčka (Focus) */
+.input-group input:focus {
+    border-color: #b19cd9; 
+    background: rgba(177, 156, 217, 0.15); 
+    box-shadow: 0 0 20px rgba(177, 156, 217, 0.4); 
+}
 
         /* Hlavní pravá část s konfigurátorem */
         .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; }
