@@ -211,13 +211,11 @@
 </form>
 
 <script>
-    // Globální proměnné pro 3D scénu
     let scene, camera, renderer, cakeGroup;
     let isDragging = false; 
     let previousMousePosition = { x: 0, y: 0 };
     const container = document.getElementById('canvas-container');
 
-    // Funkce pro inicializaci 3D světa (světla, kamera, plátno)
     function init3D() {
         if (!container) return;
 
@@ -226,27 +224,24 @@
         camera.position.set(0, 6, 14); 
         camera.lookAt(0, 2, 0);
 
-        // Nastavení rendereru (antialias zajišťuje hladké hrany)
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); 
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // Osvětlení scény (okolní světlo + směrové světlo pro stíny a lesk)
         scene.add(new THREE.AmbientLight(0xffffff, 0.6)); 
         const mainLight = new THREE.DirectionalLight(0xffffff, 0.9); 
         mainLight.position.set(5, 10, 7);
         scene.add(mainLight);
 
-        // Skupina, která drží všechny části dortu pohromadě pro snadnou rotaci
         cakeGroup = new THREE.Group();
         cakeGroup.rotation.y = 0.5;
         scene.add(cakeGroup);
         
-        updateCake(); // První vykreslení dortu
-        animate();    // Spuštění renderovací smyčky
+        updateCake(); 
+        animate(); 
 
-        // --- OVLÁDÁNÍ (Sjednoceno pro PC i Mobil) ---
+        // --- ZDOKONALENÉ OVLÁDÁNÍ ---
         const handleStart = (clientX, clientY) => { 
             isDragging = true; 
             previousMousePosition = { x: clientX, y: clientY }; 
@@ -255,41 +250,190 @@
         const handleMove = (clientX, clientY, e) => {
             if (!isDragging) return;
             
-            // Zamezení skrolu stránky při dotyku v oblasti 3D náhledu
-            if (e && e.cancelable) e.preventDefault();
+            // Důležité: Zastaví skrolování a "cukání" stránky při pohybu na dortu
+            if (e.cancelable) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
 
             const deltaX = clientX - previousMousePosition.x;
             const deltaY = clientY - previousMousePosition.y;
             
-            // Výpočet nové rotace na základě pohybu myši/prstu
-            cakeGroup.rotation.y += deltaX * 0.01;
-            cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x + deltaY * 0.01));
+            // Přidána citlivost pro plynulejší zážitek
+            const sensitivity = 0.008; 
+            
+            cakeGroup.rotation.y += deltaX * sensitivity;
+            // Omezení vertikálního náklonu, aby se dort nepřetočil "vzhůru nohama"
+            let newRotX = cakeGroup.rotation.x + deltaY * sensitivity;
+            cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, newRotX));
             
             previousMousePosition = { x: clientX, y: clientY };
             
-            // Synchronizace sliderů pod dortem
+            // Synchronizace sliderů
             document.getElementById('rotateY').value = cakeGroup.rotation.y;
             document.getElementById('rotateX').value = cakeGroup.rotation.x;
         };
 
-        // Naslouchání událostem myši
+        // EVENTY MYŠ (PC)
         container.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
         window.addEventListener('mouseup', () => { isDragging = false; });
         window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY, e));
 
-        // Naslouchání událostem dotyku (pro mobily) - pasivní false umožňuje preventDefault
+        // EVENTY DOTYK (Mobil) - Vylepšeno pro stabilitu
         container.addEventListener('touchstart', (e) => {
-            const touch = e.touches[0];
-            handleStart(touch.clientX, touch.clientY);
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                handleStart(touch.clientX, touch.clientY);
+            }
         }, { passive: false });
 
-        window.addEventListener('touchend', () => { isDragging = false; });
+        window.addEventListener('touchend', () => { 
+            isDragging = false; 
+        }, { passive: false });
 
         container.addEventListener('touchmove', (e) => {
-            const touch = e.touches[0];
-            handleMove(touch.clientX, touch.clientY, e);
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                handleMove(touch.clientX, touch.clientY, e);
+            }
         }, { passive: false });
     }
+
+    // ... (zbytek funkcí createFruit, calculatePrice, updateCake, manualControl, animate zůstává stejný jako v předchozím kódu) ...
+
+    function createFruit(type, isTop) {
+        const group = new THREE.Group();
+        let finalType = type;
+        if (type === 'mix') {
+            const rand = Math.random();
+            finalType = rand < 0.33 ? 'strawberries' : (rand < 0.66 ? 'blueberries' : 'raspberries');
+        }
+        let geo, mat, mesh;
+        if (finalType === 'strawberries') {
+            geo = new THREE.SphereGeometry(isTop ? 0.22 : 0.16, 12, 12);
+            mat = new THREE.MeshPhongMaterial({ color: 0xd32f2f, shininess: 40 });
+            mesh = new THREE.Mesh(geo, mat);
+            mesh.scale.set(0.8, 1.3, 0.8);
+        } else if (finalType === 'raspberries') {
+            geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.13, 10, 10);
+            mat = new THREE.MeshPhongMaterial({ color: 0xe91e63, flatShading: true });
+            mesh = new THREE.Mesh(geo, mat);
+        } else {
+            geo = new THREE.SphereGeometry(isTop ? 0.12 : 0.08, 8, 8);
+            mat = new THREE.MeshPhongMaterial({ color: 0x283593, shininess: 50 });
+            mesh = new THREE.Mesh(geo, mat);
+        }
+        group.add(mesh);
+        return group;
+    }
+
+    function calculatePrice() {
+        const diameter = parseInt(document.getElementById('diameter').value);
+        const layers = parseInt(document.getElementById('layers').value);
+        const style = document.getElementById('cakeStyle').value;
+        const coat = document.getElementById('coating').value;
+        const flavorText = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
+        
+        let total = (diameter * 15) * (layers / 2);
+        if (style === 'wedding') total += 500; 
+        if (flavorText.includes("Ořechový")) total += 100;
+        if (coat === 'full') total += 120;
+        if (document.getElementById('fruitCream').value !== 'none') total += 100;
+        if (document.getElementById('fruitTop').value !== 'none') total += 150;
+        if (document.getElementById('c_flowers').checked) total += 350;
+        if (document.getElementById('c1').checked) total += 250;
+        if (document.getElementById('c2').checked) total += 400;
+        if (document.getElementById('c3').checked) total += 150;
+
+        const minPrice = Math.round(total * 0.95);
+        const maxPrice = Math.round(total * 1.05);
+
+        document.getElementById('info-display').innerText = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm`;
+        document.getElementById('price-display').innerText = "ODHAD: " + minPrice + " - " + maxPrice + " Kč";
+        document.getElementById('side-info').innerText = `${diameter}cm | ${layers} vrstev`;
+        document.getElementById('side-price').innerText = minPrice + " - " + maxPrice + " Kč";
+    }
+
+    function updateCake() {
+        if (!cakeGroup) return;
+        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
+        
+        const style = document.getElementById('cakeStyle').value;
+        const layers = parseInt(document.getElementById('layers').value);
+        const diameter = parseInt(document.getElementById('diameter').value);
+        const coat = document.getElementById('coating').value;
+        const fruitT = document.getElementById('fruitTop').value;
+        const fruitC = document.getElementById('fruitCream').value;
+        const topS = document.getElementById('topStyle').value;
+        const flavorColor = parseInt(document.getElementById('flavor').value);
+        const innerColor = parseInt(document.getElementById('innerCream').value);
+        const outerColor = parseInt(document.getElementById('outerCream').value);
+        
+        const baseRadius = diameter / 6.5; 
+        const h = 0.5;
+
+        for (let i = 0; i < layers; i++) {
+            let currentRadius = baseRadius;
+            if (style === 'wedding') {
+                if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
+                if (i >= 8) currentRadius = baseRadius * 0.55;
+            }
+            const isCream = i % 2 === 1; 
+            const segment = new THREE.Mesh(
+                new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
+                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
+            );
+            segment.position.y = i * h;
+            cakeGroup.add(segment);
+
+            if (coat !== 'naked') {
+                const coatMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
+                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide })
+                );
+                coatMesh.position.y = i * h;
+                cakeGroup.add(coatMesh);
+            }
+            // Ovoce
+            if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
+                for (let j = 0; j < 8; j++) {
+                    const f = createFruit(fruitC, false);
+                    const ang = (j / 8) * Math.PI * 2;
+                    f.position.set(Math.cos(ang) * (currentRadius - 0.1), i * h, Math.sin(ang) * (currentRadius - 0.1));
+                    cakeGroup.add(f);
+                }
+            }
+            // Zdobení vršku
+            const isTopSurface = (i === layers - 1);
+            if (isTopSurface && fruitT !== 'none') {
+                const r = currentRadius * 0.7;
+                const count = 12;
+                for(let j=0; j<count; j++) {
+                    const f = createFruit(fruitT, true);
+                    const ang = (j/count) * Math.PI * 2;
+                    f.position.set(Math.cos(ang) * r, (i * h) + 0.3, Math.sin(ang) * r);
+                    cakeGroup.add(f);
+                }
+            }
+        }
+        calculatePrice(); 
+    }
+
+    function manualControl() {
+        if (!cakeGroup) return;
+        cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
+        cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (renderer && scene && camera) {
+            renderer.render(scene, camera);
+        }
+    }
+
+    window.onload = init3D;
+</script>
 
     // Pomocná funkce pro tvorbu 3D modelů ovoce (koule s různými barvami/měřítkem)
     function createFruit(type, isTop) {
