@@ -140,7 +140,6 @@
         .btn:hover { transform: translateY(-8px); }
         textarea { width: 100%; padding: 20px; border-radius: 25px; border: 2px solid #eee; margin-top: 20px; font-family: inherit; resize: none; box-sizing: border-box; }
 
-/* Popisek nad fotkou */
 .gallery-label { 
     font-size: 11px; 
     letter-spacing: 2px; 
@@ -148,6 +147,15 @@
     color: rgba(255,255,255,0.7); 
     text-transform: uppercase; 
     margin-bottom: 15px; 
+    
+    /* Centrovací kouzlo */
+    text-align: center;      /* Vycentruje samotný text */
+    display: block;          /* Zajistí, že zabere celou šířku */
+    width: 100%;             /* Roztáhne se k okrajům */
+    
+    /* Pokud by text stále utíkal, přidáme stejnou pojistku jako u fotky: */
+    position: relative;
+    left: 0;
 }
 
 .single-photo-container {
