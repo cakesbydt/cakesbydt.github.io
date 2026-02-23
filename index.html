@@ -383,31 +383,44 @@
             finalType = rand < 0.33 ? 'strawberries' : (rand < 0.66 ? 'blueberries' : 'raspberries');
         }
         let geo, mat, mesh;
-        // Definice vzhledu podle typu ovoce
-        if (finalType === 'strawberries') {
-            const size = isTop ? 0.25 : 0.18;
-            // 1. Tělo jahody (kuželovitější tvar)
-            // Použijeme ConeGeometry s mírným zaoblením nebo upravenou sféru
-            geo = new THREE.SphereGeometry(size, 16, 16);
-            mat = new THREE.MeshPhongMaterial({ 
-                color: 0xd32f2f, 
-                shininess: 60,
-                flatShading: false 
-            });
-            mesh = new THREE.Mesh(geo, mat);
-            // Vytvoříme tvar kapky/jahody
-            mesh.scale.set(1, 1.4, 1); 
-            // Posuneme těžiště, aby špička mířila dolů (při rotaci to vypadá lépe)
-            mesh.position.y = 0;
-            group.add(mesh);
+       if (finalType === 'strawberries') {
+    const size = isTop ? 0.25 : 0.18;
+    
+    // Vytvoření profilu jahody (tvaru kapky)
+    const points = [];
+    for (let i = 0; i < 10; i++) {
+        // Matematicky definovaná křivka pro tvar jahody
+        const x = Math.sin(i * 0.35) * size;
+        const y = (i - 5) * 0.08;
+        points.push(new THREE.Vector2(x, -y));
+    }
+    
+    // Vytvoření těla jahody rotací profilu
+    geo = new THREE.LatheGeometry(points, 20);
+    mat = new THREE.MeshPhongMaterial({ 
+        color: 0xd32f2f, 
+        shininess: 80,
+        specular: 0x222222
+    });
+    mesh = new THREE.Mesh(geo, mat);
+    
+    // Přidáme jemné naklonění, aby to nepůsobilo strunule
+    mesh.rotation.z = Math.PI; 
+    group.add(mesh);
 
-            // 2. Zelené lístky (kalich) - to jahodu "prodá"
-            const leafGeo = new THREE.ConeGeometry(size * 1.1, size * 0.4, 5);
-            const leafMat = new THREE.MeshPhongMaterial({ color: 0x2e7d32 });
-            const leaves = new THREE.Mesh(leafGeo, leafMat);
-            leaves.position.y = size * 0.7; // Posadíme lístky na vršek jahody
-            leaves.rotation.x = Math.PI; // Otočíme je směrem k plodu
-            group.add(leaves);
+    // Detailnější kalich (lístky)
+    const leafCount = 6;
+    const leafMat = new THREE.MeshPhongMaterial({ color: 0x1b5e20 });
+    for (let i = 0; i < leafCount; i++) {
+        const leafGeo = new THREE.SphereGeometry(size * 0.4, 4, 8);
+        const leaf = new THREE.Mesh(leafGeo, leafMat);
+        leaf.scale.set(1, 0.2, 2.5);
+        leaf.position.y = size * 0.45;
+        leaf.rotation.y = (i / leafCount) * Math.PI * 2;
+        leaf.rotation.z = 0.5;
+        group.add(leaf);
+    }
+}
 
         } else if (finalType === 'raspberries') {
             geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.13, 10, 10);
