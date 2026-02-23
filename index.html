@@ -112,7 +112,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script type="text/javascript">
    (function(){
-      emailjs.init("TVUJ_PUBLIC_KEY"); 
+      emailjs.init("d5XFw5mWVB9ijGP_J"); 
    })();
 </script>
 </head>
@@ -590,20 +590,44 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
     e.preventDefault();
 
     const btn = this.querySelector('.btn');
-    const originalBtnText = btn.innerText;
     btn.innerText = "ODESÍLÁM...";
     btn.disabled = true;
 
-    // Sběr dat z tvých stávajících polí
+    // Pomocná funkce pro získání textu z vybrané možnosti (místo ID nebo barvy)
+    const getText = (id) => {
+        const el = document.getElementById(id);
+        return el.options[el.selectedIndex].text;
+    };
+
+    // Sestavení přehledu doplňků
+    let doplnky = [];
+    if(document.getElementById('c_flowers').checked) doplnky.push("Květiny (" + document.getElementsByName('Detail_Kvetiny')[0].value + ")");
+    if(document.getElementById('c1').checked) doplnky.push("Jedlý papír (" + document.getElementsByName('Detail_Papir')[0].value + ")");
+    if(document.getElementById('c2').checked) doplnky.push("Figurka (" + document.getElementsByName('Detail_Figurka')[0].value + ")");
+    if(document.getElementById('c3').checked) doplnky.push("Zápich (" + document.getElementsByName('Detail_Zapich')[0].value + ")");
+
     const templateParams = {
+        // Zákazník
         jmeno: document.getElementsByName('Jmeno')[0].value,
         email: document.getElementsByName('Email')[0].value,
         telefon: document.getElementsByName('Telefon')[0].value,
         datum: document.getElementsByName('Datum_Udalosti')[0].value,
-        // Tady si můžeš přidat další pole podle ID, která v kódu máš:
-        konfigurace: `Průměr: ${document.getElementById('diameter').value}cm, Vrstvy: ${document.getElementById('layers').value}`,
-        cena: document.getElementById('price-display').innerText,
-        poznamka: document.getElementsByName('Zprava_Poznamka')[0].value
+
+        // Korpus a styl
+        styl_dortu: getText('cakeStyle'),
+        rozmery: `Průměr ${document.getElementById('diameter').value} cm, Počet vrstev: ${document.getElementById('layers').value}`,
+        chut_korpusu: getText('flavor'),
+
+        // Design
+        vzhled_krem: `Obmaz: ${getText('coating')}, Vnitřní krém: ${getText('innerCream')}, Vnější krém: ${getText('outerCream')}`,
+        ovoce: `Vnitřní: ${getText('fruitCream')}, Nahoře: ${getText('fruitTop')} (Styl: ${getText('topStyle')})`,
+
+        // Extra
+        doplnky: doplnky.length > 0 ? doplnky.join(", ") : "Žádné",
+        poznamka: document.getElementsByName('Zprava_Poznamka')[0].value,
+        
+        // Cena
+        cena_odhad: document.getElementById('price-display').innerText
     };
 
     emailjs.send('SERVIS_ID', 'TEMPLATE_ID', templateParams)
@@ -611,9 +635,9 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
             alert('Objednávka byla úspěšně odeslána!');
             btn.innerText = "ODESLÁNO ✅";
         }, function(error) {
-            alert('Chyba při odesílání: ' + JSON.stringify(error));
-            btn.innerText = originalBtnText;
+            alert('Chyba: ' + JSON.stringify(error));
             btn.disabled = false;
+            btn.innerText = "Odeslat objednávku";
         });
 });
 
