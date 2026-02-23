@@ -319,10 +319,16 @@
         box-sizing: border-box;
     }
 
-    .photo-slot-main {
-        width: 100% !important; /* Fotka využije celou šířku mobilu */
-        max-width: 450px;       /* Ale nebude obří na tabletech */
-        height: 450px !important;
+   .photo-slot-main {
+        width: 115% !important; /* Fotka bude širší než text nad ní */
+        max-width: 550px !important; /* Zvýšili jsme limit, aby mohla vyrůst */
+        height: 480px !important; /* Zvýšíme ji, aby zůstala v hezkém poměru */
+        margin-left: -7.5% !important; /* Vyrovnání, aby zůstala na středu, když je přes 100% */
+        border-radius: 20px !important; /* Na mobilu trochu ubereme zaoblení, vypadá to lépe u širokých fotek */
+    }
+    .single-photo-container {
+        width: 100% !important;
+        overflow: visible !important; /* Důležité: dovolí fotce "vykouknout" do stran */
     }
 
     .hlavni-motto {
