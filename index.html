@@ -374,64 +374,67 @@
         window.addEventListener('touchend', handleEnd);
     }
 
-    /* 2. Funkce pro generování 3D ovoce */
-    function createFruit(type, isTop) {
+   function createFruit(type, isTop) {
         const group = new THREE.Group();
         let finalType = type;
         if (type === 'mix') {
             const rand = Math.random();
             finalType = rand < 0.33 ? 'strawberries' : (rand < 0.66 ? 'blueberries' : 'raspberries');
         }
-        let geo, mat, mesh;
-       if (finalType === 'strawberries') {
-    const size = isTop ? 0.25 : 0.18;
-    
-    // Vytvoření profilu jahody (tvaru kapky)
-    const points = [];
-    for (let i = 0; i < 10; i++) {
-        // Matematicky definovaná křivka pro tvar jahody
-        const x = Math.sin(i * 0.35) * size;
-        const y = (i - 5) * 0.08;
-        points.push(new THREE.Vector2(x, -y));
-    }
-    
-    // Vytvoření těla jahody rotací profilu
-    geo = new THREE.LatheGeometry(points, 20);
-    mat = new THREE.MeshPhongMaterial({ 
-        color: 0xd32f2f, 
-        shininess: 80,
-        specular: 0x222222
-    });
-    mesh = new THREE.Mesh(geo, mat);
-    
-    // Přidáme jemné naklonění, aby to nepůsobilo strunule
-    mesh.rotation.z = Math.PI; 
-    group.add(mesh);
 
-    // Detailnější kalich (lístky)
-    const leafCount = 6;
-    const leafMat = new THREE.MeshPhongMaterial({ color: 0x1b5e20 });
-    for (let i = 0; i < leafCount; i++) {
-        const leafGeo = new THREE.SphereGeometry(size * 0.4, 4, 8);
-        const leaf = new THREE.Mesh(leafGeo, leafMat);
-        leaf.scale.set(1, 0.2, 2.5);
-        leaf.position.y = size * 0.45;
-        leaf.rotation.y = (i / leafCount) * Math.PI * 2;
-        leaf.rotation.z = 0.5;
-        group.add(leaf);
-    }
-}
+        if (finalType === 'strawberries') {
+            const size = isTop ? 0.22 : 0.16;
+            
+            // 1. TĚLO JAHODY (Použijeme sféru, ale deformujeme ji do tvaru srdce/kapky)
+            const strawberryGeo = new THREE.SphereGeometry(size, 16, 16);
+            const strawberryMat = new THREE.MeshPhongMaterial({ 
+                color: 0xc62828, // Sytější červená
+                shininess: 30 
+            });
+            const body = new THREE.Mesh(strawberryGeo, strawberryMat);
+            
+            // Klíč k realitě: Protažení do výšky a zúžení v bocích
+            body.scale.set(1, 1.4, 0.9); 
+            group.add(body);
+
+            // 2. KALICH (Zelené lístky nahoře)
+            // Místo jednoho kuželu uděláme hvězdici z malých lístků
+            const leafMat = new THREE.MeshPhongMaterial({ color: 0x2e7d32 });
+            for (let i = 0; i < 5; i++) {
+                const leafGeo = new THREE.BoxGeometry(size * 0.8, 0.02, size * 0.2);
+                const leaf = new THREE.Mesh(leafGeo, leafMat);
+                leaf.position.y = size * 1.1;
+                leaf.rotation.y = (i * Math.PI * 2) / 5;
+                leaf.rotation.z = 0.2; // Lehké ohnutí dolů
+                group.add(leaf);
+            }
+            
+            // 3. STOPKA
+            const stemGeo = new THREE.CylinderGeometry(size * 0.05, size * 0.05, size * 0.4);
+            const stem = new THREE.Mesh(stemGeo, leafMat);
+            stem.position.y = size * 1.3;
+            group.add(stem);
 
         } else if (finalType === 'raspberries') {
-            geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.13, 10, 10);
-            mat = new THREE.MeshPhongMaterial({ color: 0xe91e63, flatShading: true });
-            mesh = new THREE.Mesh(geo, mat);
+            // Malina (shluk kuliček)
+            const size = isTop ? 0.15 : 0.1;
+            const berryMat = new THREE.MeshPhongMaterial({ color: 0xad1457 });
+            for (let i = 0; i < 8; i++) {
+                const bubbleGeo = new THREE.SphereGeometry(size * 0.5, 8, 8);
+                const bubble = new THREE.Mesh(bubbleGeo, berryMat);
+                const angle = (i * Math.PI * 2) / 8;
+                bubble.position.set(Math.cos(angle) * size * 0.4, size * 0.3, Math.sin(angle) * size * 0.4);
+                group.add(bubble);
+            }
         } else {
-            geo = new THREE.SphereGeometry(isTop ? 0.12 : 0.08, 8, 8);
-            mat = new THREE.MeshPhongMaterial({ color: 0x283593, shininess: 50 });
-            mesh = new THREE.Mesh(geo, mat);
+            // Borůvka
+            const size = isTop ? 0.12 : 0.08;
+            const blueGeo = new THREE.SphereGeometry(size, 10, 10);
+            const blueMat = new THREE.MeshPhongMaterial({ color: 0x1a237e });
+            const blueberry = new THREE.Mesh(blueGeo, blueMat);
+            group.add(blueberry);
         }
-        group.add(mesh);
+
         return group;
     }
 
