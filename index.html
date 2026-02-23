@@ -590,54 +590,56 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
     e.preventDefault();
 
     const btn = this.querySelector('.btn');
+    const originalBtnText = btn.innerText;
     btn.innerText = "ODESÍLÁM...";
     btn.disabled = true;
 
-    // Pomocná funkce pro získání textu z vybrané možnosti (místo ID nebo barvy)
+    // Funkce pro získání čitelného textu ze Selectu
     const getText = (id) => {
         const el = document.getElementById(id);
-        return el.options[el.selectedIndex].text;
+        return el ? el.options[el.selectedIndex].text : "Nezvoleno";
     };
 
-    // Sestavení přehledu doplňků
-    let doplnky = [];
-    if(document.getElementById('c_flowers').checked) doplnky.push("Květiny (" + document.getElementsByName('Detail_Kvetiny')[0].value + ")");
-    if(document.getElementById('c1').checked) doplnky.push("Jedlý papír (" + document.getElementsByName('Detail_Papir')[0].value + ")");
-    if(document.getElementById('c2').checked) doplnky.push("Figurka (" + document.getElementsByName('Detail_Figurka')[0].value + ")");
-    if(document.getElementById('c3').checked) doplnky.push("Zápich (" + document.getElementsByName('Detail_Zapich')[0].value + ")");
+    // Sestavení seznamu doplňků
+    let doplnkyArr = [];
+    const checkFields = [
+        {id: 'c_flowers', name: 'Detail_Kvetiny', label: 'Květiny'},
+        {id: 'c1', name: 'Detail_Papir', label: 'Jedlý papír'},
+        {id: 'c2', name: 'Detail_Figurka', label: 'Figurka'},
+        {id: 'c3', name: 'Detail_Zapich', label: 'Zápich'}
+    ];
+
+    checkFields.forEach(item => {
+        if(document.getElementById(item.id) && document.getElementById(item.id).checked) {
+            const detail = document.getElementsByName(item.name)[0]?.value || "Ano";
+            doplnkyArr.push(`${item.label} (${detail})`);
+        }
+    });
 
     const templateParams = {
-        // Zákazník
         jmeno: document.getElementsByName('Jmeno')[0].value,
         email: document.getElementsByName('Email')[0].value,
         telefon: document.getElementsByName('Telefon')[0].value,
         datum: document.getElementsByName('Datum_Udalosti')[0].value,
-
-        // Korpus a styl
         styl_dortu: getText('cakeStyle'),
-        rozmery: `Průměr ${document.getElementById('diameter').value} cm, Počet vrstev: ${document.getElementById('layers').value}`,
+        rozmery: `Průměr ${document.getElementById('diameter').value} cm, ${document.getElementById('layers').value} vrstev`,
         chut_korpusu: getText('flavor'),
-
-        // Design
-        vzhled_krem: `Obmaz: ${getText('coating')}, Vnitřní krém: ${getText('innerCream')}, Vnější krém: ${getText('outerCream')}`,
-        ovoce: `Vnitřní: ${getText('fruitCream')}, Nahoře: ${getText('fruitTop')} (Styl: ${getText('topStyle')})`,
-
-        // Extra
-        doplnky: doplnky.length > 0 ? doplnky.join(", ") : "Žádné",
+        vzhled_krem: `Obmaz: ${getText('coating')}, Vnitřní: ${getText('innerCream')}, Vnější: ${getText('outerCream')}`,
+        ovoce: `Vnitřní: ${getText('fruitCream')}, Horní: ${getText('fruitTop')} (${getText('topStyle')})`,
+        doplnky: doplnkyArr.length > 0 ? doplnkyArr.join(", ") : "Žádné",
         poznamka: document.getElementsByName('Zprava_Poznamka')[0].value,
-        
-        // Cena
         cena_odhad: document.getElementById('price-display').innerText
     };
 
-    emailjs.send('SERVIS_ID', 'TEMPLATE_ID', templateParams)
+    // ZDE DOPLŇ SVÉ ÚDAJE: 'SERVIS_ID' a 'TEMPLATE_ID'
+    emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
         .then(function() {
             alert('Objednávka byla úspěšně odeslána!');
             btn.innerText = "ODESLÁNO ✅";
         }, function(error) {
-            alert('Chyba: ' + JSON.stringify(error));
+            alert('Chyba při odesílání: ' + JSON.stringify(error));
+            btn.innerText = originalBtnText;
             btn.disabled = false;
-            btn.innerText = "Odeslat objednávku";
         });
 });
 
