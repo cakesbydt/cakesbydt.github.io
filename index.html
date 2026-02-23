@@ -395,15 +395,15 @@
         let total = (diameter * 15) * (layers / 2);
         if (style === 'wedding') total += 500; 
         if (flavorText.includes("Ořechový")) total += 100;
-        if (coat === 'full') total += 120;
-        if (document.getElementById('fruitCream').value !== 'none') total += 100;
+        if (coat === 'full') total += 100;
+        if (document.getElementById('fruitCream').value !== 'none') total += 50;
         if (document.getElementById('fruitTop').value !== 'none') total += 150;
         
         // Příplatky za doplňky
-        if (document.getElementById('c_flowers').checked) total += 350;
-        if (document.getElementById('c1').checked) total += 250;
-        if (document.getElementById('c2').checked) total += 400;
-        if (document.getElementById('c3').checked) total += 150;
+        if (document.getElementById('c_flowers').checked) total += 150;
+        if (document.getElementById('c1').checked) total += 150;
+        if (document.getElementById('c2').checked) total += 200;
+        if (document.getElementById('c3').checked) total += 50;
 
         const minPrice = Math.round(total * 0.95);
         const maxPrice = Math.round(total * 1.05);
