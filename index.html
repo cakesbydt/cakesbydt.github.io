@@ -491,12 +491,41 @@
                 }
             }
 
-            // Ovoce uvnitř (v krému)
+            /* Ovoce uvnitř (v krému)
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 for (let j = 0; j < 8; j++) {
                     const f = createFruit(fruitC, false);
                     const ang = (j / 8) * Math.PI * 2;
                     f.position.set(Math.cos(ang) * (currentRadius - 0.1), i * h, Math.sin(ang) * (currentRadius - 0.1));
+                    cakeGroup.add(f);
+                }
+            } */
+
+            // Ovoce uvnitř (v krému)
+            if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
+                
+                // --- NASTAVENÍ POZIC PRO JEDNOTLIVÉ DRUHY ---
+                // Čím větší číslo odečteš, tím víc zaleze dovnitř
+                const fruitOffsets = {
+                    'strawberries': 0.15, // Jahody jsou velké, musí víc zalézt (původně 0.1)
+                    'raspberries': 0.10,  // Maliny střední
+                    'blueberries': 0.05,  // Borůvky jsou malé, můžou být víc na kraji
+                    'mix': 0.12           // Průměr pro mix
+                };
+
+                // Zjistíme, jaký offset použít pro aktuálně vybrané ovoce
+                const currentOffset = fruitOffsets[fruitC] || 0.1;
+
+                for (let j = 0; j < 8; j++) {
+                    const f = createFruit(fruitC, false);
+                    const ang = (j / 8) * Math.PI * 2;
+                    
+                    // Použití dynamického offsetu (currentRadius - currentOffset)
+                    f.position.set(
+                        Math.cos(ang) * (currentRadius - currentOffset), 
+                        i * h, 
+                        Math.sin(ang) * (currentRadius - currentOffset)
+                    );
                     cakeGroup.add(f);
                 }
             }
