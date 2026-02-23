@@ -323,7 +323,9 @@
         cakeGroup.rotation.y = 0.5;
         scene.add(cakeGroup);
         
-        updateCake(); // Sestavení modelu při načtení
+        updateCake(
+            document.getElementById('c_flowers').addEventListener('change', updateCake);
+        ); // Sestavení modelu při načtení
         animate();    // Spuštění animace
 
         /* LOGIKA OVLÁDÁNÍ (MYŠ + DOTYK) */
