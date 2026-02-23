@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="cs"> <head>
-    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Cakes by DT | The Final Masterpiece</title> 
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Cakes by DT | Plná verze</title> <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <style>
         :root { 
-            --primary: #bc9bc2;     /* Hlavní fialová */
-            --gold: #d4af37;        /* Zlatá pro detaily */
-            --glass: rgba(255, 255, 255, 0.85); /* Poloprůhledné pozadí */
+            --primary: #bc9bc2;     /* Hlavní fialová barva */
+            --gold: #d4af37;        /* Zlatá pro detaily a ceny */
+            --glass: rgba(255, 255, 255, 0.85); /* Skleněný efekt panelů */
             --pink-soft: #e8daeb;
         }
         
@@ -23,147 +22,82 @@
             min-height: 100vh;
         }
 
-        /* Animované pozadí */
-        .bg-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: linear-gradient(45deg, #fFFFFF, #d4bdd9, #d4bdd9);
-        }
-        
-        .blob {
-            position: absolute; width: 500px; height: 500px;
-            background: linear-gradient(135deg, rgba(173, 20, 87, 0.1) 0%, rgba(255, 45, 120, 0.1) 100%);
-            filter: blur(80px); border-radius: 50%; 
-            animation: drift 20s infinite alternate;
-        }
-        
-        @keyframes drift { 
-            from { transform: translate(-10%, -10%); } 
-            to { transform: translate(20%, 20%); } 
-        }
+        /* Vrstvy pozadí */
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(45deg, #fFFFFF, #d4bdd9, #d4bdd9); }
+        .blob { position: absolute; width: 500px; height: 500px; background: linear-gradient(135deg, rgba(173, 20, 87, 0.1) 0%, rgba(255, 45, 120, 0.1) 100%); filter: blur(80px); border-radius: 50%; animation: drift 20s infinite alternate; }
+        @keyframes drift { from { transform: translate(-10%, -10%); } to { transform: translate(20%, 20%); } }
 
-        /* Hlavní kontejner aplikace */
+        /* Hlavní obal stránky */
         .hlavni-wrapper { 
-            display: flex; width: 95%; max-width: 1400px;
-            background: var(--glass); 
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255,255,255,0.4); 
-            box-shadow: 0 50px 100px rgba(0,0,0,0.1);
-            margin: 40px 0; border-radius: 50px; overflow: hidden;
-            animation: entrance 1s ease-out;
+            display: flex; width: 95%; max-width: 1400px; background: var(--glass); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 50px 100px rgba(0,0,0,0.1); margin: 40px 0; border-radius: 50px; overflow: hidden; animation: entrance 1s ease-out;
         }
 
-        /* Responzivita pro mobily */
+        /* Mobilní zobrazení */
         @media (max-width: 900px) {
             .hlavni-wrapper { flex-direction: column; margin: 20px 0; border-radius: 30px; }
             .levy-panel { flex: 0 0 auto !important; width: 100% !important; padding: 40px 20px !important; }
             .obsah { padding: 40px 20px !important; }
             .hlavni-motto { font-size: 38px !important; }
             #canvas-container { height: 350px !important; }
-            .flex > div { min-width: 100% !important; }
         }
 
-        @keyframes entrance { 
-            from { opacity: 0; transform: translateY(30px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
+        @keyframes entrance { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Levý panel s kontaktem a přehledem ceny */
+        /* Levý panel */
         .levy-panel { 
-            flex: 0 0 380px; 
-            background: linear-gradient(165deg, #bc9bc2 0%, #bc9bc2 50%, #d4bdd9 100%);
-            display: flex; flex-direction: column; align-items: center; 
-            padding: 60px 40px; color: white;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.1);
-            position: relative;
+            flex: 0 0 380px; background: linear-gradient(165deg, #bc9bc2 0%, #bc9bc2 50%, #d4bdd9 100%);
+            display: flex; flex-direction: column; align-items: center; padding: 60px 40px; color: white; box-shadow: 20px 0 50px rgba(0,0,0,0.1);
         }
         
-        .logo-vlevo { 
-            width: 150px; height: 150px; background: white; border-radius: 50%; 
-            margin-bottom: 40px; border: 8px solid rgba(255, 255, 255, 0.15); 
-            overflow: hidden; transition: 0.5s;
-        }
+        .logo-vlevo { width: 170px; height: 170px; background: white; border-radius: 50%; margin-bottom: 50px; border: 8px solid rgba(255, 255, 255, 0.15); overflow: hidden; transition: 0.5s; }
         .logo-vlevo img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Styl vstupních polí vlevo */
-        .input-group { width: 100%; margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 10px; letter-spacing: 2px; margin-bottom: 8px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.7); }
-        .input-group input { 
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); 
-            background: rgba(0,0,0,0.2); color: white; outline: none; transition: 0.3s;
-            box-sizing: border-box;
-        }
+        /* Widget pro info v levém panelu */
+        .side-summary { width: 100%; background: rgba(0,0,0,0.15); padding: 20px; border-radius: 20px; margin-top: 20px; border-left: 4px solid var(--gold); }
+        .side-summary div { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; }
+        .side-summary p { margin: 0; font-size: 13px; font-weight: 600; color: #fff; }
 
-        /* --- NOVÉ: Přehled ceny v levém panelu --- */
-        .live-summary {
-            width: 100%; background: rgba(0,0,0,0.15); padding: 25px; border-radius: 20px;
-            margin-top: 30px; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .live-summary h4 { margin: 0 0 10px 0; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
-        .summary-price { font-size: 24px; font-weight: 800; margin: 5px 0; }
-        .summary-detail { font-size: 13px; opacity: 0.8; }
+        /* Formulářové prvky vlevo */
+        .input-group { width: 100%; margin-bottom: 25px; }
+        .input-group label { display: block; font-size: 10px; letter-spacing: 2px; margin-bottom: 10px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.7); }
+        .input-group input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; outline: none; box-sizing: border-box; }
 
-        /* Pravý panel s výběrem */
-        .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; scroll-behavior: smooth; }
-        .hlavni-motto { font-family: 'Playfair Display', serif; font-style: italic; color: #bc9bc2; text-align: center; font-size: 58px; margin-bottom: 50px; }
+        /* Pravý obsah */
+        .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; }
+        .hlavni-motto { font-family: 'Playfair Display', serif; font-style: italic; color: #bc9bc2; text-align: center; font-size: 62px; margin-bottom: 50px; }
         
-        .sekce { 
-            background: white; padding: 40px; border-radius: 40px; margin-bottom: 40px; 
-            border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 15px 35px rgba(173,20,87,0.05);
-            transition: 0.4s;
-        }
-        
+        .sekce { background: white; padding: 40px; border-radius: 40px; margin-bottom: 40px; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 15px 35px rgba(173,20,87,0.05); }
         h3 { color: #bc9bc2; font-size: 13px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; border-left: 5px solid var(--gold); padding-left: 20px; }
 
-        .flex { display: flex; gap: 20px; flex-wrap: wrap; } 
+        .flex { display: flex; gap: 25px; flex-wrap: wrap; } 
         .flex > div { flex: 1; min-width: 180px; }
 
         label { display: block; font-size: 11px; font-weight: 800; color: #999; margin-bottom: 12px; text-transform: uppercase; }
-        
-        select { 
-            width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #f0f0f0; 
-            background: white; font-family: inherit; font-weight: 600; cursor: pointer; transition: 0.3s;
-        }
+        select { width: 100%; padding: 16px; border-radius: 18px; border: 2px solid #f0f0f0; background: white; font-family: inherit; font-weight: 600; cursor: pointer; }
 
-        /* 3D Okno */
-        #canvas-container { 
-            width: 100%; height: 500px; 
-            background: radial-gradient(circle at center, #fdfdfd 0%, #e8e8e8 100%); 
-            position: relative; border-radius: 40px; margin-bottom: 40px; 
-            box-shadow: inset 0 0 80px rgba(0,0,0,0.05); cursor: grab;
-            overflow: hidden;
-        }
+        /* 3D Kontejner */
+        #canvas-container { width: 100%; height: 550px; background: radial-gradient(circle at center, #f8f8f8 0%, #dcdcdc 100%); position: relative; border-radius: 50px; margin-bottom: 40px; cursor: grab; }
         
         /* Zmenšené štítky v 3D okně */
-        .info-badge-small { 
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(26, 26, 26, 0.8); color: white; padding: 8px 20px; border-radius: 100px; 
-            font-weight: 600; font-size: 11px; letter-spacing: 1px; z-index: 10;
-        }
+        .info-badge-float { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 8px 20px; border-radius: 100px; font-weight: 800; font-size: 11px; z-index: 10; white-space: nowrap; }
+        #price-display { position: absolute; top: 20px; right: 20px; background: var(--gold); color: white; padding: 10px 20px; border-radius: 15px; font-weight: 800; font-size: 14px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 10; }
 
-        #price-display-3d { 
-            position: absolute; top: 20px; right: 20px; background: var(--gold); color: white; 
-            padding: 10px 18px; border-radius: 15px; font-weight: 800; font-size: 15px; 
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1); z-index: 10;
-        }
+        /* Slidery */
+        .controls-row { display: flex; gap: 40px; justify-content: center; margin-bottom: 40px; opacity: 0.6; }
+        .slider { -webkit-appearance: none; width: 150px; height: 4px; background: #ccc; border-radius: 2px; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 3px solid white; cursor: pointer; }
 
-        /* Ovládací prvky a checkboxy */
-        .controls-row { display: flex; gap: 30px; justify-content: center; margin-bottom: 40px; opacity: 0.5; }
-        .slider { -webkit-appearance: none; width: 120px; height: 3px; background: #ccc; border-radius: 2px; }
-        .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--primary); border-radius: 50%; cursor: pointer; border: 2px solid white; }
+        /* Doplňky */
+        .doplnek-item { background: #fdfdfd; padding: 25px; border-radius: 25px; margin-bottom: 20px; border: 2px solid transparent; transition: 0.4s; }
+        .doplnek-item:has(input:checked) { border-color: var(--gold); background: #fffdf2; }
+        .extra-input { max-height: 0; overflow: hidden; opacity: 0; transition: 0.4s ease; }
+        .doplnek-item:has(input:checked) .extra-input { max-height: 100px; opacity: 1; margin-top: 20px; }
+        .extra-input input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        .doplnek-item { background: #fdfdfd; padding: 20px; border-radius: 20px; margin-bottom: 15px; border: 2px solid transparent; transition: 0.3s; }
-        .doplnek-item:has(input[type="checkbox"]:checked) { border-color: var(--gold); background: #fffdf2; }
-
-        .btn { 
-            width: 100%; padding: 25px; background: linear-gradient(90deg, #bc9bc2, #d4bdd9); 
-            color: white; border: none; border-radius: 20px; cursor: pointer; font-weight: 900; 
-            font-size: 20px; text-transform: uppercase; letter-spacing: 3px;
-            box-shadow: 0 20px 40px rgba(173,20,87,0.2); transition: 0.4s; margin-top: 20px;
-        }
-        .btn:hover { transform: translateY(-5px); box-shadow: 0 30px 60px rgba(173,20,87,0.3); }
-        
-        textarea { width: 100%; padding: 20px; border-radius: 20px; border: 2px solid #eee; margin-top: 20px; font-family: inherit; resize: none; box-sizing: border-box; }
+        .btn { width: 100%; padding: 30px; background: linear-gradient(90deg, #bc9bc2, #d4bdd9); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: 4px; box-shadow: 0 25px 50px rgba(173,20,87,0.3); transition: 0.5s; }
+        .btn:hover { transform: translateY(-8px); }
+        textarea { width: 100%; padding: 20px; border-radius: 25px; border: 2px solid #eee; margin-top: 20px; font-family: inherit; resize: none; box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -185,92 +119,88 @@
             <div class="logo-vlevo"><img src="logo.jpg" alt="Logo"></div>
             
             <div class="kontaktni-form">
-                <div class="input-group">
-                    <label>Vaše Jméno</label>
-                    <input type="text" name="Jmeno" placeholder="Jan Novák" required>
-                </div>
-                <div class="input-group">
-                    <label>E-mail</label>
-                    <input type="email" name="Email" placeholder="jan@luxus.cz" required>
-                </div>
-                <div class="input-group">
-                    <label>Telefon</label>
-                    <input type="tel" name="Telefon" placeholder="+420 ..." required>
-                </div>
-                <div class="input-group">
-                    <label>Datum události</label>
-                    <input type="date" name="Datum_Udalosti" required>
-                </div>
+                <div class="input-group"><label>Jméno a Příjmení</label><input type="text" name="Jmeno" required></div>
+                <div class="input-group"><label>E-mail</label><input type="email" name="Email" required></div>
+                <div class="input-group"><label>Telefon</label><input type="tel" name="Telefon" required></div>
+                <div class="input-group"><label>Datum</label><input type="date" name="Datum_Udalosti" required></div>
             </div>
 
-            <div class="live-summary">
-                <h4>Aktuální odhad</h4>
-                <div class="summary-price" id="left-price">--- Kč</div>
-                <div class="summary-detail" id="left-detail">Vyberte parametry</div>
+            <div class="side-summary">
+                <div>Aktuální výběr:</div>
+                <p id="side-info">--</p>
+                <div style="margin-top: 15px;">Odhadovaná cena:</div>
+                <p id="side-price" style="color: var(--gold); font-size: 16px;">--</p>
             </div>
 
-            <p style="margin-top:auto; font-size: 14px; letter-spacing: 2px; opacity: 0.5; text-transform: uppercase;">Cakes by DT</p>
+            <p style="margin-top:auto; font-size: 20px; letter-spacing: 3px; opacity: 0.5;">Váš sladký sen</p>
         </div>
 
         <div class="obsah">
             <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
             
             <div class="sekce">
-                <h3>1. Parametry</h3>
+                <h3>1. Architektura korpusu</h3>
                 <div class="flex">
-                    <div style="flex-basis: 100%; margin-bottom: 10px;">
-                        <label>Styl dortu</label>
+                    <div style="flex-basis: 100%; margin-bottom: 20px;">
+                        <label>Typ události / Styl dortu</label>
                         <select id="cakeStyle" onchange="updateCake();">
                             <option value="classic">🎂 Klasický</option>
-                            <option value="wedding">💍 Svatební (vícepatrový vzhled)</option>
+                            <option value="wedding">💍 Svatební</option>
                         </select>
                     </div>
                     <div><label>Průměr</label><select id="diameter" onchange="updateCake();"><option value="15">15 cm</option><option value="20" selected>20 cm</option><option value="24">24 cm</option></select></div>
-                    <div><label>Vrstvy</label><select id="layers" onchange="updateCake();"><option value="4">6 cm</option><option value="6">9 cm</option><option value="8" selected>12 cm</option><option value="12">18 cm</option></select></div>
-                    <div><label>Korpus</label><select id="flavor" onchange="updateCake();"><option value="0x3d2b1f">Kakaový</option><option value="0xfff4e0">Vanilkový</option><option value="0xfff4e0">Mrkvový</option><option value="0xfff4e0">Ořechový</option></select></div>
+                    <div><label>Vrstvy</label><select id="layers" onchange="updateCake();"><option value="4">6 cm (4 v.)</option><option value="6">9 cm (6 v.)</option><option value="8" selected>12 cm (8 v.)</option><option value="12">18 cm (12 v.)</option></select></div>
+                    <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake();"><option value="0x3d2b1f">Kakaový</option><option value="0xfff4e0">Vanilkový</option><option value="0xfff4e0">Mrkvový</option><option value="0xfff4e0">Ořechový</option></select></div>
                 </div>
             </div>
 
             <div class="sekce">
-                <h3>2. Vzhled a Krém</h3>
+                <h3>2. Design & Krém</h3>
                 <div class="flex">
-                    <div><label>Obmaz</label><select id="coating" onchange="updateCake();"><option value="naked" selected>Nahý</option><option value="semi">Polonahý</option><option value="full" >Plný</option></select></div>
-                    <div><label>Vnitřní krém</label><select id="innerCream" onchange="updateCake();"><option value="0xffffff">Smetana - Vanilka</option><option value="0xf8bbd0">Smetana - Čoko</option><option value="0xffffff">Máslový - Vanilka</option></select></div>
-                    <div><label>Vnější krém</label><select id="outerCream" onchange="updateCake();"><option value="0xffffff">Smetana - Vanilka</option><option value="0xf8bbd0">Smetana - Čoko</option></select></div>
+                    <div><label>Typ obmazu</label><select id="coating" onchange="updateCake();"><option value="naked" selected>Nahý dort</option><option value="semi">Polonahý dort</option><option value="full" >Plný obmaz</option></select></div>
+                    <div><label>Vnitřní krém</label><select id="innerCream" onchange="updateCake();"><option value="0xffffff">Smetanový - vanilka</option><option value="0xf8bbd0">Smetanový - čokoláda</option><option value="0xf8bbd0">Máslový - karamel</option></select></div>
+                    <div><label>Vnější krém</label><select id="outerCream" onchange="updateCake();"><option value="0xffffff">Smetanový - vanilka</option><option value="0xf8bbd0">Smetanový - ovocný</option></select></div>
+                </div>
+            </div>
+
+            <div class="sekce">
+                <h3>3. Výběr ovoce</h3>
+                <div class="flex">
+                    <div><label>Proložení</label><select id="fruitCream" onchange="updateCake();"><option value="none">Bez ovoce</option><option value="mix" selected>Mix ovoce</option></select></div>
+                    <div><label>Nahoře</label><select id="fruitTop" onchange="updateCake();"><option value="none">Bez zdobení</option><option value="strawberries" selected>Jahody</option><option value="mix">Bohatý Mix</option></select></div>
+                    <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake();"><option value="border">Věneček</option><option value="full" selected>Plné zaplnění</option></select></div>
                 </div>
             </div>
 
             <div id="canvas-container">
-                <div id="info-display-3d" class="info-badge-small">MODEL: 20cm</div>
-                <div id="price-display-3d">--- Kč</div>
+                <div id="info-display" class="info-badge-float">--</div>
+                <div id="price-display">--</div>
             </div>
             
             <div class="controls-row">
-                <input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()">
-                <input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()">
-            </div>
-
-            <div class="sekce">
-                <h3>3. Zdobení ovocem</h3>
-                <div class="flex">
-                    <div><label>Uvnitř</label><select id="fruitCream" onchange="updateCake();"><option value="none">Bez ovoce</option><option value="mix" selected>Mix ovoce</option></select></div>
-                    <div><label>Nahoře</label><select id="fruitTop" onchange="updateCake();"><option value="none">Bez zdobení</option><option value="strawberries" selected>Jahody</option><option value="mix">Bohatý Mix</option></select></div>
-                    <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake();"><option value="border">Věneček</option><option value="full" selected>Plné</option></select></div>
-                </div>
+                <div><label>Rotace</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()"></div>
+                <div><label>Náklon</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
             </div>
 
             <div class="sekce">
                 <h3>4. Doplňky</h3>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> Živé květiny (+350 Kč)</label>
+                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> Květinová dekorace</label>
+                    <div class="extra-input"><input type="text" name="Detail_Kvetiny" placeholder="Jaké květiny si přejete?"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> Jedlý papír (+250 Kč)</label>
+                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> Jedlý papír</label>
+                    <div class="extra-input"><input type="text" name="Detail_Papir" placeholder="Popis obrázku/motivu"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> Personalizovaný zápich (+150 Kč)</label>
+                    <label><input type="checkbox" id="c2" onchange="calculatePrice()"> Figurka</label>
+                    <div class="extra-input"><input type="text" name="Detail_Figurka" placeholder="Jaká figurka?"></div>
                 </div>
-                <textarea name="Zprava_Poznamka" rows="3" placeholder="Vaše speciální přání..."></textarea>
+                <div class="doplnek-item">
+                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> Personalizovaný zápich</label>
+                    <div class="extra-input"><input type="text" name="Detail_Zapich" placeholder="Text na zápich"></div>
+                </div>
+                <textarea name="Zprava_Poznamka" rows="4" placeholder="Další specifické požadavky (barvy, alergie...)" onchange="calculatePrice()"></textarea>
             </div>
 
             <button type="submit" class="btn">Odeslat objednávku</button>
@@ -279,38 +209,36 @@
 </form>
 
 <script>
-    // Globální proměnné pro 3D scénu
     let scene, camera, renderer, cakeGroup;
     let isDragging = false; 
     let previousMousePosition = { x: 0, y: 0 };
     const container = document.getElementById('canvas-container');
 
-    // Inicializace 3D scény při načtení
+    // 1. Inicializace 3D scény
     function init3D() {
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(0, 5, 12); 
-        camera.lookAt(0, 1.5, 0);
+        camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 6, 14); 
+        camera.lookAt(0, 2, 0);
 
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); 
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
 
-        // Osvětlení scény
-        scene.add(new THREE.AmbientLight(0xffffff, 0.7)); 
-        const light = new THREE.DirectionalLight(0xffffff, 0.8); 
-        light.position.set(5, 10, 7);
-        scene.add(light);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6)); 
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.9); 
+        mainLight.position.set(5, 10, 7);
+        scene.add(mainLight);
 
         cakeGroup = new THREE.Group();
         cakeGroup.rotation.y = 0.5;
         scene.add(cakeGroup);
         
-        updateCake(); // První vykreslení
-        animate(); // Spuštění smyčky
-        
-        // --- Logika rotace myší/dotykem ---
+        updateCake(); 
+        animate(); 
+
+        // Ovládání myší
         const handleStart = (clientX, clientY) => { isDragging = true; previousMousePosition = { x: clientX, y: clientY }; };
         const handleMove = (clientX, clientY) => {
             if (!isDragging) return;
@@ -318,58 +246,79 @@
             const deltaY = clientY - previousMousePosition.y;
             cakeGroup.rotation.y += deltaX * 0.01;
             cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x + deltaY * 0.01));
-            document.getElementById('rotateY').value = cakeGroup.rotation.y;
-            document.getElementById('rotateX').value = cakeGroup.rotation.x;
             previousMousePosition = { x: clientX, y: clientY };
         };
+
         container.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
         window.addEventListener('mouseup', () => isDragging = false);
         window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
     }
 
-    // Pomocná funkce pro tvorbu ovoce
+    // 2. Funkce pro vytvoření ovoce (3D modely)
     function createFruit(type, isTop) {
         const group = new THREE.Group();
-        let color = 0xd32f2f; // Výchozí jahodová
-        if (type === 'blueberries') color = 0x283593;
+        let finalType = type;
+        if (type === 'mix') {
+            const rand = Math.random();
+            finalType = rand < 0.33 ? 'strawberries' : (rand < 0.66 ? 'blueberries' : 'raspberries');
+        }
         
-        const geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.12, 12, 12);
-        const mat = new THREE.MeshPhongMaterial({ color: color });
-        const mesh = new THREE.Mesh(geo, mat);
-        if (type === 'strawberries') mesh.scale.set(0.8, 1.2, 0.8);
+        let geo, mat, mesh;
+        if (finalType === 'strawberries') {
+            geo = new THREE.SphereGeometry(isTop ? 0.22 : 0.16, 12, 12);
+            mat = new THREE.MeshPhongMaterial({ color: 0xd32f2f, shininess: 40 });
+            mesh = new THREE.Mesh(geo, mat);
+            mesh.scale.set(0.8, 1.3, 0.8);
+        } else if (finalType === 'raspberries') {
+            geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.13, 10, 10);
+            mat = new THREE.MeshPhongMaterial({ color: 0xe91e63, flatShading: true });
+            mesh = new THREE.Mesh(geo, mat);
+        } else {
+            geo = new THREE.SphereGeometry(isTop ? 0.12 : 0.08, 8, 8);
+            mat = new THREE.MeshPhongMaterial({ color: 0x283593, shininess: 50 });
+            mesh = new THREE.Mesh(geo, mat);
+        }
         group.add(mesh);
         return group;
     }
 
-    // --- HLAVNÍ VÝPOČET CENY ---
+    // 3. Výpočet ceny a aktualizace textů (Včetně levého panelu)
     function calculatePrice() {
         const diameter = parseInt(document.getElementById('diameter').value);
         const layers = parseInt(document.getElementById('layers').value);
         const style = document.getElementById('cakeStyle').value;
-        const fruitT = document.getElementById('fruitTop').value;
+        const coat = document.getElementById('coating').value;
+        const flavorText = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
         
-        // Základní logika: průměr * koeficient * počet vrstev
-        let total = (diameter * 16) * (layers / 2);
-        if (style === 'wedding') total += 600; // Příplatek za svatební konstrukci
-        if (fruitT !== 'none') total += 150;  // Příplatek za ovoce
-        
-        // Příplatky za doplňky
+        // Logika ceny
+        let total = (diameter * 15) * (layers / 2);
+        if (style === 'wedding') total += 500; 
+        if (flavorText.includes("Ořechový")) total += 100;
+        if (coat === 'full') total += 120;
+        if (document.getElementById('fruitCream').value !== 'none') total += 100;
+        if (document.getElementById('fruitTop').value !== 'none') total += 150;
         if (document.getElementById('c_flowers').checked) total += 350;
         if (document.getElementById('c1').checked) total += 250;
+        if (document.getElementById('c2').checked) total += 400;
         if (document.getElementById('c3').checked) total += 150;
 
-        // Rozmezí ceny
-        const minP = Math.round(total * 0.95);
-        const maxP = Math.round(total * 1.05);
-        const priceString = `${minP} – ${maxP} Kč`;
+        const minPrice = Math.round(total * 0.95);
+        const maxPrice = Math.round(total * 1.05);
 
-        // Aktualizace všech zobrazení ceny (3D okno i levý panel)
-        document.getElementById('price-display-3d').innerText = priceString;
-        document.getElementById('left-price').innerText = priceString;
-        document.getElementById('left-detail').innerText = `${diameter}cm | v. ${layers * 1.5}cm`;
+        // Textové info
+        const infoText = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm | v. cca ${layers * 1.5}cm`;
+        const priceText = `${minPrice} – ${maxPrice} Kč`;
+
+        // Aktualizace v 3D okně
+        document.getElementById('info-display').innerText = infoText;
+        document.getElementById('price-display').innerText = "ODHAD: " + priceText;
+
+        // Aktualizace v LEVÉM panelu
+        document.getElementById('side-info').innerText = infoText;
+        document.getElementById('side-price').innerText = priceText;
     }
 
-    // --- AKTUALIZACE 3D MODELU ---
+    // 4. Přestavba 3D modelu (Včetně ovoce)
     function updateCake() {
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
         
@@ -378,55 +327,67 @@
         const diameter = parseInt(document.getElementById('diameter').value);
         const coat = document.getElementById('coating').value;
         const fruitT = document.getElementById('fruitTop').value;
+        const fruitC = document.getElementById('fruitCream').value;
         const topS = document.getElementById('topStyle').value;
+        const flavorColor = parseInt(document.getElementById('flavor').value);
+        const innerColor = parseInt(document.getElementById('innerCream').value);
+        const outerColor = parseInt(document.getElementById('outerCream').value);
         
-        const flavCol = parseInt(document.getElementById('flavor').value);
-        const inCol = parseInt(document.getElementById('innerCream').value);
-        const outCol = parseInt(document.getElementById('outerCream').value);
-        
-        const baseRad = diameter / 7; 
-        const h = 0.45;
+        const baseRadius = diameter / 6.5; 
+        const h = 0.5;
 
-        document.getElementById('info-display-3d').innerText = `ROZMĚR: ${diameter}cm | VÝŠKA: ${layers * 1.5}cm`;
-
-        // Generování vrstev dortu
         for (let i = 0; i < layers; i++) {
-            let currRad = baseRad;
-            // Pokud je styl svatební, zužujeme patra
+            let currentRadius = baseRadius;
+            // Patra pro svatební
             if (style === 'wedding') {
-                if (i >= 4 && i < 8) currRad = baseRad * 0.75;
-                if (i >= 8) currRad = baseRad * 0.55;
+                if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
+                if (i >= 8) currentRadius = baseRadius * 0.55;
             }
             
             const isCream = i % 2 === 1; 
-            const seg = new THREE.Mesh(
-                new THREE.CylinderGeometry(currRad, currRad, h, 48), 
-                new THREE.MeshPhongMaterial({ color: isCream ? inCol : flavCol })
+            const segment = new THREE.Mesh(
+                new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
+                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
             );
-            seg.position.y = i * h;
-            cakeGroup.add(seg);
+            segment.position.y = i * h;
+            cakeGroup.add(segment);
 
-            // Pokud není dort úplně nahý, přidáme obmaz
+            // Obmaz
             if (coat !== 'naked') {
-                const cMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(currRad + 0.02, currRad + 0.02, h, 48, 1, true), 
-                    new THREE.MeshPhongMaterial({ color: outCol, transparent: true, opacity: (coat === 'semi' ? 0.4 : 1) })
+                const coatMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
+                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide })
                 );
-                cMesh.position.y = i * h;
-                cakeGroup.add(cMesh);
+                coatMesh.position.y = i * h;
+                cakeGroup.add(coatMesh);
             }
 
-            // Ovoce na vršek
-            const isTop = (i === layers - 1);
-            if (isTop && fruitT !== 'none') {
-                const count = topS === 'full' ? 12 : 8;
-                for(let j=0; j<count; j++) {
-                    const f = createFruit(fruitT, true);
-                    const a = (j/count) * Math.PI * 2;
-                    const r = topS === 'full' ? currRad * 0.5 : currRad * 0.8;
-                    f.position.set(Math.cos(a)*r, (i*h)+0.3, Math.sin(a)*r);
+            // Ovoce uvnitř (pokud není plný obmaz)
+            if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
+                for (let j = 0; j < 8; j++) {
+                    const f = createFruit(fruitC, false);
+                    const ang = (j / 8) * Math.PI * 2;
+                    f.position.set(Math.cos(ang) * (currentRadius - 0.1), i * h, Math.sin(ang) * (currentRadius - 0.1));
                     cakeGroup.add(f);
                 }
+            }
+
+            // Ovoce na vršku patra
+            const isTopSurface = (i === layers - 1);
+            const isTierSurface = (style === 'wedding' && (i === 3 || i === 7));
+            if ((isTopSurface || isTierSurface) && fruitT !== 'none') {
+                let radii = [currentRadius * 0.85];
+                if (topS === 'full' && isTopSurface) radii = [currentRadius * 0.3, currentRadius * 0.6, currentRadius * 0.85];
+                
+                radii.forEach(r => {
+                    const count = Math.max(Math.floor(r * 15), 1);
+                    for(let j=0; j<count; j++) {
+                        const f = createFruit(fruitT, true);
+                        const ang = (j/count) * Math.PI * 2;
+                        f.position.set(Math.cos(ang) * r, (i * h) + 0.3, Math.sin(ang) * r);
+                        cakeGroup.add(f);
+                    }
+                });
             }
         }
         calculatePrice(); 
@@ -442,11 +403,16 @@
         renderer.render(scene, camera);
     }
 
-    // Odeslání formuláře
+    // 5. Odeslání formuláře
     document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
-        document.getElementById('hiddenConfig').value = `Styl: ${document.getElementById('cakeStyle').value}, Průměr: ${document.getElementById('diameter').value}`;
-        document.getElementById('hiddenPrice').value = document.getElementById('left-price').innerText;
-        this.querySelector('.btn').innerText = "ODESÍLÁM...";
+        const s_style = document.getElementById('cakeStyle').options[document.getElementById('cakeStyle').selectedIndex].text;
+        const s_diam = document.getElementById('diameter').value + " cm";
+        document.getElementById('hiddenConfig').value = `Styl: ${s_style}, Průměr: ${s_diam}`;
+        document.getElementById('hiddenPrice').value = document.getElementById('side-price').innerText;
+        
+        const btn = this.querySelector('.btn');
+        btn.innerText = "ODESÍLÁM...";
+        btn.disabled = true;
     });
 
     window.onload = init3D;
