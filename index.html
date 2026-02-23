@@ -968,33 +968,41 @@ const allImages = [
     'foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg', 'foto7.jpg', 'foto8.jpg', 'foto9.jpg', 'foto10.jpg', 'foto11.jpg', 'foto12.jpg', 'foto13.jpg', 'foto14.jpg', 'foto15.jpg', 'foto16.jpg', 'foto17.jpg', 'foto18.jpg', 'foto19.jpg' 
 ];
 
+let isTransitioning = false; // Pojistka proti "překrývání" animací
+
 function updateGallery() {
+    if (isTransitioning) return; // Pokud už jedna změna probíhá, nepouštěj další
+    
     const mainSlot = document.getElementById('slot1');
     if (!mainSlot || allImages.length === 0) return;
+
+    isTransitioning = true;
     
-    // 1. OKAMŽITĚ začneme stmívat (v CSS musí být transition aspoň 1s)
+    // 1. Zmizíme do nuly (trvá to 1.5s podle tvého CSS)
     mainSlot.style.opacity = '0';
-    
+
     // Vybereme náhodnou fotku
     const randomPhoto = allImages[Math.floor(Math.random() * allImages.length)];
-    
-    // 2. Vytvoříme pomocný objekt pro načtení
     const tempImage = new Image();
-    
-    // 3. Počkáme, až se sejdou dvě věci: Fotka je načtená A uplynul čas stmívání
-    tempImage.onload = () => {
-        // Tady přidáme malou pojistku (timeout), aby se fotka nevyměnila dřív, než úplně zmizí
-        setTimeout(() => {
+
+    // 2. Počkáme, až fotka zmizí (dáme tomu 1.6s, aby byla fakt tma)
+    setTimeout(() => {
+        tempImage.onload = () => {
+            // Teď, když je úplná tma, vyměníme obrázek
             mainSlot.style.backgroundImage = `url('${randomPhoto}')`;
-            mainSlot.style.opacity = '1';
-        }, 800); // Tento čas musí být o něco kratší než transition v CSS
-    };
-    
-    tempImage.src = randomPhoto;
+            
+            // Malinká pauza (50ms), aby prohlížeč stihl "vstřebat" změnu pozadí
+            setTimeout(() => {
+                mainSlot.style.opacity = '1';
+                isTransitioning = false; // Animace skončila, můžeme příště znova
+            }, 50);
+        };
+        tempImage.src = randomPhoto;
+    }, 1600); 
 }
 
-// Interval necháme na 5000ms (5 vteřin)
-setInterval(updateGallery, 5000);
+// Interval dej na 6 sekund, ať má web čas "dýchat"
+setInterval(updateGallery, 6000);
 
 // Spuštění po načtení stránky
 window.addEventListener('DOMContentLoaded', () => {
