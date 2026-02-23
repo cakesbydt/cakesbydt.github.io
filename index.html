@@ -323,9 +323,7 @@
         cakeGroup.rotation.y = 0.5;
         scene.add(cakeGroup);
         
-        updateCake(
-            document.getElementById('c_flowers').addEventListener('change', updateCake);
-        ); // Sestavení modelu při načtení
+        updateCake(); // Sestavení modelu při načtení
         animate();    // Spuštění animace
 
         /* LOGIKA OVLÁDÁNÍ (MYŠ + DOTYK) */
@@ -376,44 +374,6 @@
         window.addEventListener('touchend', handleEnd);
     }
 
-function createFlower() {
-    const group = new THREE.Group();
-    
-    // Barva květin (můžeš změnit na bílou 0xffffff nebo krémovou 0xfff5e1)
-    const flowerColor = 0xf48fb1; // Jemná růžová
-    const petalMat = new THREE.MeshPhongMaterial({ color: flowerColor, shininess: 10, side: THREE.DoubleSide });
-
-    // Vytvoříme květinu z několika vrstev okvětních lístků
-    for (let i = 0; i < 3; i++) {
-        const layerPetals = 5 + (i * 2);
-        for (let j = 0; j < layerPetals; j++) {
-            const petalGeo = new THREE.SphereGeometry(0.25, 8, 8);
-            const petal = new THREE.Mesh(petalGeo, petalMat);
-            
-            // Rozmístění lístků do kruhu a jejich deformace
-            const angle = (j / layerPetals) * Math.PI * 2;
-            const dist = 0.1 + (i * 0.08);
-            
-            petal.position.set(Math.cos(angle) * dist, i * 0.05, Math.sin(angle) * dist);
-            petal.scale.set(1, 0.2, 1.5); // Udělá z koule plochý lístek
-            petal.rotation.y = angle;
-            petal.rotation.x = 0.5 + (i * 0.3); // Vyklonění lístků ven
-            
-            group.add(petal);
-        }
-    }
-
-    // Střed květiny (pestík)
-    const centerGeo = new THREE.SphereGeometry(0.12, 8, 8);
-    const centerMat = new THREE.MeshPhongMaterial({ color: 0xffd54f });
-    const center = new THREE.Mesh(centerGeo, centerMat);
-    center.position.y = 0.1;
-    group.add(center);
-
-    group.scale.set(1.2, 1.2, 1.2); // Celkové měřítko květiny
-    return group;
-}
-    
    function createFruit(type, isTop) {
         const group = new THREE.Group();
         let finalType = type;
@@ -547,30 +507,6 @@ function createFlower() {
             );
             segment.position.y = i * h;
             cakeGroup.add(segment);
-
-            // --- Vykreslení květin ---
-const flowersCheckbox = document.getElementById('c_flowers');
-if (flowersCheckbox && flowersCheckbox.checked) {
-    const flowerCount = 5; // Počet květin na horním patře
-    for (let i = 0; i < flowerCount; i++) {
-        const flower = createFlower();
-        
-        // Rozmístění po obvodu horního patra
-        const angle = (i / flowerCount) * Math.PI * 2 + 0.5; // +0.5 aby nebyly přesně pod ovocem
-        const radius = currentDiameter * 0.03; // Umístění na kraj
-        
-        flower.position.set(
-            Math.cos(angle) * radius,
-            currentLayers * 0.5 + 0.05, // Na vršku dortu
-            Math.sin(angle) * radius
-        );
-        
-        // Náhodné pootočení pro přirozený vzhled
-        flower.rotation.y = Math.random() * Math.PI;
-        
-        cakeGroup.add(flower);
-    }
-}
 
             /* Přidání vnějšího krému (obmazu)
             if (coat !== 'naked') {
