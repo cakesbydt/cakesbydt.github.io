@@ -974,15 +974,22 @@ function updateGallery() {
     
     const randomPhoto = allImages[Math.floor(Math.random() * allImages.length)];
     
-    // 1. Fotka úplně plynule zmizí
-    mainSlot.style.opacity = '0'; 
+    // 1. Vytvoříme neviditelný pomocný obrázek pro přednačtení
+    const tempImage = new Image();
+    tempImage.src = randomPhoto;
     
-    // 2. Počkáme 1.5 sekundy (polovina času transition), než vyměníme obrázek
-    setTimeout(() => {
-        mainSlot.style.backgroundImage = `url('${randomPhoto}')`;
-        // 3. Fotka se zase plynule objeví
-        mainSlot.style.opacity = '1';
-    }, 1500); 
+    // 2. Teprve až je obrázek PLNĚ načtený v paměti, spustíme animaci
+    tempImage.onload = () => {
+        // Fotka začne plynule mizet
+        mainSlot.style.opacity = '0'; 
+        
+        setTimeout(() => {
+            // Vyměníme už načtený obrázek (teď už neproblikne)
+            mainSlot.style.backgroundImage = `url('${randomPhoto}')`;
+            // Fotka se plynule objeví
+            mainSlot.style.opacity = '1';
+        }, 1500); 
+    };
 }
 
 // Změň interval na 5 vteřin, aby si lidé stihli fotku prohlédnout (2.8s prolnutí + pauza)
