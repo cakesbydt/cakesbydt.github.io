@@ -238,22 +238,43 @@
         updateCake(); 
         animate(); 
 
-        // Ovládání myší
-        const handleStart = (clientX, clientY) => { isDragging = true; previousMousePosition = { x: clientX, y: clientY }; };
-        const handleMove = (clientX, clientY) => {
+       // Ovládání myší i dotykem
+        const handleStart = (clientX, clientY) => { 
+            isDragging = true; 
+            previousMousePosition = { x: clientX, y: clientY }; 
+        };
+
+        const handleMove = (clientX, clientY, e) => {
             if (!isDragging) return;
+            
+            // Zabráníme skrolování stránky, když uživatel točí dortem
+            if (e && e.cancelable) e.preventDefault();
+
             const deltaX = clientX - previousMousePosition.x;
             const deltaY = clientY - previousMousePosition.y;
+            
             cakeGroup.rotation.y += deltaX * 0.01;
             cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x + deltaY * 0.01));
             previousMousePosition = { x: clientX, y: clientY };
         };
 
+        // Události pro MYŠ (PC)
         container.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
         window.addEventListener('mouseup', () => isDragging = false);
-        window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
-    }
+        window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY, e));
 
+        // Události pro DOTYK (Mobil/Tablet)
+        container.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            handleStart(touch.clientX, touch.clientY);
+        }, { passive: false });
+
+        window.addEventListener('touchend', () => isDragging = false);
+
+        container.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            handleMove(touch.clientX, touch.clientY, e);
+        }, { passive: false });
     // 2. Funkce pro vytvoření ovoce (3D modely)
     function createFruit(type, isTop) {
         const group = new THREE.Group();
