@@ -164,6 +164,8 @@
 .photo-slot.large {
     grid-column: span 2;
     grid-row: span 2;
+    border: 2px solid rgba(177, 156, 217, 0.5); /* Silnější okraj pro hlavní fotku */
+    box-shadow: 0 0 20px rgba(177, 156, 217, 0.2);
 }
 
 .photo-slot:hover {
@@ -825,7 +827,7 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
 
 function updateGallery() {
     // Vybereme náhodný slot (1 až 5)
-    const slotId = 'slot' + (Math.floor(Math.random() * 5) + 1);
+    const slotId = 'slot1';
     const slotElement = document.getElementById(slotId);
     
     // Vybereme náhodnou fotku ze seznamu
