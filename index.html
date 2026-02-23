@@ -453,7 +453,7 @@
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
-            // Přidání vnějšího krému (obmazu)
+            /* Přidání vnějšího krému (obmazu)
             if (coat !== 'naked') {
                 const coatMesh = new THREE.Mesh(
                     new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
@@ -461,6 +461,34 @@
                 );
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
+            } */
+
+            // 1. Přidání vnějšího krému na BOKY (původní kód)
+            if (coat !== 'naked') {
+                const coatMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
+                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide })
+                );
+                coatMesh.position.y = i * h;
+                cakeGroup.add(coatMesh);
+
+                // 2. NOVINKA: Přidání krému na HORNÍ PLOCHU
+                // Pokud jsme na úplně poslední vrstvě (i === layers - 1), přidáme "pokličku" z krému
+                if (i === layers - 1) {
+                    const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.03, 64);
+                    const topCapMat = new THREE.MeshPhongMaterial({ 
+                        color: outerColor, 
+                        transparent: true, 
+                        opacity: (coat === 'semi' ? 0.5 : 1), 
+                        side: THREE.DoubleSide 
+                    });
+                    const topCap = new THREE.Mesh(topCapGeo, topCapMat);
+                    
+                    // Pozice: i * h (výška vrstvy) + polovina výšky segmentu (h/2) + drobný offset, aby neproblikával podklad
+                    topCap.position.y = (i * h) + (h / 2) + 0.01; 
+                    topCap.rotation.x = Math.PI / 2; // Otočení kruhu vodorovně
+                    cakeGroup.add(topCap);
+                }
             }
 
             // Ovoce uvnitř (v krému)
