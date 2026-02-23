@@ -605,27 +605,18 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
     btn.innerText = "ODESÍLÁM...";
     btn.disabled = true;
 
-    // Funkce pro získání čitelného textu ze Selectu
+    // Pomocná funkce pro texty
     const getText = (id) => {
         const el = document.getElementById(id);
         return el ? el.options[el.selectedIndex].text : "Nezvoleno";
     };
 
-    // Sestavení seznamu doplňků
+    // Sběr doplňků
     let doplnkyArr = [];
-    const checkFields = [
-        {id: 'c_flowers', name: 'Detail_Kvetiny', label: 'Květiny'},
-        {id: 'c1', name: 'Detail_Papir', label: 'Jedlý papír'},
-        {id: 'c2', name: 'Detail_Figurka', label: 'Figurka'},
-        {id: 'c3', name: 'Detail_Zapich', label: 'Zápich'}
-    ];
-
-    checkFields.forEach(item => {
-        if(document.getElementById(item.id) && document.getElementById(item.id).checked) {
-            const detail = document.getElementsByName(item.name)[0]?.value || "Ano";
-            doplnkyArr.push(`${item.label} (${detail})`);
-        }
-    });
+    if(document.getElementById('c_flowers')?.checked) doplnkyArr.push("Květiny (" + (document.getElementsByName('Detail_Kvetiny')[0]?.value || "Ano") + ")");
+    if(document.getElementById('c1')?.checked) doplnkyArr.push("Jedlý papír (" + (document.getElementsByName('Detail_Papir')[0]?.value || "Ano") + ")");
+    if(document.getElementById('c2')?.checked) doplnkyArr.push("Figurka (" + (document.getElementsByName('Detail_Figurka')[0]?.value || "Ano") + ")");
+    if(document.getElementById('c3')?.checked) doplnkyArr.push("Zápich (" + (document.getElementsByName('Detail_Zapich')[0]?.value || "Ano") + ")");
 
     const templateParams = {
         jmeno: document.getElementsByName('Jmeno')[0].value,
@@ -642,28 +633,37 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         cena_odhad: document.getElementById('price-display').innerText
     };
 
-
-
-// První e-mail TOBĚ (to už tam máš)
+    // 1. POSÍLÁME TOBĚ
     emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
         .then(function() {
+            console.log("Email tobě odeslán");
             
-            // DRUHÝ E-MAIL ZÁKAZNÍKOVI (přidáno nyní)
-            emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
-
-            // Zobrazení tvého nového okna
+            // 2. POSÍLÁME ZÁKAZNÍKOVI (Template pro potvrzení)
+            // Nahraď ID_ZAKAZNIK_SABLONY tvým ID z EmailJS
+            return emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
+        })
+        .then(function() {
+            console.log("Potvrzení zákazníkovi odesláno");
+            
+            // Zobrazení tvého stylového okna
             const modal = document.getElementById('customModal');
             if(modal) modal.style.display = 'flex';
             
             btn.innerText = "ODESLÁNO ✅";
-        }, function(error) {
-            alert('Chyba: ' + JSON.stringify(error));
+        })
+        .catch(function(error) {
+            console.error('Chyba odesílání:', error);
+            alert('Nastala chyba. Dort se ale pořád peče v náhledu!');
+            btn.innerText = originalBtnText;
             btn.disabled = false;
         });
-    
-    // Konec event listeneru
-    // Spuštění po načtení dokumentu
-    window.onload = init3D;
+});
+
+// DŮLEŽITÉ: Ujisti se, že tato řádka je na úplném konci souboru
+window.onload = init3D;
+          
+
+
 </script>
 </body>
 </html>
