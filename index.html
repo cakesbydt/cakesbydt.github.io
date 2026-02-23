@@ -115,17 +115,7 @@
       emailjs.init("d5XFw5mWVB9ijGP_J"); 
    })();
 </script>
-</head>
-
-    <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 12, 41, 0.8); z-index:9999; backdrop-filter: blur(8px); justify-content:center; align-items:center;">
-    <div style="background: white; padding: 40px; border-radius: 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 2px solid #bc9bc2; animation: entrance 0.5s ease-out;">
-        <div style="font-size: 60px; margin-bottom: 20px;">🎂</div>
-        <h2 style="font-family: 'Playfair Display', serif; color: #bc9bc2; margin-bottom: 15px; font-size: 28px;">Vaše sladká poptávka letí k nám!</h2>
-        <p style="color: #666; line-height: 1.6; font-size: 16px;">Děkujeme za důvěru. Vaši konfiguraci jsme právě obdrželi a brzy se vám ozveme, abychom doladili detaily.</p>
-        <button onclick="document.getElementById('customModal').style.display='none'" style="margin-top: 25px; padding: 15px 40px; background: linear-gradient(90deg, #bc9bc2, #d4bdd9); color: white; border: none; border-radius: 100px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 2px;">Rozumím</button>
-    </div>
-</div>
-    
+</head>   
 <body>
 
 <div class="bg-layer">
@@ -287,6 +277,15 @@
         </div>
     </div>
 </form>
+
+    </form> <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:10000; backdrop-filter: blur(5px); justify-content:center; align-items:center;">
+    <div style="background: white; padding: 40px; border-radius: 30px; text-align: center; max-width: 400px; width: 85%; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+        <div style="font-size: 50px; margin-bottom: 15px;">🎂</div>
+        <h2 style="font-family: 'Playfair Display', serif; color: #bc9bc2; margin: 0 0 15px 0;">Dort je v troubě!</h2>
+        <p style="color: #666; font-family: sans-serif; line-height: 1.5;">Vaši poptávku jsme v pořádku přijali. Brzy se vám ozveme zpět.</p>
+        <button type="button" onclick="document.getElementById('customModal').style.display='none'" style="margin-top: 20px; padding: 12px 30px; background: #bc9bc2; color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase;">Zavřít</button>
+    </div>
+</div>
 
 <script>
     /* JAVASCRIPT LOGIKA */
