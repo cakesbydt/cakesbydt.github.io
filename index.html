@@ -208,40 +208,32 @@
     font-family: 'Playfair Display', serif; /* Nebo tvůj font */
 }
 
-.gallery-label { 
-    font-size: 11px; 
-    letter-spacing: 2px; 
-    font-weight: 800; 
-    color: rgba(255,255,255,0.7); 
-    text-transform: uppercase; 
-    margin-bottom: 15px; 
-    
-    /* Centrovací kouzlo */
-    text-align: center;      /* Vycentruje samotný text */
-    display: block;          /* Zajistí, že zabere celou šířku */
-    width: 100%;             /* Roztáhne se k okrajům */
-    
-    /* Pokud by text stále utíkal, přidáme stejnou pojistku jako u fotky: */
-    position: relative;
-    left: 0;
+/* Label - jednoduché centrování textu */
+.gallery-label {
+    width: 100%;
+    text-align: center;
+    display: block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    margin-bottom: 15px;
 }
 
+/* Hlavní kontejner - univerzální centrování */
 .single-photo-container {
     width: 100%;
     height: 500px;
     margin: 30px 0;
-    /* Zrušíme vliv okolního paddingu pro tento prvek */
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    
-    display: flex;
-    justify-content: center;
+    display: flex;         /* Toto vycentruje obsah automaticky */
+    justify-content: center; 
+    align-items: center;
 }
 
+/* Fotka - tady nastavíme fixní šířku pro PC */
 .photo-slot-main {
-    /* Zkusíme fixní šířku, která odpovídá tvým políčkům */
-    width: 320px; /* Pokud je to moc, dej 300px. Pokud málo, dej 350px */
+    width: 320px;          /* Šířka na PC */
     height: 100%;
     background-size: cover;
     background-position: center;
