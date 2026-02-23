@@ -385,10 +385,30 @@
         let geo, mat, mesh;
         // Definice vzhledu podle typu ovoce
         if (finalType === 'strawberries') {
-            geo = new THREE.SphereGeometry(isTop ? 0.22 : 0.16, 12, 12);
-            mat = new THREE.MeshPhongMaterial({ color: 0xd32f2f, shininess: 40 });
+            const size = isTop ? 0.25 : 0.18;
+            // 1. Tělo jahody (kuželovitější tvar)
+            // Použijeme ConeGeometry s mírným zaoblením nebo upravenou sféru
+            geo = new THREE.SphereGeometry(size, 16, 16);
+            mat = new THREE.MeshPhongMaterial({ 
+                color: 0xd32f2f, 
+                shininess: 60,
+                flatShading: false 
+            });
             mesh = new THREE.Mesh(geo, mat);
-            mesh.scale.set(0.8, 1.3, 0.8);
+            // Vytvoříme tvar kapky/jahody
+            mesh.scale.set(1, 1.4, 1); 
+            // Posuneme těžiště, aby špička mířila dolů (při rotaci to vypadá lépe)
+            mesh.position.y = 0;
+            group.add(mesh);
+
+            // 2. Zelené lístky (kalich) - to jahodu "prodá"
+            const leafGeo = new THREE.ConeGeometry(size * 1.1, size * 0.4, 5);
+            const leafMat = new THREE.MeshPhongMaterial({ color: 0x2e7d32 });
+            const leaves = new THREE.Mesh(leafGeo, leafMat);
+            leaves.position.y = size * 0.7; // Posadíme lístky na vršek jahody
+            leaves.rotation.x = Math.PI; // Otočíme je směrem k plodu
+            group.add(leaves);
+
         } else if (finalType === 'raspberries') {
             geo = new THREE.SphereGeometry(isTop ? 0.18 : 0.13, 10, 10);
             mat = new THREE.MeshPhongMaterial({ color: 0xe91e63, flatShading: true });
