@@ -152,9 +152,10 @@
 
 /* Hlavní kontejner pro jednu velkou fotku */
 .single-photo-container {
-    width: 100%;
-    height: 450px; /* Tady nastavuješ výslednou výšku fotky */
-    margin-bottom: 25px;
+    width: calc(100% + 40px); /* Zvětší šířku o padding (odhadem 20px na každé straně) */
+    margin-left: -20px;       /* Posune fotku doleva do paddingu */
+    height: 550px;            /* Vyšší fotka vypadá v tomhle úzkém sloupci lépe */
+    margin-bottom: 30px;
 }
 
 /* Samotný slot pro fotku - velký a zářící */
