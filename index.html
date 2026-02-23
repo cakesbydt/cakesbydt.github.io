@@ -171,6 +171,47 @@
     box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
     transform: scale(1.02);
 }
+.ig-float-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: white; /* Čistě bílý základ */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(177, 156, 217, 0.3); /* Levandulový stín */
+    z-index: 1000; /* Aby bylo vždy nad 3D modelem */
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid #e2dcf4;
+}
+
+.ig-float-button img {
+    width: 30px;
+    height: 30px;
+}
+
+.ig-float-button:hover {
+    transform: scale(1.1) translateY(-5px); /* Jemné poskočení nahoru */
+    border-color: #b19cd9;
+    box-shadow: 0 0 30px rgba(177, 156, 217, 0.6); /* Výrazné levandulové podsvícení */
+}
+
+/* Mobilní verze - o kousek menší, aby nepřekáželo */
+@media (max-width: 768px) {
+    .ig-float-button {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+    .ig-float-button img {
+        width: 25px;
+        height: 25px;
+    }
+}
         
     </style>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -222,11 +263,18 @@
                 <p id="side-price" style="color: var(--gold); font-size: 16px;">--</p>
         </div>
             
-
+<a href="https://www.instagram.com/_cakesbydt_/" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #b19cd9; text-decoration: none; font-size: 13px; margin-top: 15px; font-weight: bold; transition: all 0.3s;">
+    <span>Sledujte @ _cakesbydt_</span>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" style="width: 16px; height: 16px;">
+</a>
             <p style="margin-top:auto; font-size: 20px; letter-spacing: 3px; opacity: 0.5;">Váš sladký sen</p>
         </div>
 
         <div class="obsah">
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+    <p style="color: rgba(255,255,255,0.5); font-size: 11px; letter-spacing: 1px;">Pro více inspirace navštivte můj Instagram</p>
+    <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" style="color: white; text-decoration: none; font-size: 14px; opacity: 0.8;">@_cakesbydt_</a>
+</div>
             <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
             
             <div class="sekce">
@@ -800,6 +848,10 @@ window.onload = () => {
         document.getElementById('slot'+i).style.backgroundImage = `url('${allImages[i-1]}')`;
     }
 };
+
+    <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" class="ig-float-button" title="Sledujte mě na Instagramu">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
+</a>
 // DŮLEŽITÉ: Ujisti se, že tato řádka je na úplném konci souboru
 window.onload = init3D;
           
