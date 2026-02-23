@@ -210,7 +210,8 @@
     border-radius: 30px;
     border: 2px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    transition: opacity 2.8s ease-in-out;
+    transition: opacity 1.5s ease-in-out !important; /* Animujeme průhlednost */
+    opacity: 1; /* Výchozí stav je viditelný */
 }
 
 .photo-slot-main:hover {
@@ -968,20 +969,24 @@ const allImages = [
 ];
 
 function updateGallery() {
-    // Míříme pouze na slot1
     const mainSlot = document.getElementById('slot1');
     if (!mainSlot || allImages.length === 0) return;
     
-    // Vybereme náhodnou fotku
     const randomPhoto = allImages[Math.floor(Math.random() * allImages.length)];
     
-    // Plynulý efekt prolnutí
-    mainSlot.style.opacity = '0.3'; // Nejdřív trochu zmizí
+    // 1. Fotka úplně plynule zmizí
+    mainSlot.style.opacity = '0'; 
+    
+    // 2. Počkáme 1.5 sekundy (polovina času transition), než vyměníme obrázek
     setTimeout(() => {
         mainSlot.style.backgroundImage = `url('${randomPhoto}')`;
-        mainSlot.style.opacity = '1'; // Pak se zase objeví s novou fotkou
-    }, 400);
+        // 3. Fotka se zase plynule objeví
+        mainSlot.style.opacity = '1';
+    }, 1500); 
 }
+
+// Změň interval na 5 vteřin, aby si lidé stihli fotku prohlédnout (2.8s prolnutí + pauza)
+setInterval(updateGallery, 5000);
 
 // Spuštění po načtení stránky
 window.addEventListener('DOMContentLoaded', () => {
