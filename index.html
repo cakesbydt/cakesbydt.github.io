@@ -319,16 +319,22 @@
         box-sizing: border-box;
     }
 
-   .photo-slot-main {
-        width: 115% !important; /* Fotka bude širší než text nad ní */
-        max-width: 550px !important; /* Zvýšili jsme limit, aby mohla vyrůst */
-        height: 480px !important; /* Zvýšíme ji, aby zůstala v hezkém poměru */
-        margin-left: -7.5% !important; /* Vyrovnání, aby zůstala na středu, když je přes 100% */
-        border-radius: 20px !important; /* Na mobilu trochu ubereme zaoblení, vypadá to lépe u širokých fotek */
+  .photo-slot-main {
+        display: block !important; /* Vynutí klasické chování bloku */
+        width: 115% !important; 
+        max-width: 550px !important; 
+        height: 480px !important; 
+        /* Tady je kouzlo: záporný margin ji vytáhne ven z paddingu panelu */
+        margin-left: -7.5% !important; 
+        margin-right: -7.5% !important;
+        border-radius: 20px !important;
+        position: relative !important;
     }
     .single-photo-container {
         width: 100% !important;
-        overflow: visible !important; /* Důležité: dovolí fotce "vykouknout" do stran */
+        height: 480px !important; /* Musí odpovídat výšce fotky */
+        overflow: visible !important; 
+        display: block !important; /* Přepneme z flexu na block pro správný margin */
     }
 
     .hlavni-motto {
