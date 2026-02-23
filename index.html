@@ -189,33 +189,53 @@
     box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 35px rgba(177, 156, 217, 0.5);
 }
 
-/* --- Tady začíná tvé Instagram tlačítko (beze změny) --- */
 .ig-float-button {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    width: 60px;
-    height: 60px;
-    background-color: white;
-    border-radius: 50%;
+    /* Zvětšení tlačítka */
+    width: 80px; 
+    height: 80px;
+    background-color: #ffffff;
+    border-radius: 50px; /* Zaoblení se přizpůsobí textu */
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 25px rgba(177, 156, 217, 0.3);
+    gap: 10px; /* Mezera mezi ikonou a textem */
+    padding: 0 20px; /* Polstrování pro případný text */
+    
+    /* Barva textu a stínu */
+    color: #b19cd9; 
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    
+    box-shadow: 0 10px 30px rgba(177, 156, 217, 0.4);
     z-index: 1000;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 2px solid #e2dcf4;
+    border: 3px solid #e2dcf4;
 }
 
 .ig-float-button img {
-    width: 30px;
-    height: 30px;
+    /* Zvětšení ikonky uvnitř */
+    width: 35px;
+    height: 35px;
+    /* Pokud chceš změnit barvu SVG ikony na levandulovou, použijeme filtr: */
+    filter: invert(72%) sepia(12%) saturate(953%) hue-rotate(217deg) brightness(95%) contrast(89%);
 }
 
 .ig-float-button:hover {
-    transform: scale(1.5) translateY(-5px);
+    /* Zvětšení při najetí (1.2 je akorát, 1.5 už bývá moc agresivní, ale nechám dle tvého přání) */
+    transform: scale(1.2) translateY(-10px); 
+    background-color: #b19cd9; /* Změna pozadí na levandulovou při najetí */
+    color: #ffffff; /* Text zbělá */
     border-color: #ffffff;
-    box-shadow: 0 0 30px rgba(177, 156, 217, 0.6);
+    box-shadow: 0 15px 40px rgba(177, 156, 217, 0.8);
+}
+
+.ig-float-button:hover img {
+    /* Při najetí ikonka zbělá */
+    filter: brightness(0) invert(1);
 }
 /* Mobilní ladění (pro telefony) */
 @media (max-width: 768px) {
