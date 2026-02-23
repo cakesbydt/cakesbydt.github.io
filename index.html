@@ -642,25 +642,24 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         cena_odhad: document.getElementById('price-display').innerText
     };
 
-    // ... předchozí kód se sestavením templateParams ...
 
+
+// První e-mail TOBĚ (to už tam máš)
     emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
         .then(function() {
-            // --- TATO ČÁST ZOBRAZÍ OKNO ---
+            
+            // DRUHÝ E-MAIL ZÁKAZNÍKOVI (přidáno nyní)
+            emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
+
+            // Zobrazení tvého nového okna
             const modal = document.getElementById('customModal');
-            if(modal) {
-                modal.style.display = 'flex';
-            }
-            // -----------------------------
+            if(modal) modal.style.display = 'flex';
             
             btn.innerText = "ODESLÁNO ✅";
         }, function(error) {
-            console.error('Chyba:', error);
-            alert('Něco se nepovedlo, zkuste to znovu.');
-            btn.innerText = originalBtnText;
+            alert('Chyba: ' + JSON.stringify(error));
             btn.disabled = false;
         });
-}); 
     
     // Konec event listeneru
     // Spuštění po načtení dokumentu
