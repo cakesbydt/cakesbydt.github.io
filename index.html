@@ -972,27 +972,28 @@ function updateGallery() {
     const mainSlot = document.getElementById('slot1');
     if (!mainSlot || allImages.length === 0) return;
     
+    // 1. OKAMŽITĚ začneme stmívat (v CSS musí být transition aspoň 1s)
+    mainSlot.style.opacity = '0';
+    
+    // Vybereme náhodnou fotku
     const randomPhoto = allImages[Math.floor(Math.random() * allImages.length)];
     
-    // 1. Vytvoříme neviditelný pomocný obrázek pro přednačtení
+    // 2. Vytvoříme pomocný objekt pro načtení
     const tempImage = new Image();
-    tempImage.src = randomPhoto;
     
-    // 2. Teprve až je obrázek PLNĚ načtený v paměti, spustíme animaci
+    // 3. Počkáme, až se sejdou dvě věci: Fotka je načtená A uplynul čas stmívání
     tempImage.onload = () => {
-        // Fotka začne plynule mizet
-        mainSlot.style.opacity = '0'; 
-        
+        // Tady přidáme malou pojistku (timeout), aby se fotka nevyměnila dřív, než úplně zmizí
         setTimeout(() => {
-            // Vyměníme už načtený obrázek (teď už neproblikne)
             mainSlot.style.backgroundImage = `url('${randomPhoto}')`;
-            // Fotka se plynule objeví
             mainSlot.style.opacity = '1';
-        }, 1500); 
+        }, 800); // Tento čas musí být o něco kratší než transition v CSS
     };
+    
+    tempImage.src = randomPhoto;
 }
 
-// Změň interval na 5 vteřin, aby si lidé stihli fotku prohlédnout (2.8s prolnutí + pauza)
+// Interval necháme na 5000ms (5 vteřin)
 setInterval(updateGallery, 5000);
 
 // Spuštění po načtení stránky
