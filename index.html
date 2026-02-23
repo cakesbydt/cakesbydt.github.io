@@ -214,8 +214,9 @@
     let previousMousePosition = { x: 0, y: 0 };
     const container = document.getElementById('canvas-container');
 
-    // 1. Inicializace 3D scény
     function init3D() {
+        if (!container) return;
+
         scene = new THREE.Scene();
         camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 1000);
         camera.position.set(0, 6, 14); 
@@ -238,7 +239,7 @@
         updateCake(); 
         animate(); 
 
-       // Ovládání myší i dotykem
+        // --- SPOLEČNÉ OVLÁDÁNÍ (PC I MOBIL) ---
         const handleStart = (clientX, clientY) => { 
             isDragging = true; 
             previousMousePosition = { x: clientX, y: clientY }; 
@@ -247,7 +248,7 @@
         const handleMove = (clientX, clientY, e) => {
             if (!isDragging) return;
             
-            // Zabráníme skrolování stránky, když uživatel točí dortem
+            // Zamezení skrolu stránky při rotaci na mobilu
             if (e && e.cancelable) e.preventDefault();
 
             const deltaX = clientX - previousMousePosition.x;
@@ -255,27 +256,33 @@
             
             cakeGroup.rotation.y += deltaX * 0.01;
             cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x + deltaY * 0.01));
+            
             previousMousePosition = { x: clientX, y: clientY };
+            
+            // Aktualizace sliderů pro vizuální zpětnou vazbu
+            document.getElementById('rotateY').value = cakeGroup.rotation.y;
+            document.getElementById('rotateX').value = cakeGroup.rotation.x;
         };
 
-        // Události pro MYŠ (PC)
+        // Události MYŠ
         container.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
-        window.addEventListener('mouseup', () => isDragging = false);
+        window.addEventListener('mouseup', () => { isDragging = false; });
         window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY, e));
 
-        // Události pro DOTYK (Mobil/Tablet)
+        // Události DOTYK (Mobil)
         container.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             handleStart(touch.clientX, touch.clientY);
         }, { passive: false });
 
-        window.addEventListener('touchend', () => isDragging = false);
+        window.addEventListener('touchend', () => { isDragging = false; });
 
         container.addEventListener('touchmove', (e) => {
             const touch = e.touches[0];
             handleMove(touch.clientX, touch.clientY, e);
         }, { passive: false });
-    // 2. Funkce pro vytvoření ovoce (3D modely)
+    }
+
     function createFruit(type, isTop) {
         const group = new THREE.Group();
         let finalType = type;
@@ -303,7 +310,6 @@
         return group;
     }
 
-    // 3. Výpočet ceny a aktualizace textů (Včetně levého panelu)
     function calculatePrice() {
         const diameter = parseInt(document.getElementById('diameter').value);
         const layers = parseInt(document.getElementById('layers').value);
@@ -311,7 +317,6 @@
         const coat = document.getElementById('coating').value;
         const flavorText = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
         
-        // Logika ceny
         let total = (diameter * 15) * (layers / 2);
         if (style === 'wedding') total += 500; 
         if (flavorText.includes("Ořechový")) total += 100;
@@ -326,21 +331,17 @@
         const minPrice = Math.round(total * 0.95);
         const maxPrice = Math.round(total * 1.05);
 
-        // Textové info
         const infoText = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm | v. cca ${layers * 1.5}cm`;
         const priceText = `${minPrice} – ${maxPrice} Kč`;
 
-        // Aktualizace v 3D okně
         document.getElementById('info-display').innerText = infoText;
         document.getElementById('price-display').innerText = "ODHAD: " + priceText;
-
-        // Aktualizace v LEVÉM panelu
         document.getElementById('side-info').innerText = infoText;
         document.getElementById('side-price').innerText = priceText;
     }
 
-    // 4. Přestavba 3D modelu (Včetně ovoce)
     function updateCake() {
+        if (!cakeGroup) return;
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
         
         const style = document.getElementById('cakeStyle').value;
@@ -359,7 +360,6 @@
 
         for (let i = 0; i < layers; i++) {
             let currentRadius = baseRadius;
-            // Patra pro svatební
             if (style === 'wedding') {
                 if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
                 if (i >= 8) currentRadius = baseRadius * 0.55;
@@ -373,7 +373,6 @@
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
-            // Obmaz
             if (coat !== 'naked') {
                 const coatMesh = new THREE.Mesh(
                     new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
@@ -383,7 +382,6 @@
                 cakeGroup.add(coatMesh);
             }
 
-            // Ovoce uvnitř (pokud není plný obmaz)
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 for (let j = 0; j < 8; j++) {
                     const f = createFruit(fruitC, false);
@@ -393,7 +391,6 @@
                 }
             }
 
-            // Ovoce na vršku patra
             const isTopSurface = (i === layers - 1);
             const isTierSurface = (style === 'wedding' && (i === 3 || i === 7));
             if ((isTopSurface || isTierSurface) && fruitT !== 'none') {
@@ -415,16 +412,18 @@
     }
 
     function manualControl() {
+        if (!cakeGroup) return;
         cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
         cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
     }
 
     function animate() {
         requestAnimationFrame(animate);
-        renderer.render(scene, camera);
+        if (renderer && scene && camera) {
+            renderer.render(scene, camera);
+        }
     }
 
-    // 5. Odeslání formuláře
     document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
         const s_style = document.getElementById('cakeStyle').options[document.getElementById('cakeStyle').selectedIndex].text;
         const s_diam = document.getElementById('diameter').value + " cm";
