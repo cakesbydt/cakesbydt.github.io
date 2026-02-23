@@ -255,7 +255,7 @@
             <div class="sekce">
                 <h3>4. Doplňky</h3>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> Květinová dekorace</label>
+                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice();updateCake()"> Květinová dekorace</label>
                     <div class="extra-input"><input type="text" name="Detail_Kvetiny" placeholder="Jaké květiny si přejete?"></div>
                 </div>
                 <div class="doplnek-item">
@@ -437,6 +437,42 @@
 
         return group;
     }
+    function createFlower() {
+    const group = new THREE.Group();
+    // Jemně růžový materiál pro lístky
+    const petalMat = new THREE.MeshPhongMaterial({ 
+        color: 0xf48fb1, 
+        shininess: 5, 
+        side: THREE.DoubleSide 
+    });
+
+    // Vytvoříme 3 vrstvy okvětních lístků
+    for (let i = 0; i < 3; i++) {
+        const layerCount = 5 + (i * 2); // Každá další vrstva má víc lístků
+        for (let j = 0; j < layerCount; j++) {
+            const petalGeo = new THREE.SphereGeometry(0.2, 8, 8);
+            const petal = new THREE.Mesh(petalGeo, petalMat);
+            
+            const angle = (j / layerCount) * Math.PI * 2;
+            const dist = 0.08 + (i * 0.06); // Vzdálenost od středu
+            
+            petal.position.set(Math.cos(angle) * dist, i * 0.04, Math.sin(angle) * dist);
+            petal.scale.set(1, 0.2, 1.3); // Zploštění koule na lístek
+            petal.rotation.y = angle;
+            petal.rotation.x = 0.5 + (i * 0.4); // Vyklonění lístků
+            
+            group.add(petal);
+        }
+    }
+    // Žlutý střed (pestík)
+    const centerGeo = new THREE.SphereGeometry(0.1, 8, 8);
+    const centerMat = new THREE.MeshPhongMaterial({ color: 0xffd54f });
+    const center = new THREE.Mesh(centerGeo, centerMat);
+    center.position.y = 0.06;
+    group.add(center);
+
+    return group;
+}
 
     /* 3. Logika výpočtu ceny (odhad) */
     function calculatePrice() {
@@ -594,6 +630,29 @@ if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
         f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
         
         cakeGroup.add(f);
+    }
+}
+            // --- Sekce pro květiny ---
+const flowersCheckbox = document.getElementById('c_flowers');
+if (flowersCheckbox && flowersCheckbox.checked) {
+    const flowerCount = 6; // Kolik květin chceš na dortu
+    for (let i = 0; i < flowerCount; i++) {
+        const flower = createFlower();
+        
+        // Rozmístění po obvodu (radius se přizpůsobí velikosti dortu)
+        const angle = (i / flowerCount) * Math.PI * 2;
+        const radius = (currentDiameter / 2) * 0.07; 
+        
+        flower.position.set(
+            Math.cos(angle) * radius,
+            (currentLayers * 0.5) + 0.02, // Výška podle počtu pater
+            Math.sin(angle) * radius
+        );
+        
+        // Trochu je náhodně pootočíme, ať to vypadá přirozeně
+        flower.rotation.y = Math.random() * Math.PI;
+        
+        cakeGroup.add(flower);
     }
 }
 
