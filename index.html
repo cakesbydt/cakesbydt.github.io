@@ -15,11 +15,16 @@
             --pink-soft: #e8daeb;
         }
         
-       /* Celkové pozadí stránky s efektem jemného světla */
-body {
-    background: radial-gradient(circle at top left, #f3f0ff 0%, #e6e6fa 50%, #dcd0ff 100%);
-    background-attachment: fixed;
-}
+        /* Reset okrajů a nastavení základního fontu a barvy pozadí */
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #0f0c29;
+            margin: 0;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
         /* Vrstva pro animované barevné skvrny v pozadí */
         .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(45deg, #fFFFFF, #d4bdd9, #d4bdd9); }
@@ -88,12 +93,7 @@ body {
 
         /* Hlavní pravá část s konfigurátorem */
         .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; }
-       /* Hlavní nápis s "glow" efektem */
-.hlavni-motto {
-    color: #8E7AB5 !important; /* Tmavší levandule pro kontrast */
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 2px 2px 4px rgba(0,0,0,0.05);
-    font-weight: 900;
-}
+        .hlavni-motto { font-family: 'Playfair Display', serif; font-style: italic; color: #bc9bc2; text-align: center; font-size: 62px; margin-bottom: 50px; }
         
         /* Jednotlivé karty (sekce) konfigurátoru */
         .sekce { background: white; padding: 40px; border-radius: 40px; margin-bottom: 40px; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 15px 35px rgba(173,20,87,0.05); }
@@ -208,18 +208,16 @@ body {
     background-size: cover;
     background-position: center;
     border-radius: 30px;
-    border: 8px solid white !important;
-    box-shadow: 0 20px 50px rgba(177, 156, 217, 0.3), 
-                0 0 20px rgba(255, 255, 255, 0.5); /* Vnitřní záře */
-    transition: opacity 1.5s ease-in-out, transform 0.5s ease !important;
-    background-color: #E6E6FA !important;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transition: opacity 1.5s ease-in-out !important; /* Animujeme průhlednost */
     opacity: 1; /* Výchozí stav je viditelný */
 }
 
 .photo-slot-main:hover {
-    transform: scale(1.02) translateY(-5px); /* Jemné zvětšení při najetí */
+    transform: scale(1.03); /* Jemné zvětšení při najetí */
     border-color: #b19cd9;
-    box-shadow: 0 30px 60px rgba(177, 156, 217, 0.4);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 35px rgba(177, 156, 217, 0.5);
 }
 
 /* Kontejner pro vycentrování */
@@ -234,12 +232,18 @@ body {
     transform: translateX(-50%);
 }
 
-/* Tlačítko Instagram - "Perleťový" efekt */
+/* Samotné tlačítko */
 .ig-button-link {
-    background: linear-gradient(135deg, #ffffff 0%, #f3f0ff 100%) !important;
-    border: 1px solid #dcd0ff !important;
-    color: #8E7AB5 !important;
-    box-shadow: 0 5px 15px rgba(177, 156, 217, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.15); /* Poloprůhledné bílé pozadí */
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px); /* Efekt mléčného skla */
 }
 
 /* Text v tlačítku */
@@ -258,17 +262,20 @@ body {
     filter: brightness(0) invert(1);
 }
 
+/* Efekt při najetí */
 .ig-button-link:hover {
-    background: #8E7AB5 !important;
-    color: white !important;
-}
-
-.ig-button-link span {
-    color: #8E7AB5 !important;
+    background: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
 .ig-button-link:hover span {
-    color: white !important;
+    color: #b19cd9; /* Text se při najetí přebarví na fialovou */
+}
+
+.ig-button-link:hover img {
+    /* Ikonka se při najetí přebarví na fialovou */
+    filter: invert(72%) sepia(12%) saturate(953%) hue-rotate(217deg) brightness(95%) contrast(89%);
 }
 /* --- FINÁLNÍ OPRAVA: MOBILNÍ VERZE A CENTROVÁNÍ --- */
 
@@ -351,36 +358,7 @@ body {
         height: 400px !important; /* Trochu zmenšíme 3D okno na mobilu */
     }
 }
-        /* Animovaná světla v pozadí */
-body::before, body::after {
-    content: "";
-    position: fixed;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    z-index: -1;
-    filter: blur(100px);
-    opacity: 0.5;
-    animation: moveLight 15s infinite alternate;
-}
-
-body::before {
-    background: #ffffff;
-    top: -10%;
-    left: -10%;
-}
-
-body::after {
-    background: #dcd0ff;
-    bottom: -10%;
-    right: -10%;
-    animation-delay: -7s;
-}
-
-@keyframes moveLight {
-    from { transform: translate(0, 0); }
-    to { transform: translate(100px, 100px); }
-}
+        
     </style>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script type="text/javascript">
