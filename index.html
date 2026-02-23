@@ -59,10 +59,10 @@
         .logo-vlevo { width: 170px; height: 170px; background: white; border-radius: 50%; margin-bottom: 50px; border: 8px solid rgba(255, 255, 255, 0.15); overflow: hidden; transition: 0.5s; }
         .logo-vlevo img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Malý panel se shrnutím výběru v levé části */
+        /* Malý panel se shrnutím výběru v levé části
         .side-summary { width: 100%; background: rgba(0,0,0,0.15); padding: 20px; border-radius: 20px; margin-top: 20px; border-left: 4px solid var(--gold); }
         .side-summary div { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8; }
-        .side-summary p { margin: 0; font-size: 13px; font-weight: 600; color: #fff; }
+        .side-summary p { margin: 0; font-size: 13px; font-weight: 600; color: #fff; } */
 
         /* Stylování vstupních polí formuláře */
         .input-group { width: 100%; margin-bottom: 25px; }
@@ -158,9 +158,26 @@
                             <option value="wedding">💍 Svatební</option>
                         </select>
                     </div>
-                    <div><label>Průměr</label><select id="diameter" onchange="updateCake();"><option value="15">15 cm</option><option value="20" selected>20 cm</option><option value="24">24 cm</option></select></div>
-                    <div><label>Vrstvy</label><select id="layers" onchange="updateCake();"><option value="4">4 vrstvy</option><option value="6">6 vrstvy</option><option value="8" selected>8 vrstvy</option><option value="10">10 vrstvy</option></select></div>
-                    <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake();"><option value="0x3d2b1f">Kakaový</option><option value="0xfff4e0">Vanilkový</option><option value="0xfff4e0">Mrkvový</option><option value="0xfff4e0">Ořechový</option></select></div>
+                    <div><label>Průměr</label><select id="diameter" onchange="updateCake();">
+                        <option value="15">15 cm</option>
+                        <option value="20" selected>20 cm</option>
+                        <option value="24">24 cm</option>
+                    </select></div>
+                    
+                    <div><label>Vrstvy</label><select id="layers" onchange="updateCake();">
+                        <option value="4">4 vrstvy</option>
+                        <option value="6" selected >6 vrstvy</option>
+                        <option value="8">8 vrstvy</option>
+                        <option value="10">10 vrstvy</option>
+                    </select></div>
+                    
+                    <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake();">
+                        <option value="#6e5445">Kakaový</option>
+                        <option value="#fff1a3">Vanilkový</option>
+                        <option value="#eba254">Mrkvový</option>
+                        <option value="#3b7a31">Mechový</option>
+                        <option value="#96915c">Ořechový</option>
+                    </select></div>
                 </div>
             </div>
 
@@ -170,8 +187,8 @@
                     <div><label>Typ obmazu</label><select id="coating" onchange="updateCake();"><option value="naked" selected>Nahý dort</option><option value="semi">Polonahý dort</option><option value="full" >Plný obmaz</option></select></div>
                     <div><label>Vnitřní krém</label><select id="innerCream" onchange="updateCake();">
                         <option value="0xffffff">Smetanový - vanilka</option>
-                        <option value="0xffffff">Smetanový - vanilka</option>
-                        <option value="0xffffff">Smetanový - vanilka</option>
+                        <option value="0xffffff">Smetanový - čokoláda</option>
+                        <option value="0xffffff">Smetanový - karamel</option>
                         <option value="0xffffff">Smetanový - vanilka</option>
                         <option value="0xffffff">Smetanový - vanilka</option>
                         <option value="0xf8bbd0">Smetanový - čokoláda</option>
@@ -192,9 +209,26 @@
             <div class="sekce">
                 <h3>3. Výběr ovoce</h3>
                 <div class="flex">
-                    <div><label>Proložení</label><select id="fruitCream" onchange="updateCake();"><option value="none" selected>Bez ovoce</option><option value="strawberries" >Jahody</option><option value="raspberries" >Maliny</option><option value="blueberries" >Borůvky</option><option value="mix">Mix ovoce</option></select></div>
-                    <div><label>Nahoře</label><select id="fruitTop" onchange="updateCake();"><option value="none" selected>Bez zdobení</option><option value="strawberries" >Jahody</option><option value="raspberries" >Maliny</option><option value="blueberries" >Borůvky</option><option value="mix">Bohatý Mix</option></select></div>
-                    <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake();"><option value="border">Věneček</option><option value="full" selected>Plné zaplnění</option></select></div>
+                    <div><label>Proložení</label><select id="fruitCream" onchange="updateCake();">
+                        <option value="none" selected>Bez ovoce</option>
+                        <option value="strawberries" >Jahody</option>
+                        <option value="raspberries" >Maliny</option>
+                        <option value="blueberries" >Borůvky</option>
+                        <option value="mix">Mix ovoce</option>
+                    </select></div>
+                    
+                    <div><label>Nahoře</label><select id="fruitTop" onchange="updateCake();">
+                        <option value="none" selected>Bez zdobení</option>
+                        <option value="strawberries" >Jahody</option>
+                        <option value="raspberries" >Maliny</option>
+                        <option value="blueberries" >Borůvky</option>
+                        <option value="mix">Bohatý Mix</option>
+                    </select></div>
+                    
+                    <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake();">
+                        <option value="border">Věneček</option>
+                        <option value="full" selected>Plné zaplnění</option>
+                    </select></div>
                 </div>
             </div>
 
