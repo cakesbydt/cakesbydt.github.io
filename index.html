@@ -817,32 +817,38 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         });
 });
 
-    const allImages = [
-    'foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg',
-    'foto6.jpg', 'foto7.jpg', 'foto8.jpg', 'foto9.jpg', 'foto10.jpg',
-    'foto11.jpg', 'foto12.jpg', 'foto13.jpg', 'foto14.jpg', 'foto15.jpg',
-    'foto16.jpg', 'foto17.jpg', 'foto18.jpg', 'foto19.jpg', 'foto20.jpg'
+    // Seznam tvých fotek (doplň si své názvy)
+const allImages = [
+    'foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg', 'foto7.jpg', 'foto8.jpg', 'foto9.jpg', 'foto10.jpg', 'foto11.jpg', 'foto12.jpg', 'foto13.jpg', 'foto14.jpg', 'foto15.jpg', 'foto16.jpg', 'foto17.jpg', 'foto18.jpg', 'foto19.jpg' 
 ];
 
 function updateGallery() {
-    // Vybereme náhodný slot (1 až 5)
-    const slotId = 'slot1';
-    const slotElement = document.getElementById(slotId);
+    // Míříme pouze na slot1
+    const mainSlot = document.getElementById('slot1');
+    if (!mainSlot || allImages.length === 0) return;
     
-    // Vybereme náhodnou fotku ze seznamu
+    // Vybereme náhodnou fotku
     const randomPhoto = allImages[Math.floor(Math.random() * allImages.length)];
     
-    // Plynulá změna pozadí
-    slotElement.style.opacity = '0.5';
+    // Plynulý efekt prolnutí
+    mainSlot.style.opacity = '0.3'; // Nejdřív trochu zmizí
     setTimeout(() => {
-        slotElement.style.backgroundImage = `url('${randomPhoto}')`;
-        slotElement.style.opacity = '1';
-    }, 500);
+        mainSlot.style.backgroundImage = `url('${randomPhoto}')`;
+        mainSlot.style.opacity = '1'; // Pak se zase objeví s novou fotkou
+    }, 400);
 }
 
-// Spustit měnění každé 3 vteřiny
-setInterval(updateGallery, 3000);
-
+// Spuštění po načtení stránky
+window.addEventListener('DOMContentLoaded', () => {
+    const mainSlot = document.getElementById('slot1');
+    if(mainSlot && allImages.length > 0) {
+        // Nastavíme první fotku hned na začátku
+        mainSlot.style.backgroundImage = `url('${allImages[0]}')`;
+    }
+    
+    // Každé 3 vteřiny změníme fotku
+    setInterval(updateGallery, 3000);
+});
 // Prvotní naplnění slotů při načtení
 window.onload = () => {
     for(let i=1; i<=5; i++) {
