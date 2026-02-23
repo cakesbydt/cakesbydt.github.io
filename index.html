@@ -116,6 +116,16 @@
    })();
 </script>
 </head>
+
+    <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 12, 41, 0.8); z-index:9999; backdrop-filter: blur(8px); justify-content:center; align-items:center;">
+    <div style="background: white; padding: 40px; border-radius: 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 2px solid #bc9bc2; animation: entrance 0.5s ease-out;">
+        <div style="font-size: 60px; margin-bottom: 20px;">🎂</div>
+        <h2 style="font-family: 'Playfair Display', serif; color: #bc9bc2; margin-bottom: 15px; font-size: 28px;">Vaše sladká poptávka letí k nám!</h2>
+        <p style="color: #666; line-height: 1.6; font-size: 16px;">Děkujeme za důvěru. Vaši konfiguraci jsme právě obdrželi a brzy se vám ozveme, abychom doladili detaily.</p>
+        <button onclick="document.getElementById('customModal').style.display='none'" style="margin-top: 25px; padding: 15px 40px; background: linear-gradient(90deg, #bc9bc2, #d4bdd9); color: white; border: none; border-radius: 100px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 2px;">Rozumím</button>
+    </div>
+</div>
+    
 <body>
 
 <div class="bg-layer">
@@ -632,17 +642,22 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
     };
 
     // ZDE DOPLŇ SVÉ ÚDAJE: 'SERVIS_ID' a 'TEMPLATE_ID'
-    emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
+  
+
+emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
         .then(function() {
-            alert('Objednávka byla úspěšně odeslána!');
+            // TADY JE TA ZMĚNA: Místo alertu zobrazíme naše okno
+            document.getElementById('customModal').style.display = 'flex';
+            
             btn.innerText = "ODESLÁNO ✅";
+            // Volitelně můžeš po odeslání vymazat formulář:
+            // document.getElementById('cakeOrderForm').reset(); 
         }, function(error) {
             alert('Chyba při odesílání: ' + JSON.stringify(error));
             btn.innerText = originalBtnText;
             btn.disabled = false;
         });
-});
-
+    
     // Spuštění po načtení dokumentu
     window.onload = init3D;
 </script>
