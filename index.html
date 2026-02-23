@@ -139,6 +139,39 @@
         .btn { width: 100%; padding: 30px; background: linear-gradient(90deg, #bc9bc2, #d4bdd9); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 900; font-size: 22px; text-transform: uppercase; letter-spacing: 4px; box-shadow: 0 25px 50px rgba(173,20,87,0.3); transition: 0.5s; }
         .btn:hover { transform: translateY(-8px); }
         textarea { width: 100%; padding: 20px; border-radius: 25px; border: 2px solid #eee; margin-top: 20px; font-family: inherit; resize: none; box-sizing: border-box; }
+
+.gallery-label { 
+    font-size: 11px; letter-spacing: 2px; font-weight: 800; 
+    color: rgba(255,255,255,0.7); text-transform: uppercase; margin-bottom: 15px; 
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 100px);
+    gap: 10px;
+}
+
+.photo-slot {
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    border: 1px solid rgba(177, 156, 217, 0.3);
+    transition: all 1s ease-in-out; /* Plynulé prolnutí */
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.photo-slot.large {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.photo-slot:hover {
+    border-color: #b19cd9;
+    box-shadow: 0 0 15px rgba(177, 156, 217, 0.5);
+    transform: scale(1.02);
+}
+        
     </style>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script type="text/javascript">
@@ -171,7 +204,16 @@
                 <div class="input-group"><label>Telefon</label><input type="tel" name="Telefon" required></div>
                 <div class="input-group"><label>Datum</label><input type="date" name="Datum_Udalosti" required></div>
             </div>
-
+<div class="ig-live-gallery">
+    <p class="gallery-label">Inspirace z mé tvorby</p>
+    <div class="gallery-grid">
+        <div class="photo-slot large" id="slot1"></div>
+        <div class="photo-slot" id="slot2"></div>
+        <div class="photo-slot" id="slot3"></div>
+        <div class="photo-slot" id="slot4"></div>
+        <div class="photo-slot" id="slot5"></div>
+    </div>
+</div>
            
          <div class="side-summary" style="display: none;">
             <div>Aktuální výběr:</div>
@@ -726,6 +768,38 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         });
 });
 
+    const allImages = [
+    'foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg',
+    'foto6.jpg', 'foto7.jpg', 'foto8.jpg', 'foto9.jpg', 'foto10.jpg',
+    'foto11.jpg', 'foto12.jpg', 'foto13.jpg', 'foto14.jpg', 'foto15.jpg',
+    'foto16.jpg', 'foto17.jpg', 'foto18.jpg', 'foto19.jpg', 'foto20.jpg'
+];
+
+function updateGallery() {
+    // Vybereme náhodný slot (1 až 5)
+    const slotId = 'slot' + (Math.floor(Math.random() * 5) + 1);
+    const slotElement = document.getElementById(slotId);
+    
+    // Vybereme náhodnou fotku ze seznamu
+    const randomPhoto = allImages[Math.floor(Math.random() * allImages.length)];
+    
+    // Plynulá změna pozadí
+    slotElement.style.opacity = '0.5';
+    setTimeout(() => {
+        slotElement.style.backgroundImage = `url('${randomPhoto}')`;
+        slotElement.style.opacity = '1';
+    }, 500);
+}
+
+// Spustit měnění každé 3 vteřiny
+setInterval(updateGallery, 3000);
+
+// Prvotní naplnění slotů při načtení
+window.onload = () => {
+    for(let i=1; i<=5; i++) {
+        document.getElementById('slot'+i).style.backgroundImage = `url('${allImages[i-1]}')`;
+    }
+};
 // DŮLEŽITÉ: Ujisti se, že tato řádka je na úplném konci souboru
 window.onload = init3D;
           
