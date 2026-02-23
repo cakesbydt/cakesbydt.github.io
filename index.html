@@ -140,6 +140,45 @@
         .btn:hover { transform: translateY(-8px); }
         textarea { width: 100%; padding: 20px; border-radius: 25px; border: 2px solid #eee; margin-top: 20px; font-family: inherit; resize: none; box-sizing: border-box; }
 
+        .top-instagram-header {
+    text-align: center;
+    margin-bottom: 10px;
+    padding-top: 20px;
+}
+
+.top-instagram-header a {
+    text-decoration: none;
+    color: rgba(177, 156, 217, 0.8); /* Jemná fialová místo té neviditelné bílé */
+    font-size: 14px;
+    letter-spacing: 1px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+/* Zvýraznění samotného jména @_cakesbydt_ */
+.top-instagram-header a span {
+    font-weight: 800;
+    color: #b19cd9;
+    border-bottom: 1px solid rgba(177, 156, 217, 0.3);
+}
+
+.top-instagram-header a:hover {
+    color: #b19cd9;
+    transform: translateY(-2px);
+}
+
+.top-instagram-header a:hover span {
+    border-bottom-color: #b19cd9;
+}
+
+/* Úprava hlavního nápisu pod tím, aby to spolu ladilo */
+.main-title {
+    margin-top: 5px; /* Sníží mezeru mezi odkazem a nápisem */
+    color: #b19cd9;
+    font-family: 'Playfair Display', serif; /* Nebo tvůj font */
+}
+
 .gallery-label { 
     font-size: 11px; 
     letter-spacing: 2px; 
@@ -333,10 +372,12 @@
         </div>
 
         <div class="obsah">
-            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
-    <p style="color: rgba(255,255,255,0.5); font-size: 11px; letter-spacing: 1px;">Pro více inspirace navštivte můj Instagram</p>
-    <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" style="color: white; text-decoration: none; font-size: 14px; opacity: 0.8;">@_cakesbydt_</a>
+           <div class="top-instagram-header">
+    <a href="https://www.instagram.com/_cakesbydt_/" target="_blank">
+        <i class="fab fa-instagram"></i> Pro více inspirace navštivte můj <span>Instagram @_cakesbydt_</span>
+    </a>
 </div>
+<h1 class="main-title">Upečeme vám vzpomínku</h1>
             <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
             
             <div class="sekce">
