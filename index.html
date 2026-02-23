@@ -189,53 +189,62 @@
     box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 35px rgba(177, 156, 217, 0.5);
 }
 
-.ig-float-button {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    /* Zvětšení tlačítka */
-    width: 80px; 
-    height: 80px;
-    background-color: #ffffff;
-    border-radius: 50px; /* Zaoblení se přizpůsobí textu */
+/* Kontejner pro vycentrování */
+.ig-link-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    position: relative;
+    /* Pojistka pro centrování, pokud stále používáme transform u fotky */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Samotné tlačítko */
+.ig-button-link {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px; /* Mezera mezi ikonou a textem */
-    padding: 0 20px; /* Polstrování pro případný text */
-    
-    /* Barva textu a stínu */
-    color: #b19cd9; 
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.15); /* Poloprůhledné bílé pozadí */
+    padding: 12px 25px;
+    border-radius: 50px;
     text-decoration: none;
-    font-weight: bold;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px); /* Efekt mléčného skla */
+}
+
+/* Text v tlačítku */
+.ig-button-link span {
+    color: #ffffff; /* Čistě bílá, aby byla vidět! */
     font-size: 16px;
-    
-    box-shadow: 0 10px 30px rgba(177, 156, 217, 0.4);
-    z-index: 1000;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 3px solid #e2dcf4;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
-.ig-float-button img {
-    /* Zvětšení ikonky uvnitř */
-    width: 35px;
-    height: 35px;
-    /* Pokud chceš změnit barvu SVG ikony na levandulovou, použijeme filtr: */
-    filter: invert(72%) sepia(12%) saturate(953%) hue-rotate(217deg) brightness(95%) contrast(89%);
-}
-
-.ig-float-button:hover {
-    /* Zvětšení při najetí (1.2 je akorát, 1.5 už bývá moc agresivní, ale nechám dle tvého přání) */
-    transform: scale(1.2) translateY(-10px); 
-    background-color: #b19cd9; /* Změna pozadí na levandulovou při najetí */
-    color: #ffffff; /* Text zbělá */
-    border-color: #ffffff;
-    box-shadow: 0 15px 40px rgba(177, 156, 217, 0.8);
-}
-
-.ig-float-button:hover img {
-    /* Při najetí ikonka zbělá */
+/* Ikonka v tlačítku */
+.ig-button-link img {
+    width: 24px;
+    height: 24px;
+    /* Filtr, aby ikonka zářila bíle */
     filter: brightness(0) invert(1);
+}
+
+/* Efekt při najetí */
+.ig-button-link:hover {
+    background: #ffffff;
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.ig-button-link:hover span {
+    color: #b19cd9; /* Text se při najetí přebarví na fialovou */
+}
+
+.ig-button-link:hover img {
+    /* Ikonka se při najetí přebarví na fialovou */
+    filter: invert(72%) sepia(12%) saturate(953%) hue-rotate(217deg) brightness(95%) contrast(89%);
 }
 /* Mobilní ladění (pro telefony) */
 @media (max-width: 768px) {
@@ -314,10 +323,12 @@
                 <p id="side-price" style="color: var(--gold); font-size: 16px;">--</p>
         </div>
             
-<a href="https://www.instagram.com/_cakesbydt_/" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #b19cd9; text-decoration: none; font-size: 13px; margin-top: 15px; font-weight: bold; transition: all 0.3s;">
-    <span>Sledujte @ _cakesbydt_</span>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" style="width: 16px; height: 16px;">
-</a>
+<div class="ig-link-wrapper">
+    <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" class="ig-button-link">
+        <span>Sledujte @_cakesbydt_</span>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
+    </a>
+</div>
             <p style="margin-top:auto; font-size: 20px; letter-spacing: 3px; opacity: 0.5;">Váš sladký sen</p>
         </div>
 
