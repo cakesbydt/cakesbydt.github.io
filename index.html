@@ -217,17 +217,33 @@
     border-color: #ffffff;
     box-shadow: 0 0 30px rgba(177, 156, 217, 0.6);
 }
-/* Mobilní verze - o kousek menší, aby nepřekáželo */
+/* Mobilní ladění (pro telefony) */
 @media (max-width: 768px) {
-    .ig-float-button {
-        bottom: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
+    .single-photo-container {
+        /* Na mobilu nepotřebujeme tak agresivní transform, stačí 100% šířka */
+        width: 100%;
+        left: 0;
+        transform: none; 
+        margin-left: 0;
+        margin-right: 0;
+        height: 400px; /* Menší výška pro mobil, aby zbyl prostor na dort */
+        display: flex;
+        justify-content: center;
     }
-    .ig-float-button img {
-        width: 25px;
-        height: 25px;
+
+    .photo-slot-main {
+        /* Fotka na mobilu nesmí být širší než 90% displeje */
+        width: 90%; 
+        height: 100%;
+    }
+
+    .gallery-label {
+        /* Srovnáme label na střed bez posouvání */
+        left: 0;
+        transform: none;
+        text-align: center;
+        width: 100%;
+        display: block;
     }
 }
         
