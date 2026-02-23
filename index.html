@@ -2,6 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cakes by DT | The Final Masterpiece</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -47,16 +48,17 @@
             border: 1px solid rgba(255,255,255,0.4); 
             box-shadow: 0 50px 100px rgba(0,0,0,0.1);
             margin: 40px 0; border-radius: 50px; overflow: hidden;
-            animation: entrance 1s ease-out; 
+            animation: entrance 1s ease-out;
         }
 
-        /* Responzivita pro mobilní zařízení */
+        /* Mobilní responzivita */
         @media (max-width: 900px) {
             .hlavni-wrapper { flex-direction: column; margin: 20px 0; border-radius: 30px; }
             .levy-panel { flex: 0 0 auto !important; width: 100% !important; padding: 40px 20px !important; }
             .obsah { padding: 40px 20px !important; }
             .hlavni-motto { font-size: 38px !important; }
             #canvas-container { height: 350px !important; }
+            .flex > div { min-width: 100% !important; }
         }
 
         @keyframes entrance { 
@@ -87,7 +89,6 @@
             box-sizing: border-box;
         }
         .input-group input:focus { background: rgba(0,0,0,0.4); border-color: var(--gold); }
-        .input-group input:invalid:focus { border-color: #ff4d4d; }
 
         .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; scroll-behavior: smooth; }
         .hlavni-motto { font-family: 'Playfair Display', serif; font-style: italic; color: #bc9bc2; text-align: center; font-size: 62px; margin-bottom: 50px; }
@@ -123,30 +124,31 @@
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: #1a1a1a; color: white; padding: 15px 30px; border-radius: 100px; 
             font-weight: 800; font-size: 13px; box-shadow: 0 15px 30px rgba(0,0,0,0.2); z-index: 10;
+            white-space: nowrap;
         }
 
-        .controls-row { display: flex; gap: 40px; justify-content: center; margin-bottom: 40px; opacity: 0.6; }
+        #price-display { 
+            position: absolute; top: 30px; right: 30px; background: var(--gold); color: white; 
+            padding: 15px 25px; border-radius: 20px; font-weight: 800; font-size: 18px; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 10;
+        }
+
+        /* Mobilní úprava ceny a badge */
+        @media (max-width: 600px) {
+            #price-display { top: 15px; right: 15px; font-size: 14px; padding: 10px 15px; }
+            .info-badge-float { bottom: 15px; font-size: 11px; padding: 10px 20px; }
+        }
+
+        .controls-row { display: flex; gap: 40px; justify-content: center; margin-bottom: 40px; opacity: 0.6; flex-wrap: wrap; }
         .slider { -webkit-appearance: none; width: 150px; height: 4px; background: #ccc; border-radius: 2px; }
         .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; background: var(--primary); border-radius: 50%; border: 3px solid white; cursor: pointer; }
 
-        .doplnek-item { 
-            background: #fdfdfd; padding: 25px; border-radius: 25px; margin-bottom: 20px; 
-            border: 2px solid transparent; transition: 0.4s;
-        }
-        .doplnek-item:has(input[type="checkbox"]:checked) { 
-            border-color: var(--gold); background: #fffdf2; transform: scale(1.01); 
-        }
-        .extra-input { 
-            max-height: 0; overflow: hidden; opacity: 0; 
-            transition: all 0.4s ease; 
-        }
-        .doplnek-item:has(input[type="checkbox"]:checked) .extra-input { 
-            max-height: 100px; opacity: 1; margin-top: 20px; 
-        }
-        .extra-input input { 
-            width: 100%; padding: 16px; border-radius: 15px; border: 1px solid #ddd; background: white; 
-            font-family: inherit; font-size: 14px; box-sizing: border-box;
-        }
+        .doplnek-item { background: #fdfdfd; padding: 25px; border-radius: 25px; margin-bottom: 20px; border: 2px solid transparent; transition: 0.4s; }
+        .doplnek-item:has(input[type="checkbox"]:checked) { border-color: var(--gold); background: #fffdf2; transform: scale(1.01); }
+
+        .extra-input { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; }
+        .doplnek-item:has(input[type="checkbox"]:checked) .extra-input { max-height: 100px; opacity: 1; margin-top: 20px; }
+        .extra-input input { width: 100%; padding: 16px; border-radius: 15px; border: 1px solid #ddd; background: white; font-family: inherit; font-size: 14px; box-sizing: border-box; }
 
         .btn { 
             width: 100%; padding: 30px; background: linear-gradient(90deg, #bc9bc2, #d4bdd9); 
@@ -236,9 +238,7 @@
 
             <div id="canvas-container">
                 <div id="info-display" class="info-badge-float">MODEL: 20cm | VÝŠKA: 12cm</div>
-                <div id="price-display" style="position: absolute; top: 30px; right: 30px; background: var(--gold); color: white; padding: 15px 25px; border-radius: 20px; font-weight: 800; font-size: 18px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 10;">
-                    CENA: Počítám...
-                </div>
+                <div id="price-display">CENA: Počítám...</div>
             </div>
             
             <div class="controls-row">
@@ -248,48 +248,23 @@
 
             <div class="sekce">
                 <h3>4. Doplňky</h3>
-                
                 <div class="doplnek-item">
-                    <label class="check-row">
-                        <input type="checkbox" id="c_flowers" onchange="calculatePrice()">
-                        <span class="checkbox-label">Květinová dekorace</span>
-                    </label>
-                    <div class="extra-input">
-                        <input type="text" id="t_flowers" name="Detail_Kvetiny" placeholder="Specifikujte druh květin a umístění">
-                    </div>
+                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> Květinová dekorace</label>
+                    <div class="extra-input"><input type="text" id="t_flowers" name="Detail_Kvetiny" placeholder="Specifikujte květiny"></div>
                 </div>
-
                 <div class="doplnek-item">
-                    <label class="check-row">
-                        <input type="checkbox" id="c1" onchange="calculatePrice()">
-                        <span class="checkbox-label">Jedlý papír</span>
-                    </label>
-                    <div class="extra-input">
-                        <input type="text" id="t1" name="Detail_Papir" placeholder="Jaký motiv nebo fotku si přejete?">
-                    </div>
+                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> Jedlý papír</label>
+                    <div class="extra-input"><input type="text" id="t1" name="Detail_Papir" placeholder="Jaký motiv?"></div>
                 </div>
-
                 <div class="doplnek-item">
-                    <label class="check-row">
-                        <input type="checkbox" id="c2" onchange="calculatePrice()">
-                        <span class="checkbox-label">Figurka</span>
-                    </label>
-                    <div class="extra-input">
-                        <input type="text" id="t2" name="Detail_Figurka" placeholder="Popište postavičku...">
-                    </div>
+                    <label><input type="checkbox" id="c2" onchange="calculatePrice()"> Figurka</label>
+                    <div class="extra-input"><input type="text" id="t2" name="Detail_Figurka" placeholder="Popis figurky"></div>
                 </div>
-
                 <div class="doplnek-item">
-                    <label class="check-row">
-                        <input type="checkbox" id="c3" onchange="calculatePrice()">
-                        <span class="checkbox-label">Personalizovaný zápich</span>
-                    </label>
-                    <div class="extra-input">
-                        <input type="text" id="t3" name="Detail_Zapich" placeholder="Text na zápich...">
-                    </div>
+                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> Personalizovaný zápich</label>
+                    <div class="extra-input"><input type="text" id="t3" name="Detail_Zapich" placeholder="Text na zápich"></div>
                 </div>
-
-                <textarea name="Zprava_Poznamka" rows="4" placeholder="Další specifické požadavky, barevné ladění nebo vzkaz pro nás..."></textarea>
+                <textarea name="Zprava_Poznamka" rows="4" placeholder="Další specifické požadavky..."></textarea>
             </div>
 
             <button type="submit" class="btn">Odeslat objednávku</button>
@@ -326,7 +301,6 @@
         updateCake(); 
         animate();    
 
-        // --- OPRAVENÉ OVLÁDÁNÍ (Myš i Dotyk) ---
         const handleStart = (clientX, clientY) => {
             isDragging = true;
             previousMousePosition = { x: clientX, y: clientY };
@@ -336,32 +310,20 @@
             if (!isDragging) return;
             const deltaX = clientX - previousMousePosition.x;
             const deltaY = clientY - previousMousePosition.y;
-            
             cakeGroup.rotation.y += deltaX * 0.01;
             cakeGroup.rotation.x += deltaY * 0.01;
-            
-            // Omezení, aby se dort nepřeklopil
             cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, cakeGroup.rotation.x));
-            
             document.getElementById('rotateY').value = cakeGroup.rotation.y;
             document.getElementById('rotateX').value = cakeGroup.rotation.x;
-            
             previousMousePosition = { x: clientX, y: clientY };
         };
 
-        // Eventy pro myš
         container.addEventListener('mousedown', (e) => handleStart(e.clientX, e.clientY));
         window.addEventListener('mouseup', () => isDragging = false);
         window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
-
-        // Eventy pro dotyk (Mobil)
-        container.addEventListener('touchstart', (e) => {
-            handleStart(e.touches[0].clientX, e.touches[0].clientY);
-        }, {passive: false});
+        container.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX, e.touches[0].clientY), {passive: false});
         window.addEventListener('touchend', () => isDragging = false);
-        window.addEventListener('touchmove', (e) => {
-            handleMove(e.touches[0].clientX, e.touches[0].clientY);
-        }, {passive: false});
+        window.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX, e.touches[0].clientY), {passive: false});
     }
 
     function createFruit(type, isTop) {
@@ -373,7 +335,6 @@
             else if (rand < 0.66) finalType = 'blueberries';
             else finalType = 'raspberries';
         }
-
         let geo, mat, mesh;
         if (finalType === 'strawberries') {
             geo = new THREE.SphereGeometry(isTop ? 0.22 : 0.16, 16, 16);
@@ -398,9 +359,7 @@
         const layers = parseInt(document.getElementById('layers').value);
         const style = document.getElementById('cakeStyle').value;
         const fruitT = document.getElementById('fruitTop').value;
-        const fruitC = document.getElementById('fruitCream').value;
         const topS = document.getElementById('topStyle').value;
-        
         const hasFlowers = document.getElementById('c_flowers').checked;
         const hasPaper = document.getElementById('c1').checked;
         const hasFigure = document.getElementById('c2').checked;
@@ -408,12 +367,9 @@
 
         let base = (diameter * 15) * (layers / 2);
         let extras = 0;
-        
         if (style === 'wedding') extras += 500; 
         if (fruitT !== 'none') extras += 150;    
         if (topS === 'full') extras += 200;      
-        if (fruitC !== 'none') extras += 100;    
-        
         if (hasFlowers) extras += 350;
         if (hasPaper) extras += 250;
         if (hasFigure) extras += 400;
@@ -421,12 +377,11 @@
 
         const minPrice = Math.round((base + extras) * 0.9);
         const maxPrice = Math.round((base + extras) * 1.1);
-        document.getElementById('price-display').innerHTML = `ODHAD CENA: ${minPrice} – ${maxPrice} Kč`;
+        document.getElementById('price-display').innerHTML = `ODHAD: ${minPrice} – ${maxPrice} Kč`;
     }
 
     function updateCake() {
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
-        
         const style = document.getElementById('cakeStyle').value;
         const layers = parseInt(document.getElementById('layers').value);
         const diameter = parseInt(document.getElementById('diameter').value);
@@ -437,11 +392,10 @@
         const flavorColor = parseInt(document.getElementById('flavor').value);
         const innerColor = parseInt(document.getElementById('innerCream').value);
         const outerColor = parseInt(document.getElementById('outerCream').value);
-        
         const baseRadius = diameter / 6.5; 
         const h = 0.5; 
-        
-        document.getElementById('info-display').innerHTML = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm | VÝŠKA: cca ${layers * 1.5}cm`;
+
+        document.getElementById('info-display').innerHTML = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | ${diameter}cm | v. cca ${layers * 1.5}cm`;
 
         for (let i = 0; i < layers; i++) {
             let currentRadius = baseRadius;
@@ -449,33 +403,22 @@
                 if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
                 if (i >= 8) currentRadius = baseRadius * 0.55;
             }
-
             const isCream = i % 2 === 1;
-            const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
-                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
-            );
+            const segment = new THREE.Mesh(new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor }));
             segment.position.y = i * h;
             cakeGroup.add(segment);
 
             if (coat !== 'naked') {
-                const isTopLayerOfTier = (style === 'wedding') ? (i === 3 || i === 7 || i === layers - 1) : (i === layers - 1);
-                const coatMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
-                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide })
-                );
+                const coatMesh = new THREE.Mesh(new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide }));
                 coatMesh.position.y = i * h;
                 cakeGroup.add(coatMesh);
-
-                if (isTopLayerOfTier) {
+                if ((style === 'wedding' && (i === 3 || i === 7 || i === layers - 1)) || (style !== 'wedding' && i === layers - 1)) {
                     const topCap = new THREE.Mesh(new THREE.CircleGeometry(currentRadius + 0.03, 64), new THREE.MeshPhongMaterial({ color: outerColor }));
                     topCap.rotation.x = -Math.PI / 2;
-                    topCap.position.y = i * h + (h / 2) + 0.005; 
+                    topCap.position.y = i * h + (h / 2) + 0.005;
                     cakeGroup.add(topCap);
                 }
             }
-            
-            // Ovoce uvnitř (jen pokud není plný obmaz)
             if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
                 for (let j = 0; j < 12; j++) {
                     const f = createFruit(fruitC, false);
@@ -484,16 +427,11 @@
                     cakeGroup.add(f);
                 }
             }
-
-            // --- OPRAVENÉ OVOCE NAHOŘE ---
             const isTopSurface = (i === layers - 1);
             const isTierSurface = (style === 'wedding' && (i === 3 || i === 7));
-
             if ((isTopSurface || isTierSurface) && fruitT !== 'none') {
-                let radii = [currentRadius * 0.85]; // Věneček
-                if (topS === 'full' && isTopSurface) {
-                    radii = [currentRadius * 0.3, currentRadius * 0.6, currentRadius * 0.85]; // Plné zaplnění
-                }
+                let radii = [currentRadius * 0.85];
+                if (topS === 'full' && isTopSurface) radii = [currentRadius * 0.3, currentRadius * 0.6, currentRadius * 0.85];
                 radii.forEach(r => {
                     const count = Math.max(Math.floor(r * 15), 1);
                     for(let j=0; j<count; j++) {
@@ -518,34 +456,15 @@
         renderer.render(scene, camera);
     }
 
-    // LOGIKA ODESLÁNÍ
     document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
         const s_style = document.getElementById('cakeStyle').options[document.getElementById('cakeStyle').selectedIndex].text;
         const s_diam = document.getElementById('diameter').value + " cm";
-        const s_layers = document.getElementById('layers').options[document.getElementById('layers').selectedIndex].text;
-        const s_flavor = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
-        const s_coat = document.getElementById('coating').options[document.getElementById('coating').selectedIndex].text;
         const s_innerCr = document.getElementById('innerCream').options[document.getElementById('innerCream').selectedIndex].text;
         const s_outerCr = document.getElementById('outerCream').options[document.getElementById('outerCream').selectedIndex].text;
-        const s_fruitC = document.getElementById('fruitCream').options[document.getElementById('fruitCream').selectedIndex].text;
-        const s_fruitT = document.getElementById('fruitTop').options[document.getElementById('fruitTop').selectedIndex].text;
-        const s_topSt = document.getElementById('topStyle').options[document.getElementById('topStyle').selectedIndex].text;
-
-        const configText = `Styl: ${s_style}, Průměr: ${s_diam}, Vrstvy: ${s_layers}, Chuť: ${s_flavor}, Vnitřní krém: ${s_innerCr}, Vnější krém: ${s_outerCr}, Obmaz: ${s_coat}, Ovoce uvnitř: ${s_fruitC}, Ovoce nahoře: ${s_fruitT}, Styl vršku: ${s_topSt}`;
-
-        let extras = [];
-        if(document.getElementById('c_flowers').checked) extras.push("Květiny");
-        if(document.getElementById('c1').checked) extras.push("Jedlý papír");
-        if(document.getElementById('c2').checked) extras.push("Figurka");
-        if(document.getElementById('c3').checked) extras.push("Zápich");
-
-        document.getElementById('hiddenConfig').value = configText;
-        document.getElementById('hiddenExtras').value = extras.length > 0 ? extras.join(", ") : "Žádné doplňky";
+        document.getElementById('hiddenConfig').value = `Styl: ${s_style}, Průměr: ${s_diam}, Vnitřní: ${s_innerCr}, Vnější: ${s_outerCr}`;
         document.getElementById('hiddenPrice').value = document.getElementById('price-display').innerText;
-
         const btn = this.querySelector('.btn');
         btn.innerText = "ODESÍLÁM...";
-        btn.style.opacity = "0.7";
         btn.disabled = true;
     });
 
