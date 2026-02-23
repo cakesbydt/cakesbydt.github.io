@@ -501,34 +501,48 @@
                 }
             } */
 
-            // Ovoce uvnitř (v krému)
-            if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
-                
-                // --- NASTAVENÍ POZIC PRO JEDNOTLIVÉ DRUHY ---
-                // Čím větší číslo odečteš, tím víc zaleze dovnitř
-                const fruitOffsets = {
-                    'strawberries': 0.08, // Jahody jsou velké, musí víc zalézt (původně 0.1)
-                    'raspberries': 0.09,  // Maliny střední
-                    'blueberries': 0.06,  // Borůvky jsou malé, můžou být víc na kraji
-                    'mix': 0.08           // Průměr pro mix
-                };
+          // Ovoce uvnitř (v krému)
+if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
+    
+    // Definice hloubky pro jednotlivé druhy
+    const fruitOffsets = {
+        'strawberries': 0.08,
+        'raspberries': 0.09,
+        'blueberries': 0.06
+    };
 
-                // Zjistíme, jaký offset použít pro aktuálně vybrané ovoce
-                const currentOffset = fruitOffsets[fruitC] || 0.1;
+    for (let j = 0; j < 12; j++) { // Zvýšil jsem počet na 12 pro bohatší mix
+        // 1. Určení typu ovoce pro tento konkrétní kousek
+        let activeType = fruitC;
+        if (fruitC === 'mix') {
+            const types = ['strawberries', 'raspberries', 'blueberries'];
+            activeType = types[Math.floor(Math.random() * types.length)];
+        }
 
-                for (let j = 0; j < 8; j++) {
-                    const f = createFruit(fruitC, false);
-                    const ang = (j / 8) * Math.PI * 2;
-                    
-                    // Použití dynamického offsetu (currentRadius - currentOffset)
-                    f.position.set(
-                        Math.cos(ang) * (currentRadius - currentOffset), 
-                        i * h, 
-                        Math.sin(ang) * (currentRadius - currentOffset)
-                    );
-                    cakeGroup.add(f);
-                }
-            }
+        // 2. Získání základního offsetu pro daný typ
+        let baseOffset = fruitOffsets[activeType] || 0.07;
+        
+        // 3. Přidání špetky chaosu (náhodný úhel a drobná změna hloubky)
+        // Náhodný úhel zajistí, že ovoce nebude v řadách nad sebou
+        const randomAng = Math.random() * Math.PI * 2;
+        // Náhodný jitter způsobí, že některé kuličky koukají víc a jiné míň
+        const jitter = (Math.random() - 0.5) * 0.05; 
+        const finalOffset = baseOffset + jitter;
+
+        const f = createFruit(activeType, false);
+        
+        f.position.set(
+            Math.cos(randomAng) * (currentRadius - finalOffset), 
+            i * h + (Math.random() - 0.5) * 0.1, // Drobný posun i nahoru/dolů v rámci krému
+            Math.sin(randomAng) * (currentRadius - finalOffset)
+        );
+        
+        // Náhodná rotace ovoce, aby každé mířilo jinam
+        f.rotation.set(Math.random(), Math.random(), Math.random());
+        
+        cakeGroup.add(f);
+    }
+}
 
             // Ovoce na vrchu nebo na terasách svatebního dortu
             const isTopSurface = (i === layers - 1);
