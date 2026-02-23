@@ -510,10 +510,20 @@
     }
 
     /* 4. Sestavení 3D modelu dortu na základě výběru */
-    function updateCake() {
-        if (!cakeGroup) return;
-        // Vyčištění starého modelu před novým vykreslením
-        while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
+function updateCake() {
+    // Odstranění starého dortu ze scény
+    if (window.cakeGroup) {
+        // Správné uvolnění geometrie a materiálů z paměti
+        window.cakeGroup.traverse((child) => {
+            if (child.isMesh) {
+                child.geometry.dispose();
+                child.material.dispose();
+            }
+        });
+        scene.remove(window.cakeGroup);
+    }
+    
+    window.cakeGroup = new THREE.Group();
         
         const style = document.getElementById('cakeStyle').value;
         const layers = parseInt(document.getElementById('layers').value);
