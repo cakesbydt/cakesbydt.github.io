@@ -1078,29 +1078,37 @@ window.onload = () => {
   //  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
 //</a>
 
-// Nastavení klíče (můžeš tam nechat cakesbydt)
+// Nastavení klíče - necháme stejný
 const siteId = "cakesbydt-gh-pages";
 
 async function updateStats() {
     try {
-        // Načtení návštěv
-        const vRes = await fetch(`https://api.countapi.xyz/hit/${siteId}/visits`);
+        // Používáme stabilnější službu countapi.it
+        // 1. Započítání návštěvy
+        const vRes = await fetch(`https://api.countapi.it/hit/${siteId}/visits`);
         const vData = await vRes.json();
-        document.getElementById('visits-total').innerText = vData.value;
+        
+        const visitsEl = document.getElementById('visits-total');
+        if (visitsEl) visitsEl.innerText = vData.value;
 
-        // Načtení objednávek (pouze zobrazení)
-        const oRes = await fetch(`https://api.countapi.xyz/get/${siteId}/orders`);
+        // 2. Načtení objednávek (pouze zobrazení stavu)
+        const oRes = await fetch(`https://api.countapi.it/get/${siteId}/orders`);
         const oData = await oRes.json();
-        document.getElementById('orders-total').innerText = oData.value || 0;
+        
+        const ordersEl = document.getElementById('orders-total');
+        if (ordersEl) ordersEl.innerText = oData.value || 0;
+        
     } catch (e) {
-        console.log("Statistiky se načítají...");
+        // Pokud klíč ještě neexistuje, musíme ho poprvé vytvořit (to se stane automaticky u HIT)
+        console.log("Statistiky se probouzejí...");
     }
 }
 
-// Funkce pro přičtení objednávky
+// Funkce pro přičtení objednávky (voláš v .then po odeslání emailu)
 function countNewOrder() {
-    fetch(`https://api.countapi.xyz/hit/${siteId}/orders`)
-        .then(() => updateStats());
+    fetch(`https://api.countapi.it/hit/${siteId}/orders`)
+        .then(() => updateStats())
+        .catch(err => console.log("Chyba při zápisu objednávky:", err));
 }
 
 // Spustit při načtení
