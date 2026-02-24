@@ -42,7 +42,7 @@
         
         /* Styl levého tmavšího panelu s logem a kontakty */
         .levy-panel { 
-            flex: 0 0 380px; background: linear-gradient(165deg, #e7d2f7 0%, #f5e8e0 50%, #c8a2c8 100%);
+            flex: 0 0 380px; background: linear-gradient(165deg, #e7d2f7 0%, #e7d2f7 50%, #ddc5f0 100%); 
             display: flex; flex-direction: column; align-items: center; padding: 60px 40px; color: white; box-shadow: 20px 0 50px rgba(0,0,0,0.1);
         }
         
@@ -357,76 +357,6 @@
     #canvas-container {
         height: 400px !important; /* Trochu zmenšíme 3D okno na mobilu */
     }
-
-        .stats-container {
-    display: flex;
-    gap: 25px;
-    justify-content: center;
-    padding: 40px 20px;
-    flex-wrap: wrap;
-}
-
-.stat-card {
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 30px;
-    padding: 30px;
-    width: 320px;
-    text-align: center;
-    box-shadow: 0 15px 35px rgba(177, 156, 217, 0.15);
-    transition: transform 0.3s ease;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    font-size: 30px;
-    margin-bottom: 15px;
-}
-
-.stat-card h3 {
-    color: #5a4a81;
-    font-size: 18px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 25px;
-    font-weight: 400;
-}
-
-.stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.stat-item {
-    background: rgba(255, 255, 255, 0.5);
-    padding: 12px;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.stat-item span {
-    font-size: 11px;
-    color: #b19cd9;
-    text-transform: uppercase;
-    font-weight: bold;
-    margin-bottom: 4px;
-}
-
-.stat-item strong {
-    color: #4a3f6e;
-    font-size: 18px;
-}
-
-/* Mobilní verze */
-@media (max-width: 768px) {
-    .stat-card { width: 100%; }
-}
 }
         
     </style>
@@ -482,30 +412,6 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
     </a>
 </div>
-<div class="stats-container">
-    <div class="stat-card">
-        <div class="stat-icon">👁️</div>
-        <h3>Návštěvnost webu</h3>
-        <div class="stat-grid">
-            <div class="stat-item"><span>Dnes</span><strong id="visits-day">12</strong></div>
-            <div class="stat-item"><span>Týden</span><strong id="visits-week">84</strong></div>
-            <div class="stat-item"><span>Měsíc</span><strong id="visits-month">320</strong></div>
-            <div class="stat-item"><span>Rok</span><strong id="visits-year">1 250</strong></div>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon">🎂</div>
-        <h3>Odeslané poptávky</h3>
-        <div class="stat-grid">
-            <div class="stat-item"><span>Dnes</span><strong id="orders-day">2</strong></div>
-            <div class="stat-item"><span>Týden</span><strong id="orders-week">14</strong></div>
-            <div class="stat-item"><span>Měsíc</span><strong id="orders-month">48</strong></div>
-            <div class="stat-item"><span>Rok</span><strong id="orders-year">215</strong></div>
-        </div>
-    </div>
-</div>
-            
             <p style="margin-top:auto; font-size: 20px; letter-spacing: 3px; opacity: 0.5;">Váš sladký sen</p>
         </div>
 
@@ -1040,21 +946,15 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
             // Nahraď ID_ZAKAZNIK_SABLONY tvým ID z EmailJS
             return emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
         })
-    .then(function() {
-        console.log("Potvrzení zákazníkovi odesláno");
-        
-        // --- TADY JE TA ZMĚNA ---
-        if (typeof countNewOrder === "function") {
-            countNewOrder(); 
-        }
-        // ------------------------
-        
-        // Zobrazení tvého stylového okna
-        const modal = document.getElementById('customModal');
-        if(modal) modal.style.display = 'flex';
-        
-        btn.innerText = "ODESLÁNO ✅";
-    })
+        .then(function() {
+            console.log("Potvrzení zákazníkovi odesláno");
+            
+            // Zobrazení tvého stylového okna
+            const modal = document.getElementById('customModal');
+            if(modal) modal.style.display = 'flex';
+            
+            btn.innerText = "ODESLÁNO ✅";
+        })
         .catch(function(error) {
             console.error('Chyba odesílání:', error);
             alert('Nastala chyba. Dort se ale pořád peče v náhledu!');
@@ -1125,37 +1025,6 @@ window.onload = () => {
   //  <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" class="ig-float-button" title="Sledujte mě na Instagramu">
   //  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
 //</a>
-
-// 1. Funkce pro načtení a zobrazení statistik
-async function loadStats() {
-    try {
-        const response = await fetch('stats.php');
-        const data = await response.json();
-
-        // Naplnění čísel do HTML (musí sedět ID z předchozího kroku)
-        document.getElementById('visits-day').innerText = data.visits.day;
-        document.getElementById('visits-week').innerText = data.visits.week;
-        document.getElementById('visits-month').innerText = data.visits.month;
-        document.getElementById('visits-year').innerText = data.visits.year;
-
-        document.getElementById('orders-day').innerText = data.orders.day;
-        document.getElementById('orders-week').innerText = data.orders.week;
-        document.getElementById('orders-month').innerText = data.orders.month;
-        document.getElementById('orders-year').innerText = data.orders.year;
-    } catch (error) {
-        console.error("Nepodařilo se načíst statistiky", error);
-    }
-}
-
-// 2. Funkce, kterou zavoláš, když uživatel úspěšně odešle formulář
-function countNewOrder() {
-    fetch('stats.php?action=addOrder')
-        .then(() => loadStats()); // Po započítání hned obnovíme čísla na webu
-}
-
-// Spustit při načtení
-window.addEventListener('DOMContentLoaded', loadStats);
-    
 // DŮLEŽITÉ: Ujisti se, že tato řádka je na úplném konci souboru
 window.onload = init3D;
           
