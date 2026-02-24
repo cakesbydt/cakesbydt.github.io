@@ -357,39 +357,6 @@
     #canvas-container {
         height: 400px !important; /* Trochu zmenšíme 3D okno na mobilu */
     }
-
-        .stats-container {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    padding: 20px;
-    flex-wrap: wrap;
-}
-
-.stat-card {
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 25px;
-    padding: 20px;
-    width: 250px;
-    text-align: center;
-    border: 1px solid #e2dcf4;
-    box-shadow: 0 10px 20px rgba(177, 156, 217, 0.1);
-}
-
-.stat-card h3 {
-    color: #5a4a81;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin: 10px 0;
-}
-
-.stat-item strong {
-    color: #8e7cc3;
-    font-size: 24px;
-    display: block;
-}
 }
         
     </style>
@@ -445,24 +412,6 @@
         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
     </a>
 </div>
-<div class="stats-container">
-    <div class="stat-card">
-        <div class="stat-icon">👁️</div>
-        <h3>Návštěvnost webu</h3>
-        <div class="stat-grid">
-            <div class="stat-item"><span>Celkem</span><strong id="visits-total">0</strong></div>
-        </div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-icon">🎂</div>
-        <h3>Odeslané poptávky</h3>
-        <div class="stat-grid">
-            <div class="stat-item"><span>Celkem</span><strong id="orders-total">0</strong></div>
-        </div>
-    </div>
-</div>
-            
             <p style="margin-top:auto; font-size: 20px; letter-spacing: 3px; opacity: 0.5;">Váš sladký sen</p>
         </div>
 
@@ -997,16 +946,15 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
             // Nahraď ID_ZAKAZNIK_SABLONY tvým ID z EmailJS
             return emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
         })
-    .then(function() {
-    console.log("Potvrzení zákazníkovi odesláno");
-    
-    // TADY TO PŘIDEJ:
-    countNewOrder(); 
-    
-    const modal = document.getElementById('customModal');
-    if(modal) modal.style.display = 'flex';
-    btn.innerText = "ODESLÁNO ✅";
-})
+        .then(function() {
+            console.log("Potvrzení zákazníkovi odesláno");
+            
+            // Zobrazení tvého stylového okna
+            const modal = document.getElementById('customModal');
+            if(modal) modal.style.display = 'flex';
+            
+            btn.innerText = "ODESLÁNO ✅";
+        })
         .catch(function(error) {
             console.error('Chyba odesílání:', error);
             alert('Nastala chyba. Dort se ale pořád peče v náhledu!');
@@ -1077,37 +1025,6 @@ window.onload = () => {
   //  <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" class="ig-float-button" title="Sledujte mě na Instagramu">
   //  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
 //</a>
-
-// Použijeme jiný namespace, aby se to "chytlo" jako nové
-const siteId = "cakesbydt_v3_2026"; 
-
-async function updateStats() {
-    try {
-        // Použijeme spolehlivější free API: api.countapi.xyz (pokud zrovna žije) 
-        // nebo alternativní endpoint. 
-        // Pokud ani toto nepůjde, vypíšeme chybu do konzole.
-        const response = await fetch(`https://api.countapi.xyz/hit/${siteId}/visits`);
-        const data = await response.json();
-        
-        if(document.getElementById('visits-total')) {
-            document.getElementById('visits-total').innerText = data.value;
-        }
-
-        const oRes = await fetch(`https://api.countapi.xyz/get/${siteId}/orders`);
-        const oData = await oRes.json();
-        
-        if(document.getElementById('orders-total')) {
-            document.getElementById('orders-total').innerText = oData.value || 0;
-        }
-    } catch (e) {
-        console.error("Chyba statistik:", e);
-        // Pokud API nejede, zkusíme zobrazit aspoň náhodné uvěřitelné číslo 
-        // aby web nevypadal rozbitě (volitelné)
-        document.getElementById('visits-total').innerText = "124"; 
-        document.getElementById('orders-total').innerText = "12";
-    }
-}
-    
 // DŮLEŽITÉ: Ujisti se, že tato řádka je na úplném konci souboru
 window.onload = init3D;
           
