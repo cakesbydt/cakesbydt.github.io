@@ -1040,15 +1040,21 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
             // Nahraď ID_ZAKAZNIK_SABLONY tvým ID z EmailJS
             return emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
         })
-        .then(function() {
-            console.log("Potvrzení zákazníkovi odesláno");
-            
-            // Zobrazení tvého stylového okna
-            const modal = document.getElementById('customModal');
-            if(modal) modal.style.display = 'flex';
-            
-            btn.innerText = "ODESLÁNO ✅";
-        })
+    .then(function() {
+        console.log("Potvrzení zákazníkovi odesláno");
+        
+        // --- TADY JE TA ZMĚNA ---
+        if (typeof countNewOrder === "function") {
+            countNewOrder(); 
+        }
+        // ------------------------
+        
+        // Zobrazení tvého stylového okna
+        const modal = document.getElementById('customModal');
+        if(modal) modal.style.display = 'flex';
+        
+        btn.innerText = "ODESLÁNO ✅";
+    })
         .catch(function(error) {
             console.error('Chyba odesílání:', error);
             alert('Nastala chyba. Dort se ale pořád peče v náhledu!');
@@ -1119,6 +1125,37 @@ window.onload = () => {
   //  <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" class="ig-float-button" title="Sledujte mě na Instagramu">
   //  <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
 //</a>
+
+// 1. Funkce pro načtení a zobrazení statistik
+async function loadStats() {
+    try {
+        const response = await fetch('stats.php');
+        const data = await response.json();
+
+        // Naplnění čísel do HTML (musí sedět ID z předchozího kroku)
+        document.getElementById('visits-day').innerText = data.visits.day;
+        document.getElementById('visits-week').innerText = data.visits.week;
+        document.getElementById('visits-month').innerText = data.visits.month;
+        document.getElementById('visits-year').innerText = data.visits.year;
+
+        document.getElementById('orders-day').innerText = data.orders.day;
+        document.getElementById('orders-week').innerText = data.orders.week;
+        document.getElementById('orders-month').innerText = data.orders.month;
+        document.getElementById('orders-year').innerText = data.orders.year;
+    } catch (error) {
+        console.error("Nepodařilo se načíst statistiky", error);
+    }
+}
+
+// 2. Funkce, kterou zavoláš, když uživatel úspěšně odešle formulář
+function countNewOrder() {
+    fetch('stats.php?action=addOrder')
+        .then(() => loadStats()); // Po započítání hned obnovíme čísla na webu
+}
+
+// Spustit při načtení
+window.addEventListener('DOMContentLoaded', loadStats);
+    
 // DŮLEŽITÉ: Ujisti se, že tato řádka je na úplném konci souboru
 window.onload = init3D;
           
