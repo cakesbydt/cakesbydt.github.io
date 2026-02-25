@@ -717,8 +717,12 @@
         // Matematický vzorec pro cenu
         let total = (diameter * 15) * (layers / 2);
         if (style === 'wedding') total += 500; 
-        if (flavorText.includes("Ořechový")) total += 100;
-        if (coat === 'full') total += 100;
+        if (flavorText.includes("Ořechový")) total += 80;
+        if (flavorText.includes("Mrkvový")) total += 100;
+        if (flavorText.includes("Mechový")) total += 100;
+        if (flavorText.includes("Vanilkový")) total += 0;
+        if (flavorText.includes("Kakaový")) total += 50;
+        if (coat === 'full') total += 150;
         if (document.getElementById('fruitCream').value !== 'none') total += 50;
         if (document.getElementById('fruitTop').value !== 'none') total += 150;
         
