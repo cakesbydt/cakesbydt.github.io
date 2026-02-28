@@ -443,6 +443,18 @@
                     <label><input type="checkbox" id="c3" onchange="calculatePrice()"> Personalizovaný zápich</label>
                     <div class="extra-input"><input type="text" name="Detail_Zapich" placeholder="Zadejte text na zápich (např. Vše nejlepší)"></div>
                 </div>
+                <div class="doplnek-item" style="border-top: 1px dashed var(--primary); margin-top: 30px; padding-top: 30px;">
+    <label style="color: var(--gold); margin-bottom: 15px;">
+        <i class="fas fa-camera"></i> Máte vlastní předlohu? (Inspirace)
+    </label>
+    <div class="upload-wrapper">
+        <input type="file" id="cakePhoto" name="my_file" accept="image/*" style="display: none;" onchange="updateFileName()">
+        <label for="cakePhoto" id="fileLabel" style="display: block; background: rgba(188, 155, 194, 0.1); border: 2px dashed var(--primary); padding: 20px; text-align: center; border-radius: 15px; cursor: pointer; transition: 0.3s; text-transform: none;">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: var(--primary); display: block; margin-bottom: 10px;"></i>
+            <span id="fileText">Klikněte pro nahrání fotky (max 500kB)</span>
+        </label>
+    </div>
+</div>
                 <textarea name="Zprava_Poznamka" rows="4" placeholder="Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie..." onchange="calculatePrice()"></textarea>
             </div>
 
@@ -831,11 +843,11 @@
     }
 
     function animate() {
-        requestAnimationFrame(animate);
-        if (renderer && scene && camera) {
-            renderer.render(scene, camera);
-        }
+    requestAnimationFrame(animate);
+    if (renderer && scene && camera) {
+        renderer.render(scene, camera);
     }
+}
 
 document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -856,6 +868,11 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
     if(document.getElementById('c2')?.checked) doplnkyArr.push("Figurka (" + (document.getElementsByName('Detail_Figurka')[0]?.value || "Ano") + ")");
     if(document.getElementById('c3')?.checked) doplnkyArr.push("Zápich (" + (document.getElementsByName('Detail_Zapich')[0]?.value || "Ano") + ")");
 
+    // TADY DOPLNÍME DATA DO SKRYTÝCH POLÍ PRO SENDFORM
+    document.getElementById('hiddenConfig').value = `Styl: ${getText('cakeStyle')} | Průměr: ${document.getElementById('diameter').value} cm | Patra: ${document.getElementById('layers').value}`;
+    document.getElementById('hiddenExtras').value = doplnkyArr.length > 0 ? doplnkyArr.join(", ") : "Žádné";
+    document.getElementById('hiddenPrice').value = document.getElementById('price-display').innerText;
+
     const templateParams = {
         jmeno: document.getElementsByName('Jmeno')[0].value,
         email: document.getElementsByName('Email')[0].value,
@@ -871,9 +888,11 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         cena_odhad: document.getElementById('price-display').innerText
     };
 
-    emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
+    // 1. POSÍLÁME TOBĚ (ADMINOVI) PŘES SENDFORM KVŮLI FOTCE
+    emailjs.sendForm('service_ep8bdkh', 'template_tvtxutj', this)
         .then(function() {
-            console.log("Email tobě odeslán");
+            console.log("Email tobě odeslán i s fotkou");
+            // 2. POSÍLÁME POTVRZENÍ ZÁKAZNÍKOVI PŘES SEND (BEZ FOTKY)
             return emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
         })
         .then(function() {
@@ -884,7 +903,7 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         })
         .catch(function(error) {
             console.error('Chyba odesílání:', error);
-            alert('Nastala chyba. Dort se ale pořád peče v náhledu!');
+            alert('Nastala chyba. Pokud nahráváte fotku, zkuste menší velikost.');
             btn.innerText = originalBtnText;
             btn.disabled = false;
         });
