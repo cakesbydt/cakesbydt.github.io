@@ -899,6 +899,8 @@ const allImages = [
 let currentImageIndex = 0; // Začínáme od první fotky
 let isTransitioning = false; 
 
+// --- Tato část patří na konec tvého <script> ---
+
 function updateGallery() {
     if (isTransitioning) return; 
     
@@ -906,39 +908,40 @@ function updateGallery() {
     if (!mainSlot || allImages.length === 0) return;
 
     isTransitioning = true;
-    mainSlot.style.opacity = '0'; // Plynulé zmizení
+    mainSlot.style.opacity = '0'; 
 
-    // Posuneme index na další fotku (pokud jsme na konci, skočíme zase na 0)
+    // Posuneme index na další fotku
     currentImageIndex = (currentImageIndex + 1) % allImages.length;
     const nextPhoto = allImages[currentImageIndex];
     
     const tempImage = new Image();
     
-    // Čekáme, až se nová fotka "neviditelně" načte
     setTimeout(() => {
         tempImage.onload = () => {
             mainSlot.style.backgroundImage = `url('${nextPhoto}')`;
             setTimeout(() => {
-                mainSlot.style.opacity = '1'; // Plynulé rozsvícení
+                mainSlot.style.opacity = '1'; 
                 isTransitioning = false; 
             }, 50);
         };
         tempImage.src = nextPhoto;
-    }, 1200); // Časová prodleva pro efekt zmizení
+    }, 1200); 
 }
 
-// Spuštění galerie
+// SPOJENÉ A OPRAVENÉ SPOUŠTĚNÍ
 window.addEventListener('DOMContentLoaded', () => {
     const mainSlot = document.getElementById('slot1');
     if(mainSlot && allImages.length > 0) {
-        // Nastavíme hned první fotku při načtení
+        // Nastavíme první fotku hned při startu
         mainSlot.style.backgroundImage = `url('${allImages[0]}')`;
     }
-    // Každých 6 sekund vyměnit fotku
+    
+    // Tady si vyber čas: 10000 = 10 vteřin, 3000 = 3 vteřiny
+    // Necháme 6000 (6 vteřin), ať si to lidi stihnou prohlédnout
     setInterval(updateGallery, 10000);
-
 });
 
+// Inicializace 3D modelu
 window.onload = init3D;
 
 </script>
