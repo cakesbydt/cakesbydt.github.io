@@ -937,12 +937,6 @@ window.addEventListener('DOMContentLoaded', () => {
     // Každých 6 sekund vyměnit fotku
     setInterval(updateGallery, 10000);
 
-window.addEventListener('DOMContentLoaded', () => {
-    const mainSlot = document.getElementById('slot1');
-    if(mainSlot && allImages.length > 0) {
-        mainSlot.style.backgroundImage = `url('${allImages[0]}')`;
-    }
-    setInterval(updateGallery, 3000);
 });
 
 window.onload = init3D;
