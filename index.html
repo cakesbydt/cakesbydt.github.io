@@ -337,7 +337,8 @@
                         <label>Styl dortu</label>
                         <select id="cakeStyle" onchange="updateCake();">
                             <option value="classic">🎂 Klasický</option>
-                            <option value="wedding">💍 Patrový</option>
+                            <option value="classic1">🎂 Patrový</option>
+                            <option value="wedding">💍 Svatební</option>
                         </select>
                     </div>
                     <div><label>Průměr</label><select id="diameter" onchange="updateCake();">
@@ -642,7 +643,8 @@
             total += (tierDiameter * 20) * 3; // 3 = (6 vrstev / 2) pro zachování tvé původní ceny
         }
 
-        if (style === 'wedding') total += 500; 
+        if (style === 'wedding') total += 1500; 
+        if (style === 'classic1') total += 100; 
         if (flavorText.includes("Ořechový")) total += 80 * numTiers;
         if (flavorText.includes("Mrkvový")) total += 100 * numTiers;
         if (flavorText.includes("Mechový")) total += 100 * numTiers;
@@ -661,6 +663,7 @@
         const maxPrice = Math.round(total * 1.05);
 
         const infoText = `${style === 'wedding' ? 'Svatební ('+numTiers+' patra)' : 'Klasický (1 patro)'} | Ø základny ${diameter}cm`;
+        const infoText = `${style === 'classic1' ? 'Patrový ('+numTiers+' patra)' : 'Klasický (1 patro)'} | Ø základny ${diameter}cm`;
         const priceText = `${minPrice} – ${maxPrice} Kč`;
 
         document.getElementById('info-display').innerText = infoText;
