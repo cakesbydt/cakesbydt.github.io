@@ -346,12 +346,11 @@
                         <option value="24">24 cm</option>
                     </select></div>
                     
-                    <div><label>Počet pater</label><select id="layers" onchange="updateCake();">
-                        <option value="4">4 patra</option>
-                        <option value="6" selected >6 pater</option>
-                        <option value="8">8 pater</option>
-                        <option value="10">10 pater</option>
-                    </select></div>
+                   <div><label>Patra (jen pro svatební)</label><select id="layers" onchange="updateCake();">
+    <option value="2" selected>2 patra</option>
+    <option value="3">3 patra</option>
+    <option value="4">4 patra</option>
+</select></div>
                     
                     <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake();">
                         <option value="0x6e5445">Kakaový</option>
@@ -620,21 +619,29 @@
 
     function calculatePrice() {
         const diameter = parseInt(document.getElementById('diameter').value);
-        const layers = parseInt(document.getElementById('layers').value);
         const style = document.getElementById('cakeStyle').value;
         const coat = document.getElementById('coating').value;
         const flavorText = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
         
-        let total = (diameter * 20) * (layers / 2);
+        // Zjištění počtu pater - klasika má vždy 1 patro, svatební podle dropdownu
+        let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
+        let total = 0;
+        
+        // Cena se počítá za každé patro zvlášť (každé další je užší, spotřebuje méně surovin)
+        for (let t = 0; t < numTiers; t++) {
+            let tierDiameter = diameter * Math.pow(0.75, t); 
+            total += (tierDiameter * 20) * 3; // 3 = (6 vrstev / 2) pro zachování tvé původní ceny
+        }
+
         if (style === 'wedding') total += 500; 
-        if (flavorText.includes("Ořechový")) total += 80;
-        if (flavorText.includes("Mrkvový")) total += 100;
-        if (flavorText.includes("Mechový")) total += 100;
-        if (flavorText.includes("Vanilkový")) total += 0;
-        if (flavorText.includes("Kakaový")) total += 50;
-        if (coat === 'full') total += 225;
-        if (document.getElementById('fruitCream').value !== 'none') total += 80;
-        if (document.getElementById('fruitTop').value !== 'none') total += 180;
+        if (flavorText.includes("Ořechový")) total += 80 * numTiers;
+        if (flavorText.includes("Mrkvový")) total += 100 * numTiers;
+        if (flavorText.includes("Mechový")) total += 100 * numTiers;
+        if (flavorText.includes("Kakaový")) total += 50 * numTiers;
+        
+        if (coat === 'full') total += 225 * numTiers;
+        if (document.getElementById('fruitCream').value !== 'none') total += 80 * numTiers;
+        if (document.getElementById('fruitTop').value !== 'none') total += 180; // Horní zdobení počítáme paušálně
         
         if (document.getElementById('c_flowers').checked) total += 150;
         if (document.getElementById('c1').checked) total += 300;
@@ -644,7 +651,7 @@
         const minPrice = Math.round(total * 0.95);
         const maxPrice = Math.round(total * 1.05);
 
-        const infoText = `${style === 'wedding' ? 'Svatební' : 'Klasický'} | Ø ${diameter}cm | výška cca ${layers * 1.5}cm`;
+        const infoText = `${style === 'wedding' ? 'Svatební ('+numTiers+' patra)' : 'Klasický (1 patro)'} | Ø základny ${diameter}cm`;
         const priceText = `${minPrice} – ${maxPrice} Kč`;
 
         document.getElementById('info-display').innerText = infoText;
@@ -656,8 +663,11 @@
         while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
         
         const style = document.getElementById('cakeStyle').value;
-        const layers = parseInt(document.getElementById('layers').value);
         const diameter = parseInt(document.getElementById('diameter').value);
+        
+        // ZJIŠTĚNÍ POČTU PATER (Klasický vnutí 1 patro)
+        let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
+
         const coat = document.getElementById('coating').value;
         const fruitT = document.getElementById('fruitTop').value;
         const fruitC = document.getElementById('fruitCream').value;
@@ -667,128 +677,124 @@
         const outerColor = parseInt(document.getElementById('outerCream').value);
         
         const baseRadius = diameter / 6.5; 
-        const h = 0.5; 
+        const h = 0.5; // Výška jedné mikrovrstvy (celé patro jich má 6)
+        const layersPerTier = 6; // 3x korpus, 3x krém = 12cm
 
-        for (let i = 0; i < layers; i++) {
-            let currentRadius = baseRadius;
-            if (style === 'wedding') {
-                if (i >= 4 && i < 8) currentRadius = baseRadius * 0.75;
-                if (i >= 8) currentRadius = baseRadius * 0.55;
-            }
-            const isCream = i % 2 === 1; 
-            const segment = new THREE.Mesh(
-                new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
-                new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
-            );
-            segment.position.y = i * h;
-            cakeGroup.add(segment);
-
-            if (coat !== 'naked') {
-                const coatMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
-                    new THREE.MeshPhongMaterial({ color: outerColor, transparent: true, opacity: (coat === 'semi' ? 0.5 : 1), side: THREE.DoubleSide })
-                );
-                coatMesh.position.y = i * h;
-                cakeGroup.add(coatMesh);
-
-                if (i === layers - 1) {
-                    const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.03, 64);
-                    const topCapMat = new THREE.MeshPhongMaterial({ 
-                        color: outerColor, 
-                        transparent: true, 
-                        opacity: (coat === 'semi' ? 0.5 : 1), 
-                        side: THREE.DoubleSide 
-                    });
-                    const topCap = new THREE.Mesh(topCapGeo, topCapMat);
-                    
-                    topCap.position.y = (i * h) + (h / 2) + 0.01; 
-                    topCap.rotation.x = Math.PI / 2; 
-                    cakeGroup.add(topCap);
-                }
-            }
-
-            // Vnitřní proložení ovocem (v krému)
-            if (isCream && fruitC !== 'none' && i < layers - 1 && coat !== 'full') {
-                const fruitOffsets = { 'strawberries': 0.10, 'raspberries': 0.09, 'blueberries': 0.02 };
-
-                for (let j = 0; j < 160; j++) { 
-                    let activeType = fruitC;
-                    if (fruitC === 'mix') {
-                        const types = ['strawberries', 'raspberries', 'blueberries'];
-                        activeType = types[Math.floor(Math.random() * types.length)];
-                    }
-
-                    let baseOffset = fruitOffsets[activeType] || 0.08;
-                    const randomAng = Math.random() * Math.PI * 2;
-                    const deepChaos = Math.random() * 0.15; 
-                    const finalOffset = baseOffset + deepChaos;
-
-                    const f = createFruit(activeType, false);
-                    f.position.set(
-                        Math.cos(randomAng) * (currentRadius - finalOffset), 
-                        i * h + (Math.random() - 0.5) * (h * 0.8), 
-                        Math.sin(randomAng) * (currentRadius - finalOffset)
-                    );
-                    f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
-                    cakeGroup.add(f);
-                }
-            }
-
-            // Ozdobení nahoře (nebo na patrech svatebního dortu)
-            const isTopSurface = (i === layers - 1);
-            const isTierSurface = (style === 'wedding' && (i === 3 || i === 7));
+        for (let t = 0; t < numTiers; t++) {
+            // Každé patro je o 25 % užší než to pod ním
+            let currentRadius = baseRadius * Math.pow(0.75, t); 
             
-            if ((isTopSurface || isTierSurface) && fruitT !== 'none') {
+            for (let l = 0; l < layersPerTier; l++) {
+                const isCream = (l % 2 === 1); 
+                const globalIndex = (t * layersPerTier) + l; // Výpočet celkové výšky v prostoru
                 
-                if (topS === 'full' && isTopSurface) {
-                    // PLNOU PLOCHOU - Organický, přirozený rozptyl ovoce
-                    const area = Math.PI * Math.pow(currentRadius * 0.85, 2);
-                    const count = Math.floor(area * 35); // Hustota ovoce (čím víc, tím plnější)
-                    
-                    for(let j = 0; j < count; j++) {
-                        const f = createFruit(fruitT, true);
-                        
-                        // Uniformní rozložení v kruhu pomocí odmocniny (aby nebyl chuchvalec uprostřed)
-                        const r = (currentRadius * 0.85) * Math.sqrt(Math.random()); 
-                        const theta = Math.random() * Math.PI * 2;
-                        
-                        const px = Math.cos(theta) * r;
-                        const pz = Math.sin(theta) * r;
-                        
-                        // Drobná výšková variace, aby ovoce leželo přes sebe
-                        const py = (i * h) + 0.3 + (Math.random() * 0.15); 
-                        
-                        f.position.set(px, py, pz);
-                        
-                        // Jahody a borůvky náhodně natočíme pro maximální realismus
-                        f.rotation.set(
-                            (Math.random() - 0.5) * 1.5, 
-                            Math.random() * Math.PI * 2, 
-                            (Math.random() - 0.5) * 1.5
+                // Samotná hmota (Korpus / Krém)
+                const segment = new THREE.Mesh(
+                    new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
+                    new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
+                );
+                segment.position.y = globalIndex * h;
+                cakeGroup.add(segment);
+
+                // OBMAZ (Coating)
+                if (coat !== 'naked') {
+                    const coatMesh = new THREE.Mesh(
+                        new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
+                        new MeshPhongMaterialConfig(outerColor, coat)
+                    );
+                    coatMesh.position.y = globalIndex * h;
+                    cakeGroup.add(coatMesh);
+
+                    // Potažení vršku každého patra krémem
+                    if (l === layersPerTier - 1) {
+                        const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.03, 64);
+                        const topCap = new THREE.Mesh(topCapGeo, new MeshPhongMaterialConfig(outerColor, coat));
+                        topCap.position.y = (globalIndex * h) + (h / 2) + 0.01; 
+                        topCap.rotation.x = -Math.PI / 2; 
+                        cakeGroup.add(topCap);
+                    }
+                }
+
+                // OVOCE UVNITŘ (jen v krému mezi korpusy)
+                if (isCream && fruitC !== 'none' && l < layersPerTier - 1 && coat !== 'full') {
+                    const fruitOffsets = { 'strawberries': 0.10, 'raspberries': 0.09, 'blueberries': 0.02 };
+                    for (let j = 0; j < 160; j++) { 
+                        let activeType = fruitC === 'mix' ? ['strawberries', 'raspberries', 'blueberries'][Math.floor(Math.random() * 3)] : fruitC;
+                        let baseOffset = fruitOffsets[activeType] || 0.08;
+                        const randomAng = Math.random() * Math.PI * 2;
+                        const finalOffset = baseOffset + (Math.random() * 0.15);
+
+                        const f = createFruit(activeType, false);
+                        f.position.set(
+                            Math.cos(randomAng) * (currentRadius - finalOffset), 
+                            (globalIndex * h) + (Math.random() - 0.5) * (h * 0.8), 
+                            Math.sin(randomAng) * (currentRadius - finalOffset)
                         );
-                        
+                        f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
                         cakeGroup.add(f);
                     }
-                } else {
-                    // JEN OKRAJE - Tradiční věneček
-                    const r = currentRadius * 0.85;
-                    const count = Math.max(Math.floor(r * 18), 1);
-                    for(let j = 0; j < count; j++) {
-                        const f = createFruit(fruitT, true);
-                        const ang = (j / count) * Math.PI * 2;
+                }
+
+                // OVOCE NAHOŘE A NA TERASÁCH
+                const isTopSurfaceOfTier = (l === layersPerTier - 1);
+                const isAbsoluteTop = (t === numTiers - 1 && isTopSurfaceOfTier);
+                const isTerrace = (t < numTiers - 1 && isTopSurfaceOfTier);
+
+                if ((isAbsoluteTop || isTerrace) && fruitT !== 'none') {
+                    
+                    if (isAbsoluteTop) {
+                        // ÚPLNÝ VRCHOL (Dvě možnosti: Věneček nebo Plná plocha)
+                        if (topS === 'full') {
+                            const count = Math.floor(Math.PI * Math.pow(currentRadius * 0.85, 2) * 35); 
+                            for(let j = 0; j < count; j++) {
+                                const f = createFruit(fruitT, true);
+                                const r = (currentRadius * 0.85) * Math.sqrt(Math.random()); 
+                                const theta = Math.random() * Math.PI * 2;
+                                f.position.set(Math.cos(theta) * r, (globalIndex * h) + 0.3 + (Math.random() * 0.15), Math.sin(theta) * r);
+                                f.rotation.set((Math.random() - 0.5) * 1.5, Math.random() * Math.PI * 2, (Math.random() - 0.5) * 1.5);
+                                cakeGroup.add(f);
+                            }
+                        } else {
+                            const r = currentRadius * 0.85;
+                            const count = Math.max(Math.floor(r * 18), 1);
+                            for(let j = 0; j < count; j++) {
+                                const f = createFruit(fruitT, true);
+                                const ang = (j / count) * Math.PI * 2;
+                                f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
+                                f.rotation.set((Math.random() - 0.5) * 0.5, ang, (Math.random() - 0.5) * 0.5);
+                                cakeGroup.add(f);
+                            }
+                        }
+                    } else if (isTerrace) {
+                        // TERASA SVATEBNÍHO DORTU (Ovoce jen jako věneček okolo patra nad tím)
+                        const nextRadius = baseRadius * Math.pow(0.75, t + 1); 
+                        const r = nextRadius + ((currentRadius - nextRadius) * 0.5); 
+                        const count = Math.max(Math.floor(r * 18), 1); 
                         
-                        f.position.set(Math.cos(ang) * r, (i * h) + 0.3, Math.sin(ang) * r);
-                        
-                        // U věnečku chceme ovoce hezky uspořádané, s jemným natočením
-                        f.rotation.set((Math.random() - 0.5) * 0.5, ang, (Math.random() - 0.5) * 0.5);
-                        
-                        cakeGroup.add(f);
+                        for(let j = 0; j < count; j++) {
+                            const f = createFruit(fruitT, true);
+                            const ang = (j / count) * Math.PI * 2;
+                            f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
+                            f.rotation.set((Math.random() - 0.5) * 0.5, ang, (Math.random() - 0.5) * 0.5);
+                            cakeGroup.add(f);
+                        }
                     }
                 }
             }
         }
         calculatePrice(); 
     }
+
+    // Malá pomocná funkce pro materiál obmazu, aby kód nebyl nekonečný
+    function MeshPhongMaterialConfig(outerColor, coat) {
+        return new THREE.MeshPhongMaterial({ 
+            color: outerColor, 
+            transparent: true, 
+            opacity: (coat === 'semi' ? 0.5 : 1), 
+            side: THREE.DoubleSide 
+        });
+    }
+    
     function manualControl() {
         if (!cakeGroup) return;
         cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
