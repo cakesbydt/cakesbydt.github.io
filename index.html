@@ -546,147 +546,153 @@
         if (finalType === 'strawberries') {
             const size = isTop ? 0.22 : 0.16;
             
-            // 1. REALISTICKÁ JAHODOVÁ HMOTA
+            // 1. TĚLO JAHODY (Konec rajčat!)
             const strawberryGeo = new THREE.SphereGeometry(size, 32, 32);
             const strawberryMat = new THREE.MeshPhongMaterial({ 
-                color: 0xcc1111,          // Jasnější, sytá "jahodová" červená
-                emissive: 0x330000,       // Drobný temný podtón
-                specular: 0xffaaaa,       // Lehce narůžovělý odlesk (mokrý efekt)
-                shininess: 40,            // Střední lesk, ne úplně jako plast
-                flatShading: false
+                color: 0xc8102e, // Skutečná jahodová červená (více do rubínova)
+                emissive: 0x220000, 
+                specular: 0xaa5555, 
+                shininess: 25 
             });
-            const body = new THREE.Mesh(strawberryGeo, strawberryMat);
             
-            // Deformace - dole do špičky, nahoře baculatější
-            const positions = body.geometry.attributes.position;
-            for (let i = 0; i < positions.count; i++) {
-                let y = positions.getY(i);
-                // Čím níže jsme (záporné y), tím více zúžíme (x, z)
-                let factor = y < 0 ? 1 - (Math.abs(y) / size) * 0.5 : 1 + (y / size) * 0.1;
-                positions.setX(i, positions.getX(i) * factor);
-                positions.setZ(i, positions.getZ(i) * factor);
+            // Tvarování: Široká ramena, zploštělý vršek a zúžení do špičky
+            const pos = strawberryGeo.attributes.position;
+            for (let i = 0; i < pos.count; i++) {
+                let y = pos.getY(i);
+                let ny = y / size; // Hodnota od -1 (dole) do 1 (nahoře)
                 
-                // Přidáme drobné nerovnosti (velmi mírný chaos), aby nebyla dokonalá
-                positions.setX(i, positions.getX(i) + (Math.random() - 0.5) * 0.005);
-                positions.setY(i, positions.getY(i) + (Math.random() - 0.5) * 0.005);
-                positions.setZ(i, positions.getZ(i) + (Math.random() - 0.5) * 0.005);
+                let factor = 1;
+                if (ny < 0) {
+                    // Spodní polovina se zužuje do špičky
+                    factor = 1 + ny * 0.75; 
+                } else {
+                    // Horní polovina je mírně zploštělá a plná
+                    factor = 1 - ny * 0.1;
+                    pos.setY(i, y * 0.8); // Zploštění vršku
+                }
+                
+                // Přidáme mikroskopický chaos pro organický vzhled
+                let chaos = (Math.random() - 0.5) * 0.01;
+                
+                pos.setX(i, pos.getX(i) * factor + chaos);
+                pos.setZ(i, pos.getZ(i) * factor + chaos);
             }
-            body.geometry.computeVertexNormals(); // Přepočítá stíny po deformaci
+            strawberryGeo.computeVertexNormals(); // Důležité pro správné stíny po deformaci
             
-            // Celkové protažení
-            body.scale.set(1, 1.2, 1);
+            const body = new THREE.Mesh(strawberryGeo, strawberryMat);
             group.add(body);
 
             // 2. SEMÍNKA (ZLATAVÁ ZRNÍČKA)
-            const seedGeo = new THREE.SphereGeometry(size * 0.03, 4, 4);
-            const seedMat = new THREE.MeshPhongMaterial({ color: 0xffcc44, shininess: 10 });
+            const seedGeo = new THREE.SphereGeometry(size * 0.025, 4, 4);
+            const seedMat = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 10 });
             
-            // Náhodně rozmístíme cca 40 semínek po povrchu
-            for(let i = 0; i < 40; i++) {
+            for(let i = 0; i < 45; i++) {
                 const seed = new THREE.Mesh(seedGeo, seedMat);
-                // Náhodná sférická pozice
+                // Rozložení semínek
                 const theta = Math.random() * Math.PI * 2;
-                const phi = Math.acos((Math.random() * 2) - 1); // Od shora dolů
+                const phi = Math.acos((Math.random() * 2) - 1); 
                 
-                // Semínka nahoře vynecháme (tam jsou lístky)
-                if (phi < 0.4) continue; 
+                if (phi < 0.3) continue; // Vynecháme vršek pod lístky
                 
-                // Pozice na kouli (před deformací)
                 let px = Math.sin(phi) * Math.cos(theta) * size;
                 let py = Math.cos(phi) * size;
                 let pz = Math.sin(phi) * Math.sin(theta) * size;
                 
-                // Aplikujeme stejnou deformaci jako na tělo
-                let factor = py < 0 ? 1 - (Math.abs(py) / size) * 0.5 : 1 + (py / size) * 0.1;
-                seed.position.set(px * factor * 1.02, py * 1.2, pz * factor * 1.02); // 1.02 aby semínka lehce vykukovala
+                // Stejná deformace pozice jako u těla
+                let ny = py / size;
+                let factor = ny < 0 ? 1 + ny * 0.75 : 1 - ny * 0.1;
+                let finalY = ny < 0 ? py : py * 0.8;
+                
+                // Zmáčknutí semínka, aby bylo plošší a leželo na povrchu
+                seed.scale.set(1, 1.5, 0.5);
+                seed.position.set(px * factor * 1.01, finalY, pz * factor * 1.01);
+                seed.lookAt(0, finalY, 0); // Semínko se natočí směrem ven
                 
                 group.add(seed);
             }
 
-            // 3. KALICH A LÍSTKY (Zelené)
-            const leafMat = new THREE.MeshPhongMaterial({ 
-                color: 0x336622, // Tmavší, přirozenější zelená
-                side: THREE.DoubleSide
-            });
+            // 3. KALICH A LÍSTKY (Jahodový styl, ne rajčatový)
+            const leafMat = new THREE.MeshPhongMaterial({ color: 0x2d5a1e, side: THREE.DoubleSide });
             
-            // 6 lístků
-            for (let i = 0; i < 6; i++) {
-                // Uděláme placatý trojúhelník (kužel s 3 hranami)
-                const leafGeo = new THREE.ConeGeometry(size * 0.2, size * 0.6, 3);
+            for (let i = 0; i < 8; i++) { // 8 kratších lístků
+                const leafGeo = new THREE.ConeGeometry(size * 0.2, size * 0.45, 3);
                 const leaf = new THREE.Mesh(leafGeo, leafMat);
                 
-                // Zploštíme ho
-                leaf.scale.set(1, 1, 0.1);
+                leaf.scale.set(1, 1, 0.1); // Extrémně placaté
+                leaf.position.y = size * 0.75; // Leží níže, přímo na jahodě
                 
-                // Posuneme ho kousek nahoru
-                leaf.position.y = size * 1.1;
+                leaf.rotation.y = (i * Math.PI * 2) / 8;
+                leaf.rotation.x = Math.PI / 2 + 0.1; // Skoro vodorovně s povrchem
                 
-                // Natočení do hvězdy
-                leaf.rotation.y = (i * Math.PI * 2) / 6;
-                // Sklopení dolů podél jahody
-                leaf.rotation.x = Math.PI / 2 + 0.3 + (Math.random() * 0.2); 
-                
-                // Posuneme rotaci z centra na kraj lístku, aby správně nasedal
-                leaf.geometry.translate(0, -size * 0.3, 0); 
-
+                leaf.geometry.translate(0, -size * 0.2, 0); 
                 group.add(leaf);
             }
             
-            // 4. STOPKA
-            const stemGeo = new THREE.CylinderGeometry(size * 0.04, size * 0.06, size * 0.3, 8);
+            // 4. STOPKA (Malá a tenká)
+            const stemGeo = new THREE.CylinderGeometry(size * 0.03, size * 0.04, size * 0.15, 8);
             const stem = new THREE.Mesh(stemGeo, leafMat);
-            stem.position.y = size * 1.25;
-            // Lehce ji ohneme
-            stem.rotation.z = 0.1;
+            stem.position.y = size * 0.82;
             group.add(stem);
 
         } else if (finalType === 'raspberries') {
-            // Maliny - nechávám víceméně stejné, ale lepší materiál
-            const size = isTop ? 0.15 : 0.1;
+            // 1. ZVĚTŠENÉ MALINY (Stavěné po vrstvách)
+            const size = isTop ? 0.20 : 0.15; // Zvětšeno!
             const berryMat = new THREE.MeshPhongMaterial({ 
-                color: 0xdd1144, 
-                shininess: 60,
-                specular: 0xffbbcc
+                color: 0xc71585, // MediumVioletRed (pravá malinová)
+                shininess: 40,
+                specular: 0xff88aa
             });
-            // Víc kuliček pro lepší strukturu
-            for (let i = 0; i < 24; i++) {
-                const bubbleGeo = new THREE.SphereGeometry(size * 0.35, 8, 8);
-                const bubble = new THREE.Mesh(bubbleGeo, berryMat);
-                
-                const r = size * 0.5;
-                const theta = Math.random() * Math.PI * 2;
-                const h = (Math.random() - 0.2) * size * 1.2;
-                
-                // Tvar kuželu
-                const currentRadius = r * (1 - Math.max(0, h) / (size * 1.2));
-                
-                bubble.position.set(
-                    Math.cos(theta) * currentRadius, 
-                    h, 
-                    Math.sin(theta) * currentRadius
-                );
-                group.add(bubble);
-            }
+            
+            const drupeletSize = size * 0.22;
+            
+            // Malina má dutý střed, stavíme kuličky do kruhových pater
+            const layers = [
+                { count: 1, y: size * 0.7, r: 0 },                  // Špička
+                { count: 5, y: size * 0.4, r: size * 0.35 },        // Vrchní patro
+                { count: 8, y: size * 0.1, r: size * 0.55 },        // Střední patro
+                { count: 9, y: -size * 0.2, r: size * 0.65 },       // Spodní patro
+                { count: 10, y: -size * 0.5, r: size * 0.65 }       // Základna
+            ];
+            
+            layers.forEach((layer, layerIndex) => {
+                for (let i = 0; i < layer.count; i++) {
+                    const bubbleGeo = new THREE.SphereGeometry(drupeletSize, 8, 8);
+                    const bubble = new THREE.Mesh(bubbleGeo, berryMat);
+                    
+                    // Lehce posuneme úhel každé vrstvy, aby kuličky hezky zapadly do sebe
+                    const offset = (layerIndex % 2 === 0) ? 0 : (Math.PI / layer.count);
+                    const angle = (i / layer.count) * Math.PI * 2 + offset;
+                    
+                    bubble.position.set(
+                        Math.cos(angle) * layer.r, 
+                        layer.y, 
+                        Math.sin(angle) * layer.r
+                    );
+                    
+                    // Kuličky zploštíme směrem ven
+                    bubble.lookAt(0, layer.y, 0);
+                    bubble.scale.set(1, 1, 0.8);
+                    
+                    group.add(bubble);
+                }
+            });
+
         } else {
-            // Borůvky - lepší materiál (matnější)
+            // BORŮVKY (Už byly super, jen kód pro úplnost)
             const size = isTop ? 0.12 : 0.08;
             const blueGeo = new THREE.SphereGeometry(size, 16, 16);
             const blueMat = new THREE.MeshPhongMaterial({ 
                 color: 0x222244, 
-                shininess: 10,     // Borůvky jsou spíš matné
+                shininess: 10, 
                 specular: 0x444466 
             });
             const blueberry = new THREE.Mesh(blueGeo, blueMat);
-            
-            // Zploštění (borůvky nejsou dokonalé koule)
             blueberry.scale.set(1, 0.85, 1);
             
-            // "Bubák" nahoře
             const crownGeo = new THREE.CylinderGeometry(size*0.3, size*0.1, size*0.05, 5);
             const crown = new THREE.Mesh(crownGeo, blueMat);
             crown.position.y = size * 0.85;
             group.add(crown);
-            
             group.add(blueberry);
         }
 
