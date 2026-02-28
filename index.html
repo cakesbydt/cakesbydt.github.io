@@ -477,18 +477,56 @@
     let isDragging = false; 
     let previousPosition = { x: 0, y: 0 };
     const container = document.getElementById('canvas-container');
+    let compressedImageData = ""; // Sem si uložíme zmenšenou fotku
 
-    // TATO FUNKCE MUSÍ BÝT TADY NAHOŘE A MIMO OSTATNÍ BLOKY
+   let compressedImageData = ""; // Sem si uložíme zmenšenou fotku
+
 function updateFileName() {
     const fileInput = document.getElementById('cakePhoto');
     const fileText = document.getElementById('fileText');
-    if (fileInput && fileInput.files.length > 0) {
-        // Zobrazí název souboru a změní barvu textu na zlatou
-        fileText.innerText = "Vybráno: " + fileInput.files[0].name;
-        fileText.style.color = "#d4af37"; 
-    } else {
-        fileText.innerText = "Klikněte pro nahrání fotky (max 500kB)";
-        fileText.style.color = "inherit";
+    const file = fileInput.files[0];
+
+    if (file) {
+        fileText.innerText = "Zmenšuji fotku...";
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function () {
+                // MAXIMÁLNÍ ROZMĚR (šířka nebo výška)
+                const MAX_WIDTH = 400;
+                const MAX_HEIGHT = 400;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // KOMPRESE na 0.6 (60% kvalita JPEG - pro náhled stačí)
+                compressedImageData = canvas.toDataURL('image/jpeg', 0.6);
+                
+                fileText.innerText = "Vybráno a zmenšeno: " + file.name;
+                fileText.style.color = "#d4af37";
+                console.log("Fotka zmenšena pro EmailJS");
+            };
+        };
     }
 }
 
@@ -884,11 +922,6 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
     if(document.getElementById('c2')?.checked) doplnkyArr.push("Figurka (" + (document.getElementsByName('Detail_Figurka')[0]?.value || "Ano") + ")");
     if(document.getElementById('c3')?.checked) doplnkyArr.push("Zápich (" + (document.getElementsByName('Detail_Zapich')[0]?.value || "Ano") + ")");
 
-    // TADY DOPLNÍME DATA DO SKRYTÝCH POLÍ PRO SENDFORM
-    document.getElementById('hiddenConfig').value = `Styl: ${getText('cakeStyle')} | Průměr: ${document.getElementById('diameter').value} cm | Patra: ${document.getElementById('layers').value}`;
-    document.getElementById('hiddenExtras').value = doplnkyArr.length > 0 ? doplnkyArr.join(", ") : "Žádné";
-    document.getElementById('hiddenPrice').value = document.getElementById('price-display').innerText;
-
     const templateParams = {
         jmeno: document.getElementsByName('Jmeno')[0].value,
         email: document.getElementsByName('Email')[0].value,
@@ -901,14 +934,15 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         ovoce: `Vnitřní: ${getText('fruitCream')}, Horní: ${getText('fruitTop')} (${getText('topStyle')})`,
         doplnky: doplnkyArr.length > 0 ? doplnkyArr.join(", ") : "Žádné",
         poznamka: document.getElementsByName('Zprava_Poznamka')[0].value,
-        cena_odhad: document.getElementById('price-display').innerText
+        cena_odhad: document.getElementById('price-display').innerText,
+        // TADY JE TA MAGIE - posíláme zmenšenou fotku jako text
+        my_file: compressedImageData 
     };
 
-    // 1. POSÍLÁME TOBĚ (ADMINOVI) PŘES SENDFORM KVŮLI FOTCE
-    emailjs.sendForm('service_ep8bdkh', 'template_tvtxutj', this)
+    // Používáme SEND (ne sendForm), protože posíláme zkomprimovaný text
+    emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
         .then(function() {
-            console.log("Email tobě odeslán i s fotkou");
-            // 2. POSÍLÁME POTVRZENÍ ZÁKAZNÍKOVI PŘES SEND (BEZ FOTKY)
+            console.log("Email tobě odeslán");
             return emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
         })
         .then(function() {
@@ -919,7 +953,7 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         })
         .catch(function(error) {
             console.error('Chyba odesílání:', error);
-            alert('Nastala chyba. Pokud nahráváte fotku, zkuste menší velikost.');
+            alert('Chyba odesílání. Zkuste prosím fotku nahrát znovu nebo odeslat bez ní.');
             btn.innerText = originalBtnText;
             btn.disabled = false;
         });
