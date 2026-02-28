@@ -331,25 +331,27 @@
             <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
             
             <div class="sekce">
-                <h3>1. Architektura korpusu</h3>
+                <h3>1. Korpus</h3>
                 <div class="flex">
                     <div style="flex-basis: 100%; margin-bottom: 10px;">
-                        <label>Typ události / Styl dortu</label>
+                        <label>Styl dortu</label>
                         <select id="cakeStyle" onchange="updateCake();">
                             <option value="classic">🎂 Klasický</option>
-                            <option value="wedding">💍 Svatební</option>
+                            <option value="wedding">💍 Patrový</option>
                         </select>
                     </div>
                     <div><label>Průměr</label><select id="diameter" onchange="updateCake();">
-                        <option value="15">15 cm</option>
-                        <option value="20" selected>20 cm</option>
-                        <option value="24">24 cm</option>
+                        <option value="15">16 cm (8 porcí)</option>
+                        <option value="18">18 cm (10 porcí)</option>
+                        <option value="20" selected>20 cm (12 porcí)</option>
+                        <option value="22">22 cm (14 porcí)</option>
+                        <option value="24">24 cm (16 porcí)</option>
+                        <option value="26">26 cm (18 porcí)</option>
                     </select></div>
                     
-                   <div><label>Patra (jen pro svatební)</label><select id="layers" onchange="updateCake();">
-    <option value="2" selected>2 patra</option>
-    <option value="3">3 patra</option>
-    <option value="4">4 patra</option>
+                   <div><label>Patra</label><select id="layers" onchange="updateCake();">
+    <option value="2" selected>2 patra </option>
+    <option value="3">3 patra </option>
 </select></div>
                     
                     <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake();">
@@ -365,16 +367,12 @@
             <div class="sekce">
                 <h3>2. Design & Krém</h3>
                 <div class="flex">
-                    <div><label>Styl obmazu</label><select id="coating" onchange="updateCake();"><option value="naked" selected>Nahý dort</option><option value="semi">Polonahý dort</option><option value="full" >Plný obmaz</option></select></div>
+                    <div><label>Styl obmazu</label><select id="coating" onchange="updateCake();"><option value="semi" selected>Nahý dort</option><option value="full" >Plný obmaz</option></select></div>
                     <div><label>Vnitřní krém</label><select id="innerCream" onchange="updateCake();">
                         <option value="0xFFF6C9">Smetanový - vanilka</option>
                         <option value="0x8C7464">Smetanový - čokoláda</option>
                         <option value="0xFF9852">Smetanový - karamel</option>
-                        <option value="0xED3939">Smetanový - ovocný</option>
-                        <option value="0xFFF6C9">Máslový - vanilka</option>
-                        <option value="0x8C7464">Máslový - čokoláda</option>
-                        <option value="0xFF9852">Máslový - karamel</option>
-                        <option value="0xED3939">Máslový - ovocný</option>
+                        <option value="0xED3939">Smetanový - ovocný</option>                       
                     </select></div>
                     <div><label>Vnější krém</label><select id="outerCream" onchange="updateCake();">
                         <option value="0xFFF6C9">Smetanový - vanilka</option>
@@ -423,6 +421,7 @@
             <div class="controls-row">
                 <div><label style="text-align: center;">Rotace 3D modelu</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()"></div>
                 <div><label style="text-align: center;">Náklon pohledu</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
+                <div><label style="text-align: center;">Přiblížení (Zoom)</label><input type="range" id="zoomCam" class="slider" min="8" max="28" step="0.5" value="14" oninput="manualControl()"></div>
             </div>
 
             <div class="sekce">
@@ -454,7 +453,7 @@
 <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 12, 41, 0.85); z-index:10000; backdrop-filter: blur(15px); justify-content:center; align-items:center;">
     <div style="background: white; padding: 50px; border-radius: 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 2px var(--gold);">
         <div style="font-size: 60px; margin-bottom: 20px;">🎂</div>
-        <h2 style="font-family: 'Playfair Display', serif; font-style: italic; color: var(--primary-dark); font-size: 32px; margin: 0 0 20px 0;">Dort je v troubě!</h2>
+        <h2 style="font-family: 'Playfair Display', serif; font-style: italic; color: var(--primary-dark); font-size: 32px; margin: 0 0 20px 0;">Děkujeme !</h2>
         <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">Vaši poptávku jsme v pořádku přijali.<br>Brzy se vám ozveme s detaily.</p>
         <button type="button" onclick="document.getElementById('customModal').style.display='none'" style="padding: 16px 40px; background: linear-gradient(135deg, var(--primary-dark), #1e1422); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">Zavřít</button>
     </div>
@@ -532,6 +531,16 @@
         container.addEventListener('touchstart', handleStart, { passive: false });
         container.addEventListener('touchmove', handleMove, { passive: false });
         window.addEventListener('touchend', handleEnd);
+
+        // Zoomování pomocí kolečka myši nad 3D oknem
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomSlider = document.getElementById('zoomCam');
+            let newVal = parseFloat(zoomSlider.value) + (e.deltaY * 0.01);
+            newVal = Math.max(zoomSlider.min, Math.min(zoomSlider.max, newVal));
+            zoomSlider.value = newVal;
+            manualControl();
+        }, { passive: false });
     }
 
   function createFruit(type, isTop) {
@@ -639,9 +648,9 @@
         if (flavorText.includes("Mechový")) total += 100 * numTiers;
         if (flavorText.includes("Kakaový")) total += 50 * numTiers;
         
-        if (coat === 'full') total += 225 * numTiers;
-        if (document.getElementById('fruitCream').value !== 'none') total += 80 * numTiers;
-        if (document.getElementById('fruitTop').value !== 'none') total += 180; // Horní zdobení počítáme paušálně
+        if (coat === 'full') total += 150 * numTiers;
+        if (document.getElementById('fruitCream').value !== 'none') total += 100 * numTiers;
+        if (document.getElementById('fruitTop').value !== 'none') total += 100; // Horní zdobení počítáme paušálně
         
         if (document.getElementById('c_flowers').checked) total += 150;
         if (document.getElementById('c1').checked) total += 300;
@@ -783,6 +792,16 @@
             }
         }
         calculatePrice(); 
+        // Automatické oddálení, pokud je dort moc vysoký
+        const zoomSlider = document.getElementById('zoomCam');
+        if (numTiers >= 3) {
+            zoomSlider.value = 22; // Oddálí se pro 3 a 4 patra
+        } else if (numTiers === 2) {
+            zoomSlider.value = 18; // Střední vzdálenost pro 2 patra
+        } else {
+            zoomSlider.value = 14; // Běžná vzdálenost pro 1 patro
+        }
+        manualControl();
     }
 
     // Malá pomocná funkce pro materiál obmazu, aby kód nebyl nekonečný
@@ -799,6 +818,13 @@
         if (!cakeGroup) return;
         cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
         cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
+        
+        // Plynulý Zoom kamery
+        const zoomValue = parseFloat(document.getElementById('zoomCam').value);
+        camera.position.z = zoomValue;
+        // Lehce upravíme i výšku kamery a střed pohledu, aby dort neutekl nahoru
+        camera.position.y = zoomValue * 0.4; 
+        camera.lookAt(0, zoomValue * 0.15, 0); 
     }
 
     function animate() {
