@@ -478,6 +478,22 @@
     let previousPosition = { x: 0, y: 0 };
     const container = document.getElementById('canvas-container');
 
+    // TATO FUNKCE MUSÍ BÝT TADY NAHOŘE A MIMO OSTATNÍ BLOKY
+function updateFileName() {
+    const fileInput = document.getElementById('cakePhoto');
+    const fileText = document.getElementById('fileText');
+    if (fileInput && fileInput.files.length > 0) {
+        // Zobrazí název souboru a změní barvu textu na zlatou
+        fileText.innerText = "Vybráno: " + fileInput.files[0].name;
+        fileText.style.color = "#d4af37"; 
+    } else {
+        fileText.innerText = "Klikněte pro nahrání fotky (max 500kB)";
+        fileText.style.color = "inherit";
+    }
+}
+
+// ... pak pokračuje zbytek tvého kódu (init3D, animate, atd.)
+
     function init3D() {
         if (!container) return;
 
