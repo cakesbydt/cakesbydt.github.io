@@ -397,6 +397,8 @@
                         <option value="raspberries" >Maliny</option>
                         <option value="blueberries" >Borůvky</option>
                         <option value="mix">Mix ovoce</option>
+                        <option value="0xF02800">Želatinový ovocný puk</option>
+                        <option value="0x825842">Čokoládový puk</option>
                     </select></div>
                     
                     <div><label>Zdobení nahoře</label><select id="fruitTop" onchange="updateCake();">
@@ -740,8 +742,6 @@ function updateFileName() {
         
         const style = document.getElementById('cakeStyle').value;
         const diameter = parseInt(document.getElementById('diameter').value);
-        
-        // ZJIŠTĚNÍ POČTU PATER (Klasický vnutí 1 patro)
         let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
 
         const coat = document.getElementById('coating').value;
@@ -753,37 +753,33 @@ function updateFileName() {
         const outerColor = parseInt(document.getElementById('outerCream').value);
         
         const baseRadius = diameter / 6.5; 
-        const h = 0.5; // Výška jedné mikrovrstvy (celé patro jich má 6)
-        const layersPerTier = 6; // 3x korpus, 3x krém = 12cm
+        const h = 0.5; 
+        const layersPerTier = 6; 
 
         for (let t = 0; t < numTiers; t++) {
-            // Každé patro je o 25 % užší než to pod ním
             let currentRadius = baseRadius * Math.pow(0.75, t); 
             
             for (let l = 0; l < layersPerTier; l++) {
                 const isCream = (l % 2 === 1); 
-                const globalIndex = (t * layersPerTier) + l; // Výpočet celkové výšky v prostoru
+                const globalIndex = (t * layersPerTier) + l; 
                 
-                // Samotná hmota (Korpus / Krém)
                 const segment = new THREE.Mesh(
-                    new THREE.CylinderGeometry(currentRadius, currentRadius, h, 64), 
+                    new THREE.CylinderGeometry(currentRadius, currentRadius, h, 48), // Sníženo vyhlazení z 64 na 48
                     new THREE.MeshPhongMaterial({ color: isCream ? innerColor : flavorColor })
                 );
                 segment.position.y = globalIndex * h;
                 cakeGroup.add(segment);
 
-                // OBMAZ (Coating)
                 if (coat !== 'naked') {
                     const coatMesh = new THREE.Mesh(
-                        new THREE.CylinderGeometry(currentRadius + 0.03, currentRadius + 0.03, h, 64, 1, true), 
+                        new THREE.CylinderGeometry(currentRadius + 0.02, currentRadius + 0.02, h, 48, 1, true), 
                         new MeshPhongMaterialConfig(outerColor, coat)
                     );
                     coatMesh.position.y = globalIndex * h;
                     cakeGroup.add(coatMesh);
 
-                    // Potažení vršku každého patra krémem
                     if (l === layersPerTier - 1) {
-                        const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.03, 64);
+                        const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.02, 48);
                         const topCap = new THREE.Mesh(topCapGeo, new MeshPhongMaterialConfig(outerColor, coat));
                         topCap.position.y = (globalIndex * h) + (h / 2) + 0.01; 
                         topCap.rotation.x = -Math.PI / 2; 
@@ -791,67 +787,59 @@ function updateFileName() {
                     }
                 }
 
-                // OVOCE UVNITŘ (jen v krému mezi korpusy)
+                // VNITŘNÍ OVOCE - Snížen počet kusů ze 160 na 40
                 if (isCream && fruitC !== 'none' && l < layersPerTier - 1 && coat !== 'full') {
-                    const fruitOffsets = { 'strawberries': 0.10, 'raspberries': 0.09, 'blueberries': 0.02 };
-                    for (let j = 0; j < 160; j++) { 
+                    for (let j = 0; j < 40; j++) { 
                         let activeType = fruitC === 'mix' ? ['strawberries', 'raspberries', 'blueberries'][Math.floor(Math.random() * 3)] : fruitC;
-                        let baseOffset = fruitOffsets[activeType] || 0.08;
-                        const randomAng = Math.random() * Math.PI * 2;
-                        const finalOffset = baseOffset + (Math.random() * 0.15);
-
                         const f = createFruit(activeType, false);
-                        f.position.set(
-                            Math.cos(randomAng) * (currentRadius - finalOffset), 
-                            (globalIndex * h) + (Math.random() - 0.5) * (h * 0.8), 
-                            Math.sin(randomAng) * (currentRadius - finalOffset)
-                        );
+                        const randomAng = Math.random() * Math.PI * 2;
+                        const r = Math.random() * currentRadius;
+                        f.position.set(Math.cos(randomAng) * r, (globalIndex * h), Math.sin(randomAng) * r);
                         f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
                         cakeGroup.add(f);
                     }
                 }
 
-                // OVOCE NAHOŘE A NA TERASÁCH
                 const isTopSurfaceOfTier = (l === layersPerTier - 1);
                 const isAbsoluteTop = (t === numTiers - 1 && isTopSurfaceOfTier);
                 const isTerrace = (t < numTiers - 1 && isTopSurfaceOfTier);
 
                 if ((isAbsoluteTop || isTerrace) && fruitT !== 'none') {
-                    
                     if (isAbsoluteTop) {
-                        // ÚPLNÝ VRCHOL (Dvě možnosti: Věneček nebo Plná plocha)
                         if (topS === 'full') {
-                            const count = Math.floor(Math.PI * Math.pow(currentRadius * 0.85, 2) * 35); 
+                            // OPTIMALIZOVANÉ PLNÉ ZAPLNĚNÍ
+                            const area = Math.PI * Math.pow(currentRadius, 2);
+                            // Snížena hustota na 10 a přidán strop max 80 kusů ovoce
+                            let count = Math.min(Math.floor(area * 10), 80); 
+                            
                             for(let j = 0; j < count; j++) {
                                 const f = createFruit(fruitT, true);
                                 const r = (currentRadius * 0.85) * Math.sqrt(Math.random()); 
                                 const theta = Math.random() * Math.PI * 2;
-                                f.position.set(Math.cos(theta) * r, (globalIndex * h) + 0.3 + (Math.random() * 0.15), Math.sin(theta) * r);
-                                f.rotation.set((Math.random() - 0.5) * 1.5, Math.random() * Math.PI * 2, (Math.random() - 0.5) * 1.5);
+                                f.position.set(Math.cos(theta) * r, (globalIndex * h) + 0.3, Math.sin(theta) * r);
+                                f.rotation.set(Math.random() * 0.5, Math.random() * 6, Math.random() * 0.5);
                                 cakeGroup.add(f);
                             }
                         } else {
+                            // VĚNEČEK - Snížen počet kusů
                             const r = currentRadius * 0.85;
-                            const count = Math.max(Math.floor(r * 18), 1);
+                            const count = Math.max(Math.floor(r * 12), 1);
                             for(let j = 0; j < count; j++) {
                                 const f = createFruit(fruitT, true);
                                 const ang = (j / count) * Math.PI * 2;
                                 f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
-                                f.rotation.set((Math.random() - 0.5) * 0.5, ang, (Math.random() - 0.5) * 0.5);
                                 cakeGroup.add(f);
                             }
                         }
                     } else if (isTerrace) {
-                        // TERASA SVATEBNÍHO DORTU (Ovoce jen jako věneček okolo patra nad tím)
+                        // TERASA - Úspornější věneček
                         const nextRadius = baseRadius * Math.pow(0.75, t + 1); 
                         const r = nextRadius + ((currentRadius - nextRadius) * 0.5); 
-                        const count = Math.max(Math.floor(r * 18), 1); 
-                        
+                        const count = Math.max(Math.floor(r * 10), 1); 
                         for(let j = 0; j < count; j++) {
                             const f = createFruit(fruitT, true);
                             const ang = (j / count) * Math.PI * 2;
                             f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
-                            f.rotation.set((Math.random() - 0.5) * 0.5, ang, (Math.random() - 0.5) * 0.5);
                             cakeGroup.add(f);
                         }
                     }
@@ -859,16 +847,15 @@ function updateFileName() {
             }
         }
         calculatePrice(); 
-        // Automatické oddálení, pokud je dort moc vysoký
+        
+        // Auto-zoom zachován
         const zoomSlider = document.getElementById('zoomCam');
-        if (numTiers >= 3) {
-            zoomSlider.value = 22; // Oddálí se pro 3 a 4 patra
-        } else if (numTiers === 2) {
-            zoomSlider.value = 18; // Střední vzdálenost pro 2 patra
-        } else {
-            zoomSlider.value = 14; // Běžná vzdálenost pro 1 patro
+        if (zoomSlider) {
+            if (numTiers >= 3) zoomSlider.value = 22;
+            else if (numTiers === 2) zoomSlider.value = 18;
+            else zoomSlider.value = 14;
+            manualControl();
         }
-        manualControl();
     }
 
     // Malá pomocná funkce pro materiál obmazu, aby kód nebyl nekonečný
