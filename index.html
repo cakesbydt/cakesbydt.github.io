@@ -798,31 +798,36 @@ function updateFileName() {
                 }
             }
 
-           // 3. VNITŘNÍ NÁPLŇ
-            // Tady jsem smazal podmínku "coat !== 'full'", aby to tam bylo vždycky
+          // 3. VNITŘNÍ NÁPLŇ (Ovoce nebo Puk)
             if (isCream && isFillingPresent && l < layersPerTier - 1) {
                 if (fruitC.startsWith('0x')) {
                     const puckColor = parseInt(fruitC);
-                    const puckHeight = 0.25; // Trochu jsem ho zvýšil, aby byl víc vidět
+                    const puckHeight = 0.3; // Zvýšeno z 0.15 na 0.3 pro lepší viditelnost
                     
-                    // Puk musí mít stejný nebo jen o chlup menší poloměr než dort
-                    const puckGeo = new THREE.CylinderGeometry(currentRadius * 0.95, currentRadius * 0.95, puckHeight, 48);
+                    // Puk je skoro stejně široký jako dort (0.97), aby byl vidět hned pod povrchem
+                    const puckGeo = new THREE.CylinderGeometry(currentRadius * 0.97, currentRadius * 0.97, puckHeight, 48);
                     const puckMat = new THREE.MeshPhongMaterial({ 
                         color: puckColor,
                         transparent: true,
-                        opacity: 0.9 
+                        opacity: 0.95, // Vyšší neprůhlednost, aby "zářil" skrz krém
+                        shininess: 100, // Přidáme lesk, aby se odlišil od matného krému
+                        specular: 0xffffff
                     });
+                    
                     const puck = new THREE.Mesh(puckGeo, puckMat);
-                    // Posuneme ho o kousek výš, aby neproblikával dnem krému
+                    // Důležité: renderOrder zajistí, že se puk vykreslí "přes" průhledný krém
+                    puck.renderOrder = 1; 
                     puck.position.y = globalIndex * h;
                     cakeGroup.add(puck);
+
                 } else {
+                    // Klasické ovoce zůstává
                     for (let j = 0; j < 35; j++) { 
                         let activeType = fruitC === 'mix' ? ['strawberries', 'raspberries', 'blueberries'][Math.floor(Math.random() * 3)] : fruitC;
                         const f = createFruit(activeType, false);
+                        f.renderOrder = 1; // I ovoci dáme přednost
                         const randomAng = Math.random() * Math.PI * 2;
-                        // Ovoce dáme víc k okraji (0.7 až 0.95 poloměru), aby vyukovalo
-                        const r = currentRadius * (0.7 + Math.random() * 0.25); 
+                        const r = currentRadius * (0.75 + Math.random() * 0.22); 
                         f.position.set(Math.cos(randomAng) * r, (globalIndex * h), Math.sin(randomAng) * r);
                         f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
                         cakeGroup.add(f);
