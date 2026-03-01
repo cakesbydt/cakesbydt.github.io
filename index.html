@@ -719,6 +719,7 @@ function updateFileName() {
         if (coat === 'full') total += 150 * numTiers;
         if (document.getElementById('fruitCream').value !== 'none') total += 100 * numTiers;
         if (document.getElementById('fruitTop').value !== 'none') total += 100; // Horní zdobení počítáme paušálně
+        if (document.getElementById('fruitCream').value !== 'none') total += 50 * numTiers;
         
         if (document.getElementById('c_flowers').checked) total += 150;
         if (document.getElementById('c1').checked) total += 300;
@@ -787,59 +788,44 @@ function updateFileName() {
                     }
                 }
 
-                // VNITŘNÍ OVOCE - Snížen počet kusů ze 160 na 40
+              // --- VNITŘNÍ NÁPLŇ (Ovoce nebo Puk) ---
                 if (isCream && fruitC !== 'none' && l < layersPerTier - 1 && coat !== 'full') {
-                    for (let j = 0; j < 40; j++) { 
-                        let activeType = fruitC === 'mix' ? ['strawberries', 'raspberries', 'blueberries'][Math.floor(Math.random() * 3)] : fruitC;
-                        const f = createFruit(activeType, false);
-                        const randomAng = Math.random() * Math.PI * 2;
-                        const r = Math.random() * currentRadius;
-                        f.position.set(Math.cos(randomAng) * r, (globalIndex * h), Math.sin(randomAng) * r);
-                        f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
-                        cakeGroup.add(f);
-                    }
-                }
+                    
+                    // Kontrola, zda jde o "Puk" (hodnota začíná na 0x)
+                    if (fruitC.startsWith('0x')) {
+                        const puckColor = parseInt(fruitC);
+                        const puckHeight = 0.15; // Velmi tenká vrstva uvnitř krému
+                        
+                        // Puk je o něco užší než korpus (0.9), aby neprosvítal obmazem
+                        const puckGeo = new THREE.CylinderGeometry(currentRadius * 0.9, currentRadius * 0.9, puckHeight, 48);
+                        const puckMat = new THREE.MeshPhongMaterial({ 
+                            color: puckColor,
+                            transparent: fruitC === '0xF02800', // Želatina může být lehce průsvitná
+                            opacity: 0.9
+                        });
+                        
+                        const puck = new THREE.Mesh(puckGeo, puckMat);
+                        // Umístíme ho přesně doprostřed aktuální krémové vrstvy
+                        puck.position.y = globalIndex * h;
+                        cakeGroup.add(puck);
 
-                const isTopSurfaceOfTier = (l === layersPerTier - 1);
-                const isAbsoluteTop = (t === numTiers - 1 && isTopSurfaceOfTier);
-                const isTerrace = (t < numTiers - 1 && isTopSurfaceOfTier);
-
-                if ((isAbsoluteTop || isTerrace) && fruitT !== 'none') {
-                    if (isAbsoluteTop) {
-                        if (topS === 'full') {
-                            // OPTIMALIZOVANÉ PLNÉ ZAPLNĚNÍ
-                            const area = Math.PI * Math.pow(currentRadius, 2);
-                            // Snížena hustota na 10 a přidán strop max 80 kusů ovoce
-                            let count = Math.min(Math.floor(area * 10), 80); 
+                    } else {
+                        // Klasické sypané ovoce (původní logika)
+                        const fruitOffsets = { 'strawberries': 0.10, 'raspberries': 0.09, 'blueberries': 0.02 };
+                        
+                        for (let j = 0; j < 40; j++) { 
+                            let activeType = fruitC === 'mix' ? ['strawberries', 'raspberries', 'blueberries'][Math.floor(Math.random() * 3)] : fruitC;
+                            const f = createFruit(activeType, false);
+                            const randomAng = Math.random() * Math.PI * 2;
+                            // Rozptyl ovoce spíše ke krajům, aby bylo v nahém dortu vidět
+                            const r = currentRadius * (0.6 + Math.random() * 0.35); 
                             
-                            for(let j = 0; j < count; j++) {
-                                const f = createFruit(fruitT, true);
-                                const r = (currentRadius * 0.85) * Math.sqrt(Math.random()); 
-                                const theta = Math.random() * Math.PI * 2;
-                                f.position.set(Math.cos(theta) * r, (globalIndex * h) + 0.3, Math.sin(theta) * r);
-                                f.rotation.set(Math.random() * 0.5, Math.random() * 6, Math.random() * 0.5);
-                                cakeGroup.add(f);
-                            }
-                        } else {
-                            // VĚNEČEK - Snížen počet kusů
-                            const r = currentRadius * 0.85;
-                            const count = Math.max(Math.floor(r * 12), 1);
-                            for(let j = 0; j < count; j++) {
-                                const f = createFruit(fruitT, true);
-                                const ang = (j / count) * Math.PI * 2;
-                                f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
-                                cakeGroup.add(f);
-                            }
-                        }
-                    } else if (isTerrace) {
-                        // TERASA - Úspornější věneček
-                        const nextRadius = baseRadius * Math.pow(0.75, t + 1); 
-                        const r = nextRadius + ((currentRadius - nextRadius) * 0.5); 
-                        const count = Math.max(Math.floor(r * 10), 1); 
-                        for(let j = 0; j < count; j++) {
-                            const f = createFruit(fruitT, true);
-                            const ang = (j / count) * Math.PI * 2;
-                            f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
+                            f.position.set(
+                                Math.cos(randomAng) * r, 
+                                (globalIndex * h) + (Math.random() - 0.5) * 0.1, 
+                                Math.sin(randomAng) * r
+                            );
+                            f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
                             cakeGroup.add(f);
                         }
                     }
