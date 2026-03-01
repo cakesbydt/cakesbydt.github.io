@@ -764,13 +764,14 @@ function updateFileName() {
             const isCream = (l % 2 === 1); 
             const globalIndex = (t * layersPerTier) + l; 
             
-           // 1. KORPUS / KRÉM
-            // Tady je změna: Pokud je to krém a máme náplň, uděláme ho lehce průhledný
+          // 1. KORPUS / KRÉM
             const isFillingPresent = (fruitC !== 'none');
             const segmentMat = new THREE.MeshPhongMaterial({ 
                 color: isCream ? innerColor : flavorColor,
                 transparent: isCream && isFillingPresent,
-                opacity: (isCream && isFillingPresent) ? 0.6 : 1.0 // Krém se zprůhlední, aby byl vidět vnitřek
+                opacity: (isCream && isFillingPresent) ? 0.4 : 1.0, // Ještě víc průhledné (0.4)
+                depthWrite: !(isCream && isFillingPresent), // KLÍČOVÉ: Vypne blokování hloubky pro náplň
+                side: THREE.DoubleSide
             });
 
             const segment = new THREE.Mesh(
@@ -778,6 +779,8 @@ function updateFileName() {
                 segmentMat
             );
             segment.position.y = globalIndex * h;
+            // Krému dáme nižší renderOrder
+            if (isCream && isFillingPresent) segment.renderOrder = 0; 
             cakeGroup.add(segment);
 
             // 2. OBMAZ (COATING)
@@ -798,36 +801,36 @@ function updateFileName() {
                 }
             }
 
-          // 3. VNITŘNÍ NÁPLŇ (Ovoce nebo Puk)
+         // 3. VNITŘNÍ NÁPLŇ (Ovoce nebo Puk)
             if (isCream && isFillingPresent && l < layersPerTier - 1) {
                 if (fruitC.startsWith('0x')) {
                     const puckColor = parseInt(fruitC);
-                    const puckHeight = 0.3; // Zvýšeno z 0.15 na 0.3 pro lepší viditelnost
+                    const puckHeight = 0.35; // O něco vyšší, aby byl dominantní
                     
-                    // Puk je skoro stejně široký jako dort (0.97), aby byl vidět hned pod povrchem
-                    const puckGeo = new THREE.CylinderGeometry(currentRadius * 0.97, currentRadius * 0.97, puckHeight, 48);
+                    // UDĚLÁME PUK JAKO PRSTENEC (o 0.05 užší než krém)
+                    // CylinderGeometry(radiusTop, radiusBottom, height, segments, heightSegments, openEnded)
+                    const puckGeo = new THREE.CylinderGeometry(currentRadius - 0.02, currentRadius - 0.02, puckHeight, 48, 1, false);
                     const puckMat = new THREE.MeshPhongMaterial({ 
                         color: puckColor,
-                        transparent: true,
-                        opacity: 0.95, // Vyšší neprůhlednost, aby "zářil" skrz krém
-                        shininess: 100, // Přidáme lesk, aby se odlišil od matného krému
-                        specular: 0xffffff
+                        emissive: puckColor, // Přidáme trochu "vlastního světla", aby v krému zářil
+                        emissiveIntensity: 0.2,
+                        transparent: false, // Puk sám nemusí být průhledný, chceme ho vidět sytě
+                        side: THREE.DoubleSide
                     });
                     
                     const puck = new THREE.Mesh(puckGeo, puckMat);
-                    // Důležité: renderOrder zajistí, že se puk vykreslí "přes" průhledný krém
-                    puck.renderOrder = 1; 
+                    puck.renderOrder = 10; // Mnohem vyšší priorita vykreslení
                     puck.position.y = globalIndex * h;
                     cakeGroup.add(puck);
 
                 } else {
-                    // Klasické ovoce zůstává
+                    // Ovoce s vysokým renderOrderem
                     for (let j = 0; j < 35; j++) { 
                         let activeType = fruitC === 'mix' ? ['strawberries', 'raspberries', 'blueberries'][Math.floor(Math.random() * 3)] : fruitC;
                         const f = createFruit(activeType, false);
-                        f.renderOrder = 1; // I ovoci dáme přednost
+                        f.renderOrder = 10; 
                         const randomAng = Math.random() * Math.PI * 2;
-                        const r = currentRadius * (0.75 + Math.random() * 0.22); 
+                        const r = currentRadius * (0.8 + Math.random() * 0.18); // Ještě víc na kraj
                         f.position.set(Math.cos(randomAng) * r, (globalIndex * h), Math.sin(randomAng) * r);
                         f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
                         cakeGroup.add(f);
