@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="cs"> 
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Cakes by DT | Konfigurátor</title> 
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    
+    <style>
+        /* --- PREMIUM BAREVNÁ PALETA --- */
+        :root { 
+            --primary: #b087bf;      /* Hlavní orchidejová fialová */
+            --primary-dark: #2c1c37; /* Temná luxusní švestková pro levý panel */
+            --gold: #c9a13b;         /* Patinovaná zlatá pro akcenty */
+            --gold-light: #f1e2ad;
+            --gold-deep: #8a6a1f;
+            --cream: #faf5ec;        /* Teplá slonovinová pro pravý panel */
+            --blush: #e7c3ca;        /* Jemný pudrový akcent */
+            --glass-light: rgba(255, 255, 255, 0.75); 
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --bg-dark: #130c19;
+        }
+        
+        /* --- RESET A ZÁKLAD --- */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-dark);
+            margin: 0;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* --- CUSTOM SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* --- ANIMOVANÉ POZADÍ (SOFT MESH GRADIENT) --- */
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: var(--bg-dark); overflow: hidden;}
+        .bg-layer::after {
+            content: ''; position: absolute; inset: 0; opacity: 0.35; mix-blend-mode: overlay; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+        }
+        .blob { position: absolute; width: 600px; height: 600px; filter: blur(120px); border-radius: 50%; animation: drift 25s infinite alternate ease-in-out; opacity: 0.55; }
+        .blob.one { background: linear-gradient(135deg, var(--primary) 0%, #6a3f7a 100%); top: -10%; left: -10%; }
+        .blob.two { background: linear-gradient(135deg, var(--gold) 0%, #c17a86 100%); bottom: -20%; right: -10%; animation-delay: -12s; }
+
+        /* --- HLAVNÍ SKLENĚNÝ WRAPPER --- */
+        .hlavni-wrapper { 
+            display: flex; 
+            width: 95%; 
+            max-width: 1400px; 
+            background: var(--glass-light); 
+            backdrop-filter: blur(40px); 
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border); 
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,255,255,0.5); 
+            margin: 40px 0; 
+            border-radius: 40px; 
+            overflow: hidden; 
+            animation: entrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        @keyframes entrance { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- LEVÝ PANEL (LUXUSNÍ TMAVÝ) --- */
+        .levy-panel { 
+            flex: 0 0 400px; 
+            background: linear-gradient(165deg, var(--primary-dark) 0%, #1e1422 100%); 
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 60px 40px; 
+            color: white; 
+            box-shadow: 15px 0 40px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo-vlevo { 
+            width: 220px; height: 220px; 
+            background: white; border-radius: 50%; 
+            margin-bottom: 50px; 
+            border: 4px solid var(--gold); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 30px rgba(201, 161, 59, 0.2);
+            overflow: hidden; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); 
+        }
+        .logo-vlevo:hover { transform: scale(1.05) rotate(-5deg); }
+        .logo-vlevo img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- FORMULÁŘ V LEVÉM PANELU --- */
+        .input-group { width: 100%; margin-bottom: 25px; }
+        .input-group label { 
+            display: block; font-size: 11px; letter-spacing: 2px; margin-bottom: 8px; 
+            font-weight: 600; text-transform: uppercase; color: rgba(255,255,255,0.6); 
+        }
+        .input-group input { 
+            width: 100%; padding: 16px 20px; border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.05); color: white; 
+            font-size: 15px; font-family: 'Plus Jakarta Sans', sans-serif;
+            outline: none; transition: all 0.3s ease; 
+        }
+        .input-group input:focus { 
+            border-color: var(--gold); background: rgba(255,255,255,0.1); 
+            box-shadow: 0 0 20px rgba(201, 161, 59, 0.15); 
+        }
+
+        /* --- INSTAGRAM V LEVÉM PANELU --- */
+        .gallery-label { 
+            font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; 
+            color: var(--gold); text-align: center; margin: 40px 0 20px 0; width: 100%;
+        }
+        /* --- DUOTONE GALERIE --- */
+        .duotone-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+        .duotone-tile {
+            position: relative; aspect-ratio: 1; border-radius: 16px; overflow: hidden; cursor: zoom-in;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08);
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
+        }
+        .duotone-tile:hover { box-shadow: 0 18px 40px rgba(0,0,0,0.5), 0 0 0 2px var(--gold); transform: translateY(-3px); }
+        .duotone-tile img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            filter: grayscale(1) contrast(1.15) brightness(1.05);
+            transition: filter 0.6s ease, transform 0.6s ease, opacity 0.5s ease;
+        }
+        .duotone-tile::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(150deg, var(--primary-dark) 10%, var(--gold) 100%);
+            mix-blend-mode: color; opacity: 0.85; transition: opacity 0.6s ease; pointer-events: none;
+        }
+        .duotone-tile:hover img { filter: grayscale(0) contrast(1) brightness(1); transform: scale(1.08); }
+        .duotone-tile:hover::after { opacity: 0; }
+        @media (max-width: 480px) { .duotone-gallery { gap: 7px; } }
+
+        .ig-link-wrapper { width: 100%; display: flex; justify-content: center; margin-top: 30px; }
+        .ig-button-link { 
+            display: flex; align-items: center; gap: 12px; 
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); 
+            padding: 14px 28px; border-radius: 30px; text-decoration: none; 
+            border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease; 
+            backdrop-filter: blur(10px);
+        }
+        .ig-button-link span { color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 1px; }
+        .ig-button-link img { width: 20px; height: 20px; filter: brightness(0) invert(1); }
+        .ig-button-link:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(201, 161, 59, 0.3); }
+
+        /* --- PRAVÝ PANEL (KONFIGURÁTOR) --- */
+        .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; position: relative; background: linear-gradient(180deg, var(--cream) 0%, #f5eee2 100%); }
+        
+        .top-instagram-header { text-align: right; margin-bottom: 20px; }
+        .top-instagram-header a { text-decoration: none; color: var(--primary-dark); font-size: 13px; font-weight: 600; letter-spacing: 1px; transition: color 0.3s; }
+        .top-instagram-header a span { color: var(--primary); font-weight: 800; border-bottom: 1px solid var(--primary); padding-bottom: 2px;}
+        .top-instagram-header a:hover { color: var(--gold); }
+        .top-instagram-header a:hover span { color: var(--gold); border-color: var(--gold); }
+
+        .hlavni-motto { 
+            font-family: 'Fraunces', serif; font-style: italic; font-weight: 700;
+            color: var(--primary-dark); text-align: center; font-size: 68px; 
+            margin: 10px 0 20px 0; line-height: 1.1; text-shadow: 2px 5px 15px rgba(0,0,0,0.05);
+        }
+        .motto-flourish { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 0 0 60px 0; }
+        .motto-flourish svg { flex-shrink: 0; }
+        .motto-flourish .line { width: 90px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+        .motto-flourish .line.right { background: linear-gradient(90deg, var(--gold), transparent); }
+
+        /* --- SEKCE A KARTY --- */
+        .sekce { 
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px);
+            padding: 40px 50px; border-radius: 30px; margin-bottom: 40px; 
+            border: 1px solid rgba(255,255,255,0.8); 
+            box-shadow: 0 15px 35px rgba(58, 38, 64, 0.05); 
+            position: relative; overflow: hidden;
+        }
+        .sekce::before {
+            content: ''; position: absolute; top: -30px; right: -30px; width: 90px; height: 90px;
+            border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
+            opacity: 0.16; pointer-events: none;
+        }
+        .sekce.reveal-init { opacity: 0; transform: translateY(30px); }
+        .sekce.revealed { opacity: 1; transform: translateY(0); transition: opacity 0.8s cubic-bezier(0.2,0.8,0.2,1), transform 0.8s cubic-bezier(0.2,0.8,0.2,1); }
+        h3 { 
+            color: var(--primary-dark); font-family: 'Fraunces', serif; font-style: italic;
+            font-size: 26px; font-weight: 600; margin-bottom: 35px; 
+            display: flex; align-items: center; gap: 15px;
+        }
+        h3::before { content: ''; display: block; width: 40px; height: 2px; background: var(--gold); }
+
+        .flex { display: flex; gap: 30px; flex-wrap: wrap; } 
+        .flex > div { flex: 1; min-width: 200px; }
+
+        /* --- SELECTY V PRAVÉ ČÁSTI --- */
+        label { display: block; font-size: 11px; font-weight: 700; color: #777; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+        select { 
+            width: 100%; padding: 18px 20px; border-radius: 15px; 
+            border: 1px solid rgba(188, 155, 194, 0.3); background: rgba(255,255,255,0.9); 
+            color: var(--primary-dark); font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+            appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b087bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 20px center; background-size: 16px;
+        }
+        select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(188, 155, 194, 0.1); }
+
+        /* --- 3D STUDIO --- */
+        #canvas-container { 
+            width: 100%; height: 600px; 
+            background: radial-gradient(circle at 50% 40%, #ffffff 0%, #e8daeb 100%); 
+            position: relative; border-radius: 30px; margin-bottom: 30px; 
+            cursor: grab; touch-action: none;
+            box-shadow: inset 0 10px 30px rgba(0,0,0,0.05), 0 20px 40px rgba(58, 38, 64, 0.1);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        #canvas-container:active { cursor: grabbing; }
+        
+        /* Skleněné štítky ve 3D okně */
+        .info-badge-float { 
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); 
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);
+            color: var(--primary-dark); padding: 12px 30px; border-radius: 50px; 
+            font-weight: 700; font-size: 13px; z-index: 10; white-space: nowrap;
+            border: 1px solid rgba(255,255,255,0.9); box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        #price-display { 
+            position: absolute; top: 30px; right: 30px; 
+            background: linear-gradient(135deg, var(--gold), var(--gold-deep)); 
+            color: white; padding: 15px 30px; border-radius: 20px; 
+            font-weight: 800; font-size: 18px; box-shadow: 0 15px 30px rgba(201, 161, 59, 0.3); 
+            z-index: 10; border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* --- CUSTOM SLIDERY --- */
+        .controls-row { display: flex; gap: 50px; justify-content: center; margin-bottom: 50px; }
+        .controls-row > div { width: 200px; }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; background: #e0d5e6; border-radius: 3px; outline: none; }
+        .slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; width: 24px; height: 24px; 
+            background: var(--primary-dark); border-radius: 50%; border: 4px solid white; 
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.2s;
+        }
+        .slider::-webkit-slider-thumb:hover { transform: scale(1.2); background: var(--gold); }
+
+        /* --- DOPLŇKY (KARTY) --- */
+        .doplnek-item { 
+            background: rgba(255,255,255,0.8); padding: 25px 30px; 
+            border-radius: 20px; margin-bottom: 20px; 
+            border: 2px solid transparent; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            cursor: pointer;
+        }
+        .doplnek-item label { 
+            margin: 0; font-size: 15px; color: var(--primary-dark); 
+            display: flex; align-items: center; gap: 15px; cursor: pointer; text-transform: none; letter-spacing: normal; font-weight: 600;
+        }
+        /* Custom Checkbox */
+        .doplnek-item input[type="checkbox"] {
+            appearance: none; width: 24px; height: 24px; border: 2px solid var(--primary); 
+            border-radius: 6px; position: relative; cursor: pointer; transition: 0.2s;
+        }
+        .doplnek-item input[type="checkbox"]:checked { background: var(--gold); border-color: var(--gold); }
+        .doplnek-item input[type="checkbox"]:checked::after {
+            content: '✔'; position: absolute; color: white; font-size: 14px; 
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+
+        .doplnek-item:has(input:checked) { border-color: var(--gold); background: #fff; box-shadow: 0 10px 30px rgba(201, 161, 59, 0.1); transform: translateX(5px); }
+        .extra-input { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; }
+        .doplnek-item:has(input:checked) .extra-input { max-height: 100px; opacity: 1; margin-top: 20px; }
+        .extra-input input { width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid rgba(188, 155, 194, 0.3); font-family: inherit; outline: none; }
+        .extra-input input:focus { border-color: var(--primary); }
+
+        textarea { 
+            width: 100%; padding: 25px; border-radius: 20px; 
+            border: 1px solid rgba(188, 155, 194, 0.3); margin-top: 20px; 
+            font-family: inherit; font-size: 15px; resize: none; box-sizing: border-box; 
+            background: rgba(255,255,255,0.8); transition: 0.3s;
+        }
+        textarea:focus { border-color: var(--primary); outline: none; background: #fff; }
+
+        /* --- ODESÍLACÍ TLAČÍTKO --- */
+        .btn { 
+            width: 100%; padding: 25px; 
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #1e1422 100%); 
+            color: white; border: none; border-radius: 20px; cursor: pointer; 
+            font-weight: 800; font-size: 18px; text-transform: uppercase; letter-spacing: 4px; 
+            box-shadow: 0 20px 40px rgba(58, 38, 64, 0.3); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); 
+            position: relative; overflow: hidden;
+        }
+        .btn::after { content:''; position: absolute; top:0; left:-100%; width:50%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
+        .btn:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(58, 38, 64, 0.4); }
+        .btn:hover::after { left: 100%; }
+
+        /* --- PROGRESS STEPPER --- */
+        .stepper-nav {
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            margin: 10px 0 30px 0; position: sticky; top: 0; z-index: 50;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(20px);
+            padding: 16px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 10px 25px rgba(58,38,64,0.06);
+        }
+        .step-item {
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            padding: 8px 14px; border-radius: 30px; transition: all 0.35s ease;
+            color: #a89aad; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .step-item .dot {
+            width: 26px; height: 26px; border-radius: 50%; background: #e6dbe9;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800; color: white; transition: all 0.35s ease; flex-shrink: 0;
+        }
+        .step-item.active { color: var(--primary-dark); background: rgba(188,155,194,0.15); }
+        .step-item.active .dot { background: var(--primary); box-shadow: 0 0 0 5px rgba(188,155,194,0.2); }
+        .step-item.done .dot { background: var(--gold); }
+        .step-item.done .dot::after { content: '✔'; }
+        .step-item.done .dot span { display: none; }
+        .step-connector { width: 20px; height: 2px; background: #e6dbe9; }
+        @media (max-width: 640px) { .step-item span.step-label { display: none; } .stepper-nav { gap: 4px; } }
+
+        /* --- COMPLETNESS BADGE PRO DOPLŇKY --- */
+        .added-badge {
+            display: none; margin-left: auto; background: var(--gold); color: white;
+            font-size: 10px; font-weight: 800; letter-spacing: 1px; padding: 5px 12px;
+            border-radius: 20px; text-transform: uppercase; animation: pop-in 0.3s ease;
+        }
+        .doplnek-item:has(input:checked) .added-badge { display: inline-block; }
+        @keyframes pop-in { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .doplnek-item label { justify-content: flex-start; }
+
+        /* --- CENOVÝ ROZPAD (BREAKDOWN) --- */
+        #price-display { cursor: pointer; }
+        #price-display .hint { display: block; font-size: 9px; font-weight: 600; opacity: 0.85; text-transform: none; letter-spacing: 0.5px; margin-top: 2px; }
+        .price-breakdown-popup {
+            position: absolute; top: 85px; right: 30px; width: 280px;
+            background: white; border-radius: 20px; padding: 20px 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2); border: 1px solid rgba(201,161,59,0.3);
+            z-index: 20; opacity: 0; pointer-events: none; transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+        }
+        .price-breakdown-popup.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .price-breakdown-popup h4 { margin: 0 0 12px 0; font-family: 'Fraunces', serif; font-style: italic; color: var(--primary-dark); font-size: 16px; }
+        .price-breakdown-popup .row { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding: 6px 0; border-bottom: 1px dashed #eee; }
+        .price-breakdown-popup .row span:last-child { font-weight: 700; color: var(--primary-dark); }
+        .price-breakdown-popup .row.total { border-bottom: none; margin-top: 8px; padding-top: 10px; border-top: 2px solid var(--gold); font-weight: 800; }
+
+        /* --- LOADING OVERLAY 3D --- */
+        .loading-overlay {
+            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle at 50% 40%, #ffffff 0%, #e8daeb 100%); border-radius: 30px; z-index: 15;
+            transition: opacity 0.6s ease, visibility 0.6s ease; gap: 15px;
+        }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
+        .loading-spinner { width: 46px; height: 46px; border: 4px solid rgba(188,155,194,0.2); border-top-color: var(--primary-dark); border-radius: 50%; animation: spin 0.9s linear infinite; }
+        .loading-overlay span { font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- AKČNÍ TLAČÍTKA POD 3D (SDÍLET / SCREENSHOT) --- */
+        .canvas-actions { display: flex; gap: 15px; justify-content: center; margin: -10px 0 40px 0; flex-wrap: wrap; }
+        .ghost-btn {
+            display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(188,155,194,0.3); color: var(--primary-dark); font-weight: 700;
+            font-size: 12px; letter-spacing: 0.5px; padding: 12px 22px; border-radius: 30px; cursor: pointer;
+            transition: all 0.3s ease; text-transform: uppercase;
+        }
+        .ghost-btn:hover { background: var(--primary-dark); color: var(--gold-light); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(58,38,64,0.25); border-color: var(--gold); }
+
+        /* --- PŘEPÍNAČ JAZYKŮ --- */
+        .lang-switch {
+            position: fixed; top: 24px; right: 24px; z-index: 997;
+            display: flex; gap: 4px; background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.7); border-radius: 30px; padding: 5px; box-shadow: 0 10px 25px rgba(58,38,64,0.1);
+        }
+        .lang-switch button {
+            border: none; background: transparent; padding: 7px 13px; border-radius: 20px; cursor: pointer;
+            font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--primary-dark); opacity: 0.5;
+            transition: all 0.25s ease;
+        }
+        .lang-switch button.active { background: var(--primary-dark); color: var(--gold-light); opacity: 1; }
+        .lang-switch button:hover { opacity: 1; }
+        @media (max-width: 1024px) { .lang-switch { top: 14px; right: 14px; } .lang-switch button { padding: 6px 10px; font-size: 10px; } }
+
+        /* --- WHATSAPP FLOAT --- */
+        .whatsapp-float {
+            position: fixed; bottom: 30px; right: 30px; width: 62px; height: 62px; border-radius: 50%;
+            background: #25D366; display: flex; align-items: center; justify-content: center; color: white;
+            font-size: 28px; box-shadow: 0 15px 30px rgba(37,211,102,0.4); z-index: 999; text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); }
+
+        /* --- ADMIN ODKAZ (malý, ale viditelný) --- */
+        .admin-float {
+            position: fixed; bottom: 30px; left: 30px; width: 42px; height: 42px; border-radius: 50%;
+            background: var(--primary-dark);
+            display: flex; align-items: center; justify-content: center; color: var(--gold);
+            font-size: 16px; text-decoration: none; transition: all 0.3s ease;
+            border: 1px solid rgba(201,161,59,0.4); z-index: 999;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+        .admin-float:hover { background: var(--gold); color: var(--primary-dark); transform: scale(1.12); }
+
+        /* --- STICKY MOBILNÍ LIŠTA --- */
+        .sticky-mobile-bar { display: none; }
+
+        /* --- LIGHTBOX GALERIE --- */
+        .lightbox-modal {
+            display: none; position: fixed; inset: 0; background: rgba(15,12,41,0.9); z-index: 10001;
+            backdrop-filter: blur(15px); align-items: center; justify-content: center; padding: 20px;
+        }
+        .lightbox-modal img { max-width: 90%; max-height: 85vh; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .lightbox-close { position: absolute; top: 30px; right: 40px; color: white; font-size: 36px; cursor: pointer; }
+
+        /* --- POTVRZOVACÍ CHECKBOX PŘED ODESLÁNÍM --- */
+        .confirm-row { display: flex; align-items: flex-start; gap: 12px; margin: 25px 0; font-size: 13px; color: #666; }
+        .confirm-row input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--gold); flex-shrink: 0; cursor: pointer; }
+        .confirm-row label { text-transform: none; letter-spacing: normal; font-weight: 500; color: #666; margin: 0; cursor: pointer; }
+
+        /* --- TOAST NOTIFIKACE (odkaz zkopírován apod.) --- */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary-dark); color: white; padding: 16px 30px; border-radius: 50px; font-size: 14px; font-weight: 600; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 10002; transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1); }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* --- KALENDÁŘ DOSTUPNOSTI --- */
+        .calendar-popup {
+            position: absolute; top: calc(100% + 8px); left: 0; width: 290px; max-width: 90vw;
+            background: #241a29; border: 1px solid rgba(201,161,59,0.3); border-radius: 18px;
+            padding: 18px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); z-index: 100;
+            display: none;
+        }
+        .calendar-popup.open { display: block; animation: pop-in 0.25s ease; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: white; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
+        .cal-header button { background: rgba(255,255,255,0.06); border: none; color: var(--gold); font-size: 16px; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .cal-header button:hover { background: var(--gold); color: var(--primary-dark); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .cal-weekday { font-size: 9px; color: rgba(255,255,255,0.4); text-align: center; padding-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 12px; border-radius: 8px; color: rgba(255,255,255,0.85); }
+        .cal-day.disabled { color: rgba(255,255,255,0.12); }
+        .cal-day.blocked { color: rgba(255,90,90,0.65); text-decoration: line-through; }
+        .cal-day.available { cursor: pointer; background: rgba(255,255,255,0.04); }
+        .cal-day.available:hover { background: var(--gold); color: var(--primary-dark); font-weight: 700; }
+        .cal-day.selected { background: var(--gold); color: var(--primary-dark); font-weight: 800; }
+        .cal-legend { display: flex; gap: 16px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: rgba(255,255,255,0.5); }
+        .cal-legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+        .cal-legend .dot.available { background: rgba(255,255,255,0.35); }
+        .cal-legend .dot.blocked { background: #ff5a5a; }
+        .cal-loading-note { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 10px; text-align: center; }
+
+        /* --- MOBILNÍ RESPONZIVITA --- */
+        @media (max-width: 1024px) {
+            .hlavni-wrapper { flex-direction: column; border-radius: 0; margin: 0; width: 100%; }
+            .levy-panel { width: 100%; flex: none; padding: 50px 20px; }
+            .obsah { padding: 40px 20px 100px 20px; }
+            .hlavni-motto { font-size: 42px; margin-bottom: 40px; }
+            .sekce { padding: 30px 20px; border-radius: 20px; }
+            #canvas-container { height: 450px; }
+            .flex > div { min-width: 100%; }
+            .controls-row { flex-direction: column; align-items: center; gap: 20px; }
+            #price-display { top: auto; bottom: 80px; left: 50%; transform: translateX(-50%); right: auto; font-size: 16px; padding: 10px 20px;}
+            .price-breakdown-popup { top: auto; bottom: 130px; right: 50%; transform: translate(50%, 10px); }
+            .price-breakdown-popup.open { transform: translate(50%, 0); }
+            .whatsapp-float { bottom: 90px; right: 20px; width: 54px; height: 54px; font-size: 24px; }
+            .admin-float { bottom: 90px; left: 20px; width: 34px; height: 34px; font-size: 12px; }
+
+            .sticky-mobile-bar {
+                display: flex; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 998;
+                background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(188,155,194,0.3); padding: 14px 20px;
+                align-items: center; justify-content: space-between; box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            }
+            .sticky-mobile-bar .price-part { display: flex; flex-direction: column; }
+            .sticky-mobile-bar .price-part small { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+            .sticky-mobile-bar .price-part strong { font-size: 16px; color: var(--primary-dark); }
+            .sticky-mobile-bar button {
+                background: linear-gradient(135deg, var(--primary-dark), #1e1422); color: white; border: none;
+                padding: 12px 26px; border-radius: 30px; font-weight: 800; font-size: 12px; letter-spacing: 1px;
+                text-transform: uppercase; cursor: pointer;
+            }
+        }
+        
+    </style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init("d5XFw5mWVB9ijGP_J"); 
+   })();
+</script>
+</head>
+<body>
+
+<div class="bg-layer">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+</div>
+
+<div class="lang-switch" id="langSwitch">
+    <button type="button" data-lang="cs">CZ</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="de">DE</button>
+</div>
+
+<form id="cakeOrderForm" style="width: 100%; display: flex; justify-content: center;">
+    
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="Konfigurace_Dortu" id="hiddenConfig">
+    <input type="hidden" name="Doplnky_Vypis" id="hiddenExtras">
+    <input type="hidden" name="Odhadovana_Cena" id="hiddenPrice">
+
+    <div class="hlavni-wrapper">
+        <div class="levy-panel">
+            <div class="logo-vlevo"><img src="logo.jpg" alt="Logo Cakes by DT"></div>
+            
+            <div class="kontaktni-form" style="width: 100%; max-width: 320px;">
+                <div class="input-group"><label data-i18n="label_jmeno">Jméno a Příjmení</label><input type="text" name="Jmeno" required></div>
+                <div class="input-group"><label data-i18n="label_email">E-mail</label><input type="email" name="Email" required></div>
+                <div class="input-group"><label data-i18n="label_telefon">Telefon</label><input type="tel" name="Telefon" required></div>
+                <div class="input-group" style="position: relative;">
+                    <label data-i18n="label_datum">Datum události</label>
+                    <input type="text" id="eventDateDisplay" name="Datum_Udalosti" data-i18n-ph="datum_placeholder" placeholder="Klikněte a vyberte termín" readonly autocomplete="off">
+                    <div class="calendar-popup" id="calendarPopup">
+                        <div class="cal-header">
+                            <button type="button" id="calPrev">&lsaquo;</button>
+                            <span id="calMonthLabel"></span>
+                            <button type="button" id="calNext">&rsaquo;</button>
+                        </div>
+                        <div class="cal-grid" id="calGrid"></div>
+                        <div class="cal-legend">
+                            <span><i class="dot available"></i><span data-i18n="cal_free">Volno</span></span>
+                            <span><i class="dot blocked"></i><span data-i18n="cal_blocked">Obsazeno</span></span>
+                        </div>
+                        <div class="cal-loading-note" id="calNote"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ig-live-gallery" style="width: 100%;">
+                <p class="gallery-label" data-i18n="gallery_label">Inspirace z mé tvorby</p>
+                <div class="duotone-gallery" id="duotoneGallery">
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 1"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 2"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 3"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 4"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 5"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 6"></div>
+                </div>
+            </div>
+            
+            <div class="ig-link-wrapper">
+                <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" class="ig-button-link">
+                    <span data-i18n="ig_follow">Sledujte @_cakesbydt_</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
+                </a>
+            </div>
+            <p style="margin-top:50px; font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--gold); opacity: 0.8;" data-i18n="footer_tagline">Váš sladký sen</p>
+        </div>
+
+        <div class="obsah">
+            <div class="top-instagram-header">
+                <a href="https://www.instagram.com/_cakesbydt_/" target="_blank">
+                    <i class="fab fa-instagram"></i> <span data-i18n="ig_more">Více inspirace na</span> <span>@_cakesbydt_</span>
+                </a>
+            </div>
+
+            <h1 class="hlavni-motto" data-i18n="hero_title">Upečeme vám vzpomínku</h1>
+            <div class="motto-flourish">
+                <span class="line"></span>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                    <circle cx="11" cy="11" r="3" style="fill:var(--gold)"/>
+                    <circle cx="11" cy="11" r="9" style="stroke:var(--gold)" stroke-width="1" opacity="0.5"/>
+                </svg>
+                <span class="line right"></span>
+            </div>
+
+            <nav class="stepper-nav" id="stepperNav">
+                <div class="step-item" data-target="stepSekce1"><span class="dot"><span>1</span></span><span class="step-label" data-i18n="step1">Korpus</span></div>
+                <div class="step-connector"></div>
+                <div class="step-item" data-target="stepSekce2"><span class="dot"><span>2</span></span><span class="step-label" data-i18n="step2">Design</span></div>
+                <div class="step-connector"></div>
+                <div class="step-item" data-target="stepSekce3"><span class="dot"><span>3</span></span><span class="step-label" data-i18n="step3">Ovoce</span></div>
+                <div class="step-connector"></div>
+                <div class="step-item" data-target="stepSekce4"><span class="dot"><span>4</span></span><span class="step-label" data-i18n="step4">Doplňky</span></div>
+            </nav>
+            
+            <div class="sekce" id="stepSekce1">
+                <h3><span class="sekce-title-wrap">1. <span data-i18n="sekce1_title">Korpus</span></span></h3>
+                <div class="flex">
+                    <div style="flex-basis: 100%; margin-bottom: 10px;">
+                        <label data-i18n="label_styl_dortu">Styl dortu</label>
+                        <select id="cakeStyle" onchange="updateCake();">
+                            <option value="classic" data-i18n="opt_classic">🎂 Klasický</option>
+                            <option value="classic1" data-i18n="opt_classic1">🎂 Patrový</option>
+                            <option value="wedding" data-i18n="opt_wedding">💍 Svatební</option>
+                        </select>
+                    </div>
+                    <div><label data-i18n="label_prumer">Průměr</label><select id="diameter" onchange="updateCake();">
+                        <option value="15" data-i18n="dia_15">16 cm (8-10 porcí)</option>
+                        <option value="18" data-i18n="dia_18">18 cm (10-12 porcí)</option>
+                        <option value="20" selected data-i18n="dia_20">20 cm (12-14 porcí)</option>
+                        <option value="22" data-i18n="dia_22">22 cm (14-16 porcí)</option>
+                        <option value="24" data-i18n="dia_24">24 cm (16-18 porcí)</option>
+                        <option value="26" data-i18n="dia_26">26 cm (18-20 porcí)</option>
+                    </select></div>
+                    
+                   <div><label data-i18n="label_patra">Patra</label><select id="layers" onchange="updateCake();">
+    <option value="2" selected data-i18n="patra_2">2 patra </option>
+    <option value="3" data-i18n="patra_3">3 patra </option>
+</select></div>
+                    
+                    <div><label data-i18n="label_chut">Chuť korpusu</label><select id="flavor" onchange="updateCake();">
+                        <option value="0x6e5445" data-i18n="flavor_kakaovy">Kakaový</option>
+                        <option value="0xfff1a3" data-i18n="flavor_vanilkovy">Vanilkový</option>
+                        <option value="0xeba254" data-i18n="flavor_mrkvovy">Mrkvový</option>
+                        <option value="0x3b7a31" data-i18n="flavor_mechovy">Mechový</option>
+                        <option value="0x96915c" data-i18n="flavor_orechovy">Ořechový</option>
+                    </select></div>
+                </div>
+            </div>
+
+            <div class="sekce" id="stepSekce2">
+                <h3><span class="sekce-title-wrap">2. <span data-i18n="sekce2_title">Design & Krém</span></span></h3>
+                <div class="flex">
+                    <div><label data-i18n="label_obmaz">Styl obmazu</label><select id="coating" onchange="updateCake();"><option value="semi" selected data-i18n="obmaz_naked">Nahý dort</option><option value="full" data-i18n="obmaz_full">Plný obmaz</option></select></div>
+                    <div><label data-i18n="label_vnitrni">Vnitřní krém</label><select id="innerCream" onchange="updateCake();">
+                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
+                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>                       
+                    </select></div>
+                    <div><label data-i18n="label_vnejsi">Vnější krém</label><select id="outerCream" onchange="updateCake();">
+                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
+                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>
+                        <option value="0xFFF6C9" data-i18n="butter_vanilka">Máslový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="butter_cokolada">Máslový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="butter_karamel">Máslový - karamel</option>
+                        <option value="0xED3939" data-i18n="butter_ovocny">Máslový - ovocný</option>
+                    </select></div>
+                </div>
+            </div>
+
+            <div class="sekce" id="stepSekce3">
+                <h3><span class="sekce-title-wrap">3. <span data-i18n="sekce3_title">Ovocná kompozice</span></span></h3>
+                <div class="flex">
+                    <div><label data-i18n="label_prolozeni">Proložení uvnitř</label><select id="fruitCream" onchange="updateCake();">
+                        <option value="none" selected data-i18n="fruit_none">Bez ovoce</option>
+                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
+                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
+                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
+                        <option value="mix" data-i18n="fruit_mix">Mix ovoce</option>
+                        <option value="0xF02800" data-i18n="fruit_puk">Želatinový ovocný puk</option>
+                        <option value="0x825842" data-i18n="fruit_cokopuk">Čokoládový puk</option>
+                    </select></div>
+                    
+                    <div><label data-i18n="label_zdobeni">Zdobení nahoře</label><select id="fruitTop" onchange="updateCake();">
+                        <option value="none" selected data-i18n="top_none">Bez zdobení</option>
+                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
+                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
+                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
+                        <option value="mix" data-i18n="top_mix">Bohatý Mix</option>
+                    </select></div>
+                    
+                    <div><label data-i18n="label_vrsek">Styl vršku</label><select id="topStyle" onchange="updateCake();">
+                        <option value="border" data-i18n="vrsek_border">Věneček (Okraje)</option>
+                        <option value="full" selected data-i18n="vrsek_full">Plné zaplnění</option>
+                    </select></div>
+                </div>
+            </div>
+
+            <div id="canvas-container">
+                <div id="info-display" class="info-badge-float">--</div>
+                <div id="price-display"><span id="priceMainText">--</span><span class="hint" data-i18n="price_hint">Klikni pro rozpad ceny</span></div>
+                <div class="price-breakdown-popup" id="priceBreakdown">
+                    <h4 data-i18n="breakdown_title">Rozpad ceny</h4>
+                    <div id="breakdownRows"></div>
+                </div>
+                <div class="loading-overlay" id="loading3d">
+                    <div class="loading-spinner"></div>
+                    <span data-i18n="loading_3d">Připravuji 3D náhled…</span>
+                </div>
+            </div>
+
+            <div class="canvas-actions">
+                <button type="button" class="ghost-btn" id="shareBtn"><i class="fas fa-link"></i> <span data-i18n="btn_share">Sdílet konfiguraci</span></button>
+                <button type="button" class="ghost-btn" id="screenshotBtn"><i class="fas fa-camera-retro"></i> <span data-i18n="btn_screenshot">Uložit náhled</span></button>
+            </div>
+            
+            <div class="controls-row">
+                <div><label style="text-align: center;" data-i18n="label_rotace">Rotace 3D modelu</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()"></div>
+                <div><label style="text-align: center;" data-i18n="label_naklon">Náklon pohledu</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
+                <div><label style="text-align: center;" data-i18n="label_zoom">Přiblížení (Zoom)</label><input type="range" id="zoomCam" class="slider" min="8" max="28" step="0.5" value="14" oninput="manualControl()"></div>
+            </div>
+
+            <div class="sekce" id="stepSekce4">
+                <h3><span class="sekce-title-wrap">4. <span data-i18n="sekce4_title">Osobní doplňky</span></span></h3>
+                <div class="doplnek-item">
+                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> <span data-i18n="extra_kvetiny">Květinová dekorace</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Kvetiny" data-i18n-ph="ph_kvetiny" placeholder="Jaké květiny si přejete (druh, barva)?"></div>
+                </div>
+                <div class="doplnek-item">
+                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> <span data-i18n="extra_papir">Jedlý papír</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Papir" data-i18n-ph="ph_papir" placeholder="Popis obrázku nebo motivu"></div>
+                </div>
+                <div class="doplnek-item">
+                    <label><input type="checkbox" id="c2" onchange="calculatePrice()"> <span data-i18n="extra_figurka">Modelovaná figurka</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Figurka" data-i18n-ph="ph_figurka" placeholder="Jaká figurka to má být?"></div>
+                </div>
+                <div class="doplnek-item">
+                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> <span data-i18n="extra_zapich">Personalizovaný zápich</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Zapich" data-i18n-ph="ph_zapich" placeholder="Zadejte text na zápich (např. Vše nejlepší)"></div>
+                </div>
+                <div class="doplnek-item" style="border-top: 1px dashed var(--primary); margin-top: 30px; padding-top: 30px;">
+    <label style="color: var(--gold); margin-bottom: 15px;">
+        <i class="fas fa-camera"></i> <span data-i18n="label_vlastni_predloha">Máte vlastní předlohu? (Inspirace)</span>
+    </label>
+    <div class="upload-wrapper">
+        <input type="file" id="cakePhoto" name="my_file" accept="image/*" style="display: none;" onchange="updateFileName()">
+        <label for="cakePhoto" id="fileLabel" style="display: block; background: rgba(188, 155, 194, 0.1); border: 2px dashed var(--primary); padding: 20px; text-align: center; border-radius: 15px; cursor: pointer; transition: 0.3s; text-transform: none;">
+            <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: var(--primary); display: block; margin-bottom: 10px;"></i>
+            <span id="fileText" data-i18n="upload_text">Klikněte pro nahrání fotky (max 500kB)</span>
+        </label>
+    </div>
+</div>
+                <textarea name="Zprava_Poznamka" rows="4" data-i18n-ph="ph_zprava" placeholder="Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie..." onchange="calculatePrice()"></textarea>
+            </div>
+
+            <div class="confirm-row">
+                <input type="checkbox" id="confirmPrice" required>
+                <label for="confirmPrice" data-i18n="confirm_text">Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.</label>
+            </div>
+
+            <button type="submit" class="btn" data-i18n="btn_submit">Odeslat poptávku</button>
+        </div>
+    </div>
+</form>
+
+<div class="sticky-mobile-bar" id="stickyMobileBar">
+    <div class="price-part"><small data-i18n="sticky_label">Odhad ceny</small><strong id="stickyPriceText">--</strong></div>
+    <button type="button" id="stickyCtaBtn" data-i18n="btn_submit">Odeslat poptávku</button>
+</div>
+
+<a href="admin.html" class="admin-float" title="Administrace termínů" data-i18n-title="admin_title">
+    <i class="fas fa-gear"></i>
+</a>
+
+<a href="https://wa.me/420000000000?text=Dobr%C3%BD%20den%2C%20m%C3%A1m%20z%C3%A1jem%20o%20dort%20z%20va%C5%A1eho%20konfigur%C3%A1toru." target="_blank" class="whatsapp-float" title="Napsat na WhatsApp" data-i18n-title="whatsapp_title">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<div class="lightbox-modal" id="lightboxModal">
+    <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <img id="lightboxImg" src="" alt="Ukázka dortu ve velkém rozlišení">
+</div>
+
+<div class="toast" id="toastMsg"></div>
+    
+<div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 12, 41, 0.85); z-index:10000; backdrop-filter: blur(15px); justify-content:center; align-items:center;">
+    <div style="background: white; padding: 50px; border-radius: 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 2px var(--gold);">
+        <div style="font-size: 60px; margin-bottom: 20px;">🎂</div>
+        <h2 style="font-family: 'Fraunces', serif; font-style: italic; color: var(--primary-dark); font-size: 32px; margin: 0 0 20px 0;" data-i18n="modal_title">Děkujeme !</h2>
+        <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;" data-i18n="modal_text">Vaši poptávku jsme v pořádku přijali.<br>Brzy se vám ozveme s detaily.</p>
+        <button type="button" onclick="document.getElementById('customModal').style.display='none'" style="padding: 16px 40px; background: linear-gradient(135deg, var(--primary-dark), #1e1422); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;" data-i18n="modal_close">Zavřít</button>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// PŘEKLADY / TRANSLATIONS (CS / EN / DE)
+// ============================================================
+const translations = {
+    cs: {
+        hero_title: "Upečeme vám vzpomínku",
+        footer_tagline: "Váš sladký sen",
+        gallery_label: "Inspirace z mé tvorby",
+        ig_follow: "Sledujte @_cakesbydt_",
+        ig_more: "Více inspirace na",
+        step1: "Korpus", step2: "Design", step3: "Ovoce", step4: "Doplňky",
+        label_jmeno: "Jméno a Příjmení", label_email: "E-mail", label_telefon: "Telefon",
+        label_datum: "Datum události", datum_placeholder: "Klikněte a vyberte termín",
+        cal_free: "Volno", cal_blocked: "Obsazeno", cal_past: "Tento termín už je pryč",
+        sekce1_title: "Korpus", label_styl_dortu: "Styl dortu",
+        opt_classic: "🎂 Klasický", opt_classic1: "🎂 Patrový", opt_wedding: "💍 Svatební",
+        label_prumer: "Průměr",
+        dia_15: "16 cm (8-10 porcí)", dia_18: "18 cm (10-12 porcí)", dia_20: "20 cm (12-14 porcí)",
+        dia_22: "22 cm (14-16 porcí)", dia_24: "24 cm (16-18 porcí)", dia_26: "26 cm (18-20 porcí)",
+        label_patra: "Patra", patra_2: "2 patra", patra_3: "3 patra",
+        label_chut: "Chuť korpusu",
+        flavor_kakaovy: "Kakaový", flavor_vanilkovy: "Vanilkový", flavor_mrkvovy: "Mrkvový",
+        flavor_mechovy: "Mechový", flavor_orechovy: "Ořechový",
+        sekce2_title: "Design & Krém",
+        label_obmaz: "Styl obmazu", obmaz_naked: "Nahý dort", obmaz_full: "Plný obmaz",
+        label_vnitrni: "Vnitřní krém", label_vnejsi: "Vnější krém",
+        cream_vanilka: "Smetanový - vanilka", cream_cokolada: "Smetanový - čokoláda",
+        cream_karamel: "Smetanový - karamel", cream_ovocny: "Smetanový - ovocný",
+        butter_vanilka: "Máslový - vanilka", butter_cokolada: "Máslový - čokoláda",
+        butter_karamel: "Máslový - karamel", butter_ovocny: "Máslový - ovocný",
+        sekce3_title: "Ovocná kompozice",
+        label_prolozeni: "Proložení uvnitř", label_zdobeni: "Zdobení nahoře", label_vrsek: "Styl vršku",
+        fruit_none: "Bez ovoce", fruit_jahody: "Jahody", fruit_maliny: "Maliny", fruit_boruvky: "Borůvky",
+        fruit_mix: "Mix ovoce", fruit_puk: "Želatinový ovocný puk", fruit_cokopuk: "Čokoládový puk",
+        top_none: "Bez zdobení", top_mix: "Bohatý Mix",
+        vrsek_border: "Věneček (Okraje)", vrsek_full: "Plné zaplnění",
+        price_hint: "Klikni pro rozpad ceny", breakdown_title: "Rozpad ceny",
+        loading_3d: "Připravuji 3D náhled…",
+        btn_share: "Sdílet konfiguraci", btn_screenshot: "Uložit náhled",
+        label_rotace: "Rotace 3D modelu", label_naklon: "Náklon pohledu", label_zoom: "Přiblížení (Zoom)",
+        sekce4_title: "Osobní doplňky",
+        extra_kvetiny: "Květinová dekorace", extra_papir: "Jedlý papír",
+        extra_figurka: "Modelovaná figurka", extra_zapich: "Personalizovaný zápich",
+        badge_pridano: "✔ Přidáno",
+        ph_kvetiny: "Jaké květiny si přejete (druh, barva)?", ph_papir: "Popis obrázku nebo motivu",
+        ph_figurka: "Jaká figurka to má být?", ph_zapich: "Zadejte text na zápich (např. Vše nejlepší)",
+        label_vlastni_predloha: "Máte vlastní předlohu? (Inspirace)",
+        upload_text: "Klikněte pro nahrání fotky (max 500kB)",
+        upload_resizing: "Zmenšuji fotku...", upload_done: "Vybráno a zmenšeno: ",
+        ph_zprava: "Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie...",
+        confirm_text: "Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.",
+        btn_submit: "Odeslat poptávku", sticky_label: "Odhad ceny",
+        admin_title: "Administrace termínů", whatsapp_title: "Napsat na WhatsApp",
+        modal_title: "Děkujeme !", modal_text: "Vaši poptávku jsme v pořádku přijali.<br>Brzy se vám ozveme s detaily.",
+        modal_close: "Zavřít",
+        // dynamické JS řetězce
+        toast_link_copied: "Odkaz na tvou konfiguraci byl zkopírován 🎂",
+        toast_link_fail: "Nepodařilo se zkopírovat, zkus to prosím ručně: ",
+        toast_screenshot: "Náhled dortu byl stažen 📸",
+        toast_shared_config: "Načetl jsem sdílenou konfiguraci dortu 🎂",
+        toast_select_date: "Prosím vyberte datum události v kalendáři 📅",
+        cal_not_configured: "Kalendář obsazenosti zatím není napojený — všechny dny jsou volné.",
+        cal_load_fail: "Termíny se teď nepodařilo načíst, zkuste to prosím později.",
+        months: ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'],
+        weekdays: ['Po','Út','St','Čt','Pá','So','Ne'],
+        price_estimate: "ODHAD", breakdown_total: "Odhad celkem",
+        tier_word: (n) => n > 1 ? 'patra' : 'patro',
+        info_wedding: (n, d) => `Svatební (${n} patra) | Ø základny ${d}cm`,
+        info_classic: (d) => `Klasický (1 patro) | Ø základny ${d}cm`,
+        bd_zaklad: (d, n, tw) => `Základ (Ø${d}cm, ${n} ${tw})`,
+        bd_svatebni: "Svatební provedení", bd_patrovy: "Patrový styl",
+        bd_orechovy: "Ořechový korpus", bd_mrkvovy: "Mrkvový korpus", bd_mechovy: "Mechový korpus", bd_kakaovy: "Kakaový korpus",
+        bd_obmaz: "Plný obmaz", bd_prolozeni: "Ovocné proložení", bd_zdobeni_nahore: "Ovocné zdobení nahoře", bd_puk: "Ovocný puk",
+        bd_kvetiny: "Květinová dekorace", bd_papir: "Jedlý papír", bd_figurka: "Modelovaná figurka", bd_zapich: "Personalizovaný zápich",
+    },
+    en: {
+        hero_title: "We'll bake your memory",
+        footer_tagline: "Your sweet dream",
+        gallery_label: "Inspiration from my work",
+        ig_follow: "Follow @_cakesbydt_",
+        ig_more: "More inspiration on",
+        step1: "Base", step2: "Design", step3: "Fruit", step4: "Extras",
+        label_jmeno: "Full Name", label_email: "E-mail", label_telefon: "Phone",
+        label_datum: "Event date", datum_placeholder: "Click to pick a date",
+        cal_free: "Free", cal_blocked: "Booked", cal_past: "This date has already passed",
+        sekce1_title: "Base", label_styl_dortu: "Cake style",
+        opt_classic: "🎂 Classic", opt_classic1: "🎂 Tiered", opt_wedding: "💍 Wedding",
+        label_prumer: "Diameter",
+        dia_15: "16 cm (8–10 servings)", dia_18: "18 cm (10–12 servings)", dia_20: "20 cm (12–14 servings)",
+        dia_22: "22 cm (14–16 servings)", dia_24: "24 cm (16–18 servings)", dia_26: "26 cm (18–20 servings)",
+        label_patra: "Tiers", patra_2: "2 tiers", patra_3: "3 tiers",
+        label_chut: "Sponge flavor",
+        flavor_kakaovy: "Chocolate", flavor_vanilkovy: "Vanilla", flavor_mrkvovy: "Carrot",
+        flavor_mechovy: "Matcha (moss cake)", flavor_orechovy: "Walnut",
+        sekce2_title: "Design & Cream",
+        label_obmaz: "Coating style", obmaz_naked: "Naked cake", obmaz_full: "Full coating",
+        label_vnitrni: "Inner cream", label_vnejsi: "Outer cream",
+        cream_vanilka: "Cream - vanilla", cream_cokolada: "Cream - chocolate",
+        cream_karamel: "Cream - caramel", cream_ovocny: "Cream - fruit",
+        butter_vanilka: "Buttercream - vanilla", butter_cokolada: "Buttercream - chocolate",
+        butter_karamel: "Buttercream - caramel", butter_ovocny: "Buttercream - fruit",
+        sekce3_title: "Fruit composition",
+        label_prolozeni: "Inner filling", label_zdobeni: "Top decoration", label_vrsek: "Top style",
+        fruit_none: "No fruit", fruit_jahody: "Strawberries", fruit_maliny: "Raspberries", fruit_boruvky: "Blueberries",
+        fruit_mix: "Fruit mix", fruit_puk: "Fruit jelly disc", fruit_cokopuk: "Chocolate disc",
+        top_none: "No decoration", top_mix: "Rich mix",
+        vrsek_border: "Wreath (border)", vrsek_full: "Full coverage",
+        price_hint: "Tap for price breakdown", breakdown_title: "Price breakdown",
+        loading_3d: "Preparing 3D preview…",
+        btn_share: "Share configuration", btn_screenshot: "Save preview",
+        label_rotace: "Rotate 3D model", label_naklon: "Tilt view", label_zoom: "Zoom",
+        sekce4_title: "Personal extras",
+        extra_kvetiny: "Flower decoration", extra_papir: "Edible paper print",
+        extra_figurka: "Modeled figure/topper", extra_zapich: "Personalized cake topper",
+        badge_pridano: "✔ Added",
+        ph_kvetiny: "What flowers would you like (type, color)?", ph_papir: "Describe the picture or theme",
+        ph_figurka: "What should the figure be?", ph_zapich: "Enter the topper text (e.g. Happy Birthday)",
+        label_vlastni_predloha: "Have your own reference photo? (Inspiration)",
+        upload_text: "Click to upload a photo (max 500kB)",
+        upload_resizing: "Resizing photo...", upload_done: "Selected and resized: ",
+        ph_zprava: "Leave me a note here — specific color requests, allergy warnings...",
+        confirm_text: "I understand the shown price is only an estimate and the final price will be confirmed after consultation.",
+        btn_submit: "Send inquiry", sticky_label: "Estimated price",
+        admin_title: "Availability admin", whatsapp_title: "Message on WhatsApp",
+        modal_title: "Thank you!", modal_text: "We've received your inquiry.<br>We'll be in touch soon with details.",
+        modal_close: "Close",
+        toast_link_copied: "Your configuration link has been copied 🎂",
+        toast_link_fail: "Couldn't copy automatically, please copy manually: ",
+        toast_screenshot: "Cake preview has been downloaded 📸",
+        toast_shared_config: "Loaded a shared cake configuration 🎂",
+        toast_select_date: "Please pick an event date in the calendar 📅",
+        cal_not_configured: "Availability calendar isn't connected yet — all days show as free.",
+        cal_load_fail: "Couldn't load availability right now, please try again later.",
+        months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        weekdays: ['Mo','Tu','We','Th','Fr','Sa','Su'],
+        price_estimate: "ESTIMATE", breakdown_total: "Estimated total",
+        tier_word: (n) => n > 1 ? 'tiers' : 'tier',
+        info_wedding: (n, d) => `Wedding (${n} tiers) | Ø base ${d}cm`,
+        info_classic: (d) => `Classic (1 tier) | Ø base ${d}cm`,
+        bd_zaklad: (d, n, tw) => `Base (Ø${d}cm, ${n} ${tw})`,
+        bd_svatebni: "Wedding styling", bd_patrovy: "Tiered style",
+        bd_orechovy: "Walnut sponge", bd_mrkvovy: "Carrot sponge", bd_mechovy: "Matcha sponge", bd_kakaovy: "Chocolate sponge",
+        bd_obmaz: "Full coating", bd_prolozeni: "Fruit filling", bd_zdobeni_nahore: "Fruit decoration on top", bd_puk: "Fruit disc",
+        bd_kvetiny: "Flower decoration", bd_papir: "Edible paper print", bd_figurka: "Modeled figure/topper", bd_zapich: "Personalized topper",
+    },
+    de: {
+        hero_title: "Wir backen Ihre Erinnerung",
+        footer_tagline: "Ihr süßer Traum",
+        gallery_label: "Inspiration aus meiner Arbeit",
+        ig_follow: "Folgen Sie @_cakesbydt_",
+        ig_more: "Mehr Inspiration auf",
+        step1: "Boden", step2: "Design", step3: "Frucht", step4: "Extras",
+        label_jmeno: "Vor- und Nachname", label_email: "E-Mail", label_telefon: "Telefon",
+        label_datum: "Veranstaltungsdatum", datum_placeholder: "Klicken Sie, um ein Datum zu wählen",
+        cal_free: "Frei", cal_blocked: "Belegt", cal_past: "Dieser Termin liegt bereits in der Vergangenheit",
+        sekce1_title: "Boden", label_styl_dortu: "Tortenstil",
+        opt_classic: "🎂 Klassisch", opt_classic1: "🎂 Etagen", opt_wedding: "💍 Hochzeit",
+        label_prumer: "Durchmesser",
+        dia_15: "16 cm (8–10 Portionen)", dia_18: "18 cm (10–12 Portionen)", dia_20: "20 cm (12–14 Portionen)",
+        dia_22: "22 cm (14–16 Portionen)", dia_24: "24 cm (16–18 Portionen)", dia_26: "26 cm (18–20 Portionen)",
+        label_patra: "Etagen", patra_2: "2 Etagen", patra_3: "3 Etagen",
+        label_chut: "Bodengeschmack",
+        flavor_kakaovy: "Kakao", flavor_vanilkovy: "Vanille", flavor_mrkvovy: "Karotte",
+        flavor_mechovy: "Matcha (Moos-Torte)", flavor_orechovy: "Walnuss",
+        sekce2_title: "Design & Creme",
+        label_obmaz: "Überzugsstil", obmaz_naked: "Naked Cake", obmaz_full: "Voller Überzug",
+        label_vnitrni: "Innere Creme", label_vnejsi: "Äußere Creme",
+        cream_vanilka: "Sahne - Vanille", cream_cokolada: "Sahne - Schokolade",
+        cream_karamel: "Sahne - Karamell", cream_ovocny: "Sahne - Frucht",
+        butter_vanilka: "Buttercreme - Vanille", butter_cokolada: "Buttercreme - Schokolade",
+        butter_karamel: "Buttercreme - Karamell", butter_ovocny: "Buttercreme - Frucht",
+        sekce3_title: "Fruchtkomposition",
+        label_prolozeni: "Innere Füllung", label_zdobeni: "Verzierung oben", label_vrsek: "Stil der Oberseite",
+        fruit_none: "Ohne Frucht", fruit_jahody: "Erdbeeren", fruit_maliny: "Himbeeren", fruit_boruvky: "Heidelbeeren",
+        fruit_mix: "Fruchtmix", fruit_puk: "Fruchtgelee-Scheibe", fruit_cokopuk: "Schokoladenscheibe",
+        top_none: "Ohne Verzierung", top_mix: "Reicher Mix",
+        vrsek_border: "Kranz (Rand)", vrsek_full: "Volle Bedeckung",
+        price_hint: "Für Preisaufschlüsselung tippen", breakdown_title: "Preisaufschlüsselung",
+        loading_3d: "3D-Vorschau wird vorbereitet…",
+        btn_share: "Konfiguration teilen", btn_screenshot: "Vorschau speichern",
+        label_rotace: "3D-Modell drehen", label_naklon: "Ansicht neigen", label_zoom: "Zoom",
+        sekce4_title: "Persönliche Extras",
+        extra_kvetiny: "Blumendekoration", extra_papir: "Essbarer Fotodruck",
+        extra_figurka: "Modellierte Figur/Topper", extra_zapich: "Personalisierter Tortenstecker",
+        badge_pridano: "✔ Hinzugefügt",
+        ph_kvetiny: "Welche Blumen wünschen Sie (Art, Farbe)?", ph_papir: "Beschreiben Sie das Motiv",
+        ph_figurka: "Was soll die Figur darstellen?", ph_zapich: "Text für den Stecker eingeben (z. B. Alles Gute)",
+        label_vlastni_predloha: "Haben Sie eine eigene Vorlage? (Inspiration)",
+        upload_text: "Klicken Sie, um ein Foto hochzuladen (max. 500kB)",
+        upload_resizing: "Foto wird verkleinert...", upload_done: "Ausgewählt und verkleinert: ",
+        ph_zprava: "Hier können Sie mir eine Nachricht hinterlassen — Farbwünsche, Allergiehinweise...",
+        confirm_text: "Mir ist bewusst, dass der angezeigte Preis nur eine Schätzung ist und der Endpreis nach Rücksprache bestätigt wird.",
+        btn_submit: "Anfrage senden", sticky_label: "Geschätzter Preis",
+        admin_title: "Terminverwaltung", whatsapp_title: "Auf WhatsApp schreiben",
+        modal_title: "Vielen Dank!", modal_text: "Wir haben Ihre Anfrage erhalten.<br>Wir melden uns bald mit Details.",
+        modal_close: "Schließen",
+        toast_link_copied: "Der Link zu deiner Konfiguration wurde kopiert 🎂",
+        toast_link_fail: "Automatisches Kopieren fehlgeschlagen, bitte manuell kopieren: ",
+        toast_screenshot: "Die Tortenvorschau wurde heruntergeladen 📸",
+        toast_shared_config: "Geteilte Tortenkonfiguration geladen 🎂",
+        toast_select_date: "Bitte wählen Sie ein Veranstaltungsdatum im Kalender 📅",
+        cal_not_configured: "Der Verfügbarkeitskalender ist noch nicht verbunden — alle Tage gelten als frei.",
+        cal_load_fail: "Termine konnten gerade nicht geladen werden, bitte später erneut versuchen.",
+        months: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+        weekdays: ['Mo','Di','Mi','Do','Fr','Sa','So'],
+        price_estimate: "SCHÄTZUNG", breakdown_total: "Geschätzte Summe",
+        tier_word: (n) => n > 1 ? 'Etagen' : 'Etage',
+        info_wedding: (n, d) => `Hochzeit (${n} Etagen) | Ø Basis ${d}cm`,
+        info_classic: (d) => `Klassisch (1 Etage) | Ø Basis ${d}cm`,
+        bd_zaklad: (d, n, tw) => `Basis (Ø${d}cm, ${n} ${tw})`,
+        bd_svatebni: "Hochzeitsausführung", bd_patrovy: "Etagenstil",
+        bd_orechovy: "Walnussboden", bd_mrkvovy: "Karottenboden", bd_mechovy: "Matchaboden", bd_kakaovy: "Kakaoboden",
+        bd_obmaz: "Voller Überzug", bd_prolozeni: "Fruchtfüllung", bd_zdobeni_nahore: "Fruchtverzierung oben", bd_puk: "Fruchtscheibe",
+        bd_kvetiny: "Blumendekoration", bd_papir: "Essbarer Fotodruck", bd_figurka: "Modellierte Figur/Topper", bd_zapich: "Personalisierter Stecker",
+    }
+};
+
+let currentLang = localStorage.getItem('siteLang') || 'cs';
+
+function t(key) {
+    return (translations[currentLang] && translations[currentLang][key]) ?? translations.cs[key] ?? key;
+}
+
+function applyTranslations() {
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const val = t(el.getAttribute('data-i18n'));
+        if (typeof val === 'string') el.innerHTML = val;
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        el.placeholder = t(el.getAttribute('data-i18n-ph'));
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        el.title = t(el.getAttribute('data-i18n-title'));
+    });
+    document.querySelectorAll('#langSwitch button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+    // Přepočítat odvozené texty (cena, kalendář), pokud už jsou funkce dostupné
+    if (typeof calculatePrice === 'function' && typeof cakeGroup !== 'undefined' && cakeGroup) calculatePrice();
+    if (typeof renderCalendar === 'function') renderCalendar();
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('siteLang', lang);
+    applyTranslations();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#langSwitch button').forEach(btn => {
+        btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+    });
+    applyTranslations();
+});
+
+    let scene, camera, renderer, cakeGroup;
+    let isDragging = false; 
+    let previousPosition = { x: 0, y: 0 };
+    const container = document.getElementById('canvas-container');
+    let compressedImageData = ""; // Sem si uložíme zmenšenou fotku
+
+function updateFileName() {
+    const fileInput = document.getElementById('cakePhoto');
+    const fileText = document.getElementById('fileText');
+    const file = fileInput.files[0];
+
+    if (file) {
+        fileText.innerText = t('upload_resizing');
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = function () {
+                // MAXIMÁLNÍ ROZMĚR (šířka nebo výška)
+                const MAX_WIDTH = 400;
+                const MAX_HEIGHT = 400;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // KOMPRESE na 0.6 (60% kvalita JPEG - pro náhled stačí)
+                compressedImageData = canvas.toDataURL('image/jpeg', 0.6);
+                
+                fileText.innerText = t('upload_done') + file.name;
+                fileText.style.color = "#d4af37";
+                console.log("Fotka zmenšena pro EmailJS");
+            };
+        };
+    }
+}
+
+// ... pak pokračuje zbytek tvého kódu (init3D, animate, atd.)
+
+    function init3D() {
+        if (!container) return;
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(0, 6, 14); 
+        camera.lookAt(0, 2, 0);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); 
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6)); 
+        const mainLight = new THREE.DirectionalLight(0xffffff, 0.9); 
+        mainLight.position.set(5, 10, 7);
+        scene.add(mainLight);
+
+        cakeGroup = new THREE.Group();
+        cakeGroup.rotation.y = 0.5;
+        scene.add(cakeGroup);
+        
+        updateCake(); 
+        animate();    
+
+        // Načtení konfigurace z URL (pokud přišel sdílený odkaz) a skrytí loading overlaye
+        applyConfigFromURL();
+        const loadingEl = document.getElementById('loading3d');
+        if (loadingEl) setTimeout(() => loadingEl.classList.add('hidden'), 400);
+
+        const getPoint = (e) => {
+            if (e.touches && e.touches.length > 0) {
+                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+            return { x: e.clientX, y: e.clientY };
+        };
+
+        const handleStart = (e) => {
+            isDragging = true;
+            const point = getPoint(e);
+            previousPosition = point;
+        };
+
+        const handleMove = (e) => {
+            if (!isDragging) return;
+            if (e.cancelable) e.preventDefault();
+
+            const point = getPoint(e);
+            const deltaX = point.x - previousPosition.x;
+            const deltaY = point.y - previousPosition.y;
+
+            const sensitivity = 0.007; 
+            cakeGroup.rotation.y += deltaX * sensitivity;
+            
+            let newRotX = cakeGroup.rotation.x + deltaY * sensitivity;
+            cakeGroup.rotation.x = Math.max(-0.6, Math.min(0.6, newRotX));
+
+            previousPosition = point;
+
+            document.getElementById('rotateY').value = cakeGroup.rotation.y;
+            document.getElementById('rotateX').value = cakeGroup.rotation.x;
+        };
+
+        const handleEnd = () => { isDragging = false; };
+
+        container.addEventListener('mousedown', handleStart);
+        window.addEventListener('mousemove', handleMove, { passive: false });
+        window.addEventListener('mouseup', handleEnd);
+        container.addEventListener('touchstart', handleStart, { passive: false });
+        container.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('touchend', handleEnd);
+
+        // Zoomování pomocí kolečka myši nad 3D oknem
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomSlider = document.getElementById('zoomCam');
+            let newVal = parseFloat(zoomSlider.value) + (e.deltaY * 0.01);
+            newVal = Math.max(zoomSlider.min, Math.min(zoomSlider.max, newVal));
+            zoomSlider.value = newVal;
+            manualControl();
+        }, { passive: false });
+    }
+
+  function createFruit(type, isTop) {
+        const group = new THREE.Group();
+        let finalType = type;
+        if (type === 'mix') {
+            const rand = Math.random();
+            finalType = rand < 0.33 ? 'strawberries' : (rand < 0.66 ? 'blueberries' : 'raspberries');
+        }
+
+        if (finalType === 'strawberries') {
+            const size = isTop ? 0.22 : 0.15;
+            
+            // 1. Tělo jahody - čistá, do výšky protažená koule (konec placatých rajčat)
+            const strawberryGeo = new THREE.SphereGeometry(size, 24, 24);
+            const strawberryMat = new THREE.MeshPhongMaterial({ 
+                color: 0xd31027, // Sytá, temnější jahodová červená
+                shininess: 30,
+                specular: 0x555555
+            });
+            
+            const body = new THREE.Mesh(strawberryGeo, strawberryMat);
+            // Zúžíme osu X a Z, pořádně protáhneme osu Y
+            body.scale.set(0.85, 1.3, 0.85); 
+            // Jahodu o kousíček zvedneme, aby "seděla" a nepropadala se do krému
+            body.position.y = size * 0.4; 
+            group.add(body);
+
+            // 2. Zelené lístky (kalich) nahoře
+            const leafMat = new THREE.MeshPhongMaterial({ color: 0x2d5a1e, side: THREE.DoubleSide });
+            for (let i = 0; i < 6; i++) {
+                const leafGeo = new THREE.ConeGeometry(size * 0.25, size * 0.6, 3);
+                const leaf = new THREE.Mesh(leafGeo, leafMat);
+                
+                // Umístíme těsně na vrchol protažené jahody
+                leaf.position.y = size * 1.45; 
+                
+                // Rozmístíme do kruhu a sklopíme podél těla
+                leaf.rotation.y = (i * Math.PI * 2) / 6;
+                leaf.rotation.x = Math.PI / 2 + 0.3; // Sklon jemně dolů po povrchu
+                
+                leaf.geometry.translate(0, -size * 0.25, 0); 
+                group.add(leaf);
+            }
+
+        // --- ZBYTEK KÓDU PRO MALINY A BORŮVKY (z předchozí zprávy) ---
+        } else if (finalType === 'raspberries') {
+            const size = isTop ? 0.20 : 0.15; 
+            const berryMat = new THREE.MeshPhongMaterial({ color: 0xc71585, shininess: 40, specular: 0xff88aa });
+            const drupeletSize = size * 0.22;
+            const layers = [
+                { count: 1, y: size * 0.7, r: 0 },                  
+                { count: 5, y: size * 0.4, r: size * 0.35 },        
+                { count: 8, y: size * 0.1, r: size * 0.55 },        
+                { count: 9, y: -size * 0.2, r: size * 0.65 },       
+                { count: 10, y: -size * 0.5, r: size * 0.65 }       
+            ];
+            layers.forEach((layer, layerIndex) => {
+                for (let i = 0; i < layer.count; i++) {
+                    const bubbleGeo = new THREE.SphereGeometry(drupeletSize, 8, 8);
+                    const bubble = new THREE.Mesh(bubbleGeo, berryMat);
+                    const offset = (layerIndex % 2 === 0) ? 0 : (Math.PI / layer.count);
+                    const angle = (i / layer.count) * Math.PI * 2 + offset;
+                    bubble.position.set(Math.cos(angle) * layer.r, layer.y, Math.sin(angle) * layer.r);
+                    bubble.lookAt(0, layer.y, 0);
+                    bubble.scale.set(1, 1, 0.8);
+                    group.add(bubble);
+                }
+            });
+        } else {
+            const size = isTop ? 0.12 : 0.08;
+            const blueGeo = new THREE.SphereGeometry(size, 16, 16);
+            const blueMat = new THREE.MeshPhongMaterial({ color: 0x222244, shininess: 10, specular: 0x444466 });
+            const blueberry = new THREE.Mesh(blueGeo, blueMat);
+            blueberry.scale.set(1, 0.85, 1);
+            const crownGeo = new THREE.CylinderGeometry(size*0.3, size*0.1, size*0.05, 5);
+            const crown = new THREE.Mesh(crownGeo, blueMat);
+            crown.position.y = size * 0.85;
+            group.add(crown);
+            group.add(blueberry);
+        }
+
+        return group;
+    }
+
+    function calculatePrice() {
+        const diameter = parseInt(document.getElementById('diameter').value);
+        const style = document.getElementById('cakeStyle').value;
+        const coat = document.getElementById('coating').value;
+        const flavorValue = document.getElementById('flavor').value; // barevný kód, jazykově nezávislý
+
+        // Zjištění počtu pater - klasika má vždy 1 patro, svatební podle dropdownu
+        let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
+        let total = 0;
+        const breakdown = []; // { label, amount } pro itemizovaný rozpad ceny
+
+        // Cena se počítá za každé patro zvlášť (každé další je užší, spotřebuje méně surovin)
+        let baseCost = 0;
+        for (let i = 0; i < numTiers; i++) {
+            let tierDiameter = diameter * Math.pow(0.75, i); 
+            baseCost += (tierDiameter * 15) * 3; // 3 = (6 vrstev / 2) pro zachování tvé původní ceny
+        }
+        baseCost = Math.round(baseCost);
+        total += baseCost;
+        breakdown.push({ label: t('bd_zaklad')(diameter, numTiers, t('tier_word')(numTiers)), amount: baseCost });
+
+        if (style === 'wedding') { total += 1500; breakdown.push({ label: t('bd_svatebni'), amount: 1500 }); }
+        if (style === 'classic1') { total += 100; breakdown.push({ label: t('bd_patrovy'), amount: 100 }); }
+        if (flavorValue === '0x96915c') { const a = 80 * numTiers; total += a; breakdown.push({ label: t('bd_orechovy'), amount: a }); }
+        if (flavorValue === '0xeba254') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_mrkvovy'), amount: a }); }
+        if (flavorValue === '0x3b7a31') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_mechovy'), amount: a }); }
+        if (flavorValue === '0x6e5445') { const a = 50 * numTiers; total += a; breakdown.push({ label: t('bd_kakaovy'), amount: a }); }
+        
+        if (coat === 'full') { const a = 150 * numTiers; total += a; breakdown.push({ label: t('bd_obmaz'), amount: a }); }
+        if (document.getElementById('fruitCream').value !== 'none') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_prolozeni'), amount: a }); }
+        if (document.getElementById('fruitTop').value !== 'none') { total += 100; breakdown.push({ label: t('bd_zdobeni_nahore'), amount: 100 }); }
+        if (document.getElementById('fruitCream').value !== 'none') { const a = 50 * numTiers; total += a; breakdown.push({ label: t('bd_puk'), amount: a }); }
+        
+        if (document.getElementById('c_flowers').checked) { total += 150; breakdown.push({ label: t('bd_kvetiny'), amount: 150 }); }
+        if (document.getElementById('c1').checked) { total += 300; breakdown.push({ label: t('bd_papir'), amount: 300 }); }
+        if (document.getElementById('c2').checked) { total += 200; breakdown.push({ label: t('bd_figurka'), amount: 200 }); }
+        if (document.getElementById('c3').checked) { total += 50; breakdown.push({ label: t('bd_zapich'), amount: 50 }); }
+
+        const minPrice = Math.round(total * 0.95);
+        const maxPrice = Math.round(total * 1.05);
+
+        const infoText = style === 'wedding' ? t('info_wedding')(numTiers, diameter) : t('info_classic')(diameter);
+        const priceText = `${minPrice} – ${maxPrice} Kč`;
+
+        document.getElementById('info-display').innerText = infoText;
+        const priceMainEl = document.getElementById('priceMainText');
+        if (priceMainEl) priceMainEl.innerText = t('price_estimate') + ": " + priceText;
+
+        // Aktualizace itemizovaného rozpadu ceny
+        const rowsEl = document.getElementById('breakdownRows');
+        if (rowsEl) {
+            rowsEl.innerHTML = breakdown.map(b => `<div class="row"><span>${b.label}</span><span>+${b.amount} Kč</span></div>`).join('')
+                + `<div class="row total"><span>${t('breakdown_total')}</span><span>${priceText}</span></div>`;
+        }
+
+        // Synchronizace sticky mobilní lišty
+        const stickyEl = document.getElementById('stickyPriceText');
+        if (stickyEl) stickyEl.innerText = priceText;
+    }
+
+ function updateCake() {
+    if (!cakeGroup) return;
+    while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
+    
+    const style = document.getElementById('cakeStyle').value;
+    const diameter = parseInt(document.getElementById('diameter').value);
+    let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
+
+    const coat = document.getElementById('coating').value;
+    const fruitT = document.getElementById('fruitTop').value;
+    const fruitC = document.getElementById('fruitCream').value;
+    const topS = document.getElementById('topStyle').value;
+    const flavorColor = parseInt(document.getElementById('flavor').value);
+    const innerColor = parseInt(document.getElementById('innerCream').value);
+    const outerColor = parseInt(document.getElementById('outerCream').value);
+    
+    const baseRadius = diameter / 6.5; 
+    const h = 0.5; 
+    const layersPerTier = 6; 
+
+    for (let t = 0; t < numTiers; t++) {
+        let currentRadius = baseRadius * Math.pow(0.75, t); 
+        
+        for (let l = 0; l < layersPerTier; l++) {
+            const isCream = (l % 2 === 1); 
+            const globalIndex = (t * layersPerTier) + l; 
+            
+          // 1. KORPUS / KRÉM
+            const isFillingPresent = (fruitC !== 'none');
+            const segmentMat = new THREE.MeshPhongMaterial({ 
+                color: isCream ? innerColor : flavorColor,
+                transparent: isCream && isFillingPresent,
+                opacity: (isCream && isFillingPresent) ? 0.4 : 1.0, // Ještě víc průhledné (0.4)
+                depthWrite: !(isCream && isFillingPresent), // KLÍČOVÉ: Vypne blokování hloubky pro náplň
+                side: THREE.DoubleSide
+            });
+
+            const segment = new THREE.Mesh(
+                new THREE.CylinderGeometry(currentRadius, currentRadius, h, 48),
+                segmentMat
+            );
+            segment.position.y = globalIndex * h;
+            // Krému dáme nižší renderOrder
+            if (isCream && isFillingPresent) segment.renderOrder = 0; 
+            cakeGroup.add(segment);
+
+            // 2. OBMAZ (COATING)
+            if (coat !== 'naked') {
+                const coatMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(currentRadius + 0.02, currentRadius + 0.02, h, 48, 1, true), 
+                    new MeshPhongMaterialConfig(outerColor, coat)
+                );
+                coatMesh.position.y = globalIndex * h;
+                cakeGroup.add(coatMesh);
+
+                if (l === layersPerTier - 1) {
+                    const topCapGeo = new THREE.CircleGeometry(currentRadius + 0.02, 48);
+                    const topCap = new THREE.Mesh(topCapGeo, new MeshPhongMaterialConfig(outerColor, coat));
+                    topCap.position.y = (globalIndex * h) + (h / 2) + 0.01; 
+                    topCap.rotation.x = -Math.PI / 2; 
+                    cakeGroup.add(topCap);
+                }
+            }
+
+         // 3. VNITŘNÍ NÁPLŇ (Ovoce nebo Puk)
+            if (isCream && isFillingPresent && l < layersPerTier - 1) {
+                if (fruitC.startsWith('0x')) {
+                    const puckColor = parseInt(fruitC);
+                    const puckHeight = 0.25; // O něco vyšší, aby byl dominantní
+                    
+                    // UDĚLÁME PUK JAKO PRSTENEC (o 0.05 užší než krém)
+                    // CylinderGeometry(radiusTop, radiusBottom, height, segments, heightSegments, openEnded)
+                    const puckGeo = new THREE.CylinderGeometry(currentRadius - 0.02, currentRadius - 0.02, puckHeight, 48, 1, false);
+                    const puckMat = new THREE.MeshPhongMaterial({ 
+                        color: puckColor,
+                        emissive: puckColor, // Přidáme trochu "vlastního světla", aby v krému zářil
+                        emissiveIntensity: 0.2,
+                        transparent: false, // Puk sám nemusí být průhledný, chceme ho vidět sytě
+                        side: THREE.DoubleSide
+                    });
+                    
+                    const puck = new THREE.Mesh(puckGeo, puckMat);
+                    puck.renderOrder = 10; // Mnohem vyšší priorita vykreslení
+                    puck.position.y = globalIndex * h;
+                    cakeGroup.add(puck);
+
+                } else {
+                    // Ovoce s vysokým renderOrderem
+                    for (let j = 0; j < 35; j++) { 
+                        let activeType = fruitC === 'mix' ? ['strawberries', 'raspberries', 'blueberries'][Math.floor(Math.random() * 3)] : fruitC;
+                        const f = createFruit(activeType, false);
+                        f.renderOrder = 10; 
+                        const randomAng = Math.random() * Math.PI * 2;
+                        const r = currentRadius * (0.8 + Math.random() * 0.18); // Ještě víc na kraj
+                        f.position.set(Math.cos(randomAng) * r, (globalIndex * h), Math.sin(randomAng) * r);
+                        f.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
+                        cakeGroup.add(f);
+                    }
+                }
+            }
+
+            // 4. HORNÍ ZDOBENÍ A TERASY (Tahle část ti tam chyběla!)
+            const isTopSurfaceOfTier = (l === layersPerTier - 1);
+            const isAbsoluteTop = (t === numTiers - 1 && isTopSurfaceOfTier);
+            const isTerrace = (t < numTiers - 1 && isTopSurfaceOfTier);
+
+            if ((isAbsoluteTop || isTerrace) && fruitT !== 'none') {
+                if (isAbsoluteTop) {
+                    if (topS === 'full') {
+                        const area = Math.PI * Math.pow(currentRadius, 2);
+                        let count = Math.min(Math.floor(area * 10), 80); // Strop 80ks, aby to nespadlo
+                        for(let j = 0; j < count; j++) {
+                            const f = createFruit(fruitT, true);
+                            const r = (currentRadius * 0.85) * Math.sqrt(Math.random()); 
+                            const theta = Math.random() * Math.PI * 2;
+                            f.position.set(Math.cos(theta) * r, (globalIndex * h) + 0.3, Math.sin(theta) * r);
+                            f.rotation.set(Math.random() * 0.4, Math.random() * 6, Math.random() * 0.4);
+                            cakeGroup.add(f);
+                        }
+                    } else {
+                        const r = currentRadius * 0.85;
+                        const count = Math.max(Math.floor(r * 12), 1);
+                        for(let j = 0; j < count; j++) {
+                            const f = createFruit(fruitT, true);
+                            const ang = (j / count) * Math.PI * 2;
+                            f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
+                            cakeGroup.add(f);
+                        }
+                    }
+                } else if (isTerrace) {
+                    const nextRadius = baseRadius * Math.pow(0.75, t + 1); 
+                    const r = nextRadius + ((currentRadius - nextRadius) * 0.5); 
+                    const count = Math.max(Math.floor(r * 10), 1); 
+                    for(let j = 0; j < count; j++) {
+                        const f = createFruit(fruitT, true);
+                        const ang = (j / count) * Math.PI * 2;
+                        f.position.set(Math.cos(ang) * r, (globalIndex * h) + 0.3, Math.sin(ang) * r);
+                        cakeGroup.add(f);
+                    }
+                }
+            }
+        }
+    }
+    calculatePrice(); 
+    
+    const zoomSlider = document.getElementById('zoomCam');
+    if (zoomSlider) {
+        if (numTiers >= 3) zoomSlider.value = 22;
+        else if (numTiers === 2) zoomSlider.value = 18;
+        else zoomSlider.value = 14;
+        manualControl();
+    }
+}
+
+    // Malá pomocná funkce pro materiál obmazu, aby kód nebyl nekonečný
+    function MeshPhongMaterialConfig(outerColor, coat) {
+        return new THREE.MeshPhongMaterial({ 
+            color: outerColor, 
+            transparent: true, 
+            opacity: (coat === 'semi' ? 0.5 : 1), 
+            side: THREE.DoubleSide 
+        });
+    }
+    
+    function manualControl() {
+        if (!cakeGroup) return;
+        cakeGroup.rotation.y = parseFloat(document.getElementById('rotateY').value);
+        cakeGroup.rotation.x = parseFloat(document.getElementById('rotateX').value);
+        
+        // Plynulý Zoom kamery
+        const zoomValue = parseFloat(document.getElementById('zoomCam').value);
+        camera.position.z = zoomValue;
+        // Lehce upravíme i výšku kamery a střed pohledu, aby dort neutekl nahoru
+        camera.position.y = zoomValue * 0.4; 
+        camera.lookAt(0, zoomValue * 0.15, 0); 
+    }
+
+    function animate() {
+    requestAnimationFrame(animate);
+    if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+    }
+}
+
+document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (!selectedEventDate) {
+        showToast(t('toast_select_date'));
+        document.getElementById('eventDateDisplay')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('calendarPopup')?.classList.add('open');
+        return;
+    }
+
+    const btn = this.querySelector('.btn');
+    const originalBtnText = btn.innerText;
+    btn.innerText = "ODESÍLÁM...";
+    btn.disabled = true;
+
+    const getText = (id) => {
+        const el = document.getElementById(id);
+        return el ? el.options[el.selectedIndex].text : "Nezvoleno";
+    };
+
+    let doplnkyArr = [];
+    if(document.getElementById('c_flowers')?.checked) doplnkyArr.push("Květiny (" + (document.getElementsByName('Detail_Kvetiny')[0]?.value || "Ano") + ")");
+    if(document.getElementById('c1')?.checked) doplnkyArr.push("Jedlý papír (" + (document.getElementsByName('Detail_Papir')[0]?.value || "Ano") + ")");
+    if(document.getElementById('c2')?.checked) doplnkyArr.push("Figurka (" + (document.getElementsByName('Detail_Figurka')[0]?.value || "Ano") + ")");
+    if(document.getElementById('c3')?.checked) doplnkyArr.push("Zápich (" + (document.getElementsByName('Detail_Zapich')[0]?.value || "Ano") + ")");
+
+    const templateParams = {
+        jmeno: document.getElementsByName('Jmeno')[0].value,
+        email: document.getElementsByName('Email')[0].value,
+        telefon: document.getElementsByName('Telefon')[0].value,
+        datum: document.getElementsByName('Datum_Udalosti')[0].value,
+        styl_dortu: getText('cakeStyle'),
+        rozmery: `Průměr ${document.getElementById('diameter').value} cm, ${document.getElementById('layers').value} vrstev`,
+        chut_korpusu: getText('flavor'),
+        vzhled_krem: `Obmaz: ${getText('coating')}, Vnitřní: ${getText('innerCream')}, Vnější: ${getText('outerCream')}`,
+        ovoce: `Vnitřní: ${getText('fruitCream')}, Horní: ${getText('fruitTop')} (${getText('topStyle')})`,
+        doplnky: doplnkyArr.length > 0 ? doplnkyArr.join(", ") : "Žádné",
+        poznamka: document.getElementsByName('Zprava_Poznamka')[0].value,
+        cena_odhad: document.getElementById('price-display').innerText,
+        // TADY JE TA MAGIE - posíláme zmenšenou fotku jako text
+        my_file: compressedImageData 
+    };
+
+    // Používáme SEND (ne sendForm), protože posíláme zkomprimovaný text
+    emailjs.send('service_ep8bdkh', 'template_tvtxutj', templateParams)
+        .then(function() {
+            console.log("Email tobě odeslán");
+            return emailjs.send('service_ep8bdkh', 'template_8x12wfq', templateParams);
+        })
+        .then(function() {
+            console.log("Potvrzení zákazníkovi odesláno");
+            const modal = document.getElementById('customModal');
+            if(modal) modal.style.display = 'flex';
+            btn.innerText = "ODESLÁNO ✅";
+        })
+        .catch(function(error) {
+            console.error('Chyba odesílání:', error);
+            alert('Chyba odesílání. Zkuste prosím fotku nahrát znovu nebo odeslat bez ní.');
+            btn.innerText = originalBtnText;
+            btn.disabled = false;
+        });
+});
+
+// Seznam tvých 19 fotek (předpokládám názvy 1.jpg až 19.jpg)
+const allImages = [
+    'foto19.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg', 'foto7.jpg', 'foto8.jpg', 'foto9.jpg', 'foto10.jpg', 
+    'foto11.jpg', 'foto12.jpg', 'foto13.jpg', 'foto14.jpg', 'foto15.jpg', 'foto16.jpg', 'foto17.jpg', 'foto18.jpg', 'foto1.jpg'
+];
+
+let duotoneNextIndex = 6; // dalších 6 fotek už je v mřížce, odsud pokračujeme v rotaci
+let duotoneTileCursor = 0; // která dlaždice se má aktualizovat příště
+let duotoneTransitioning = new Set(); // dlaždice zrovna probíhající přechodem
+
+function initDuotoneGallery() {
+    const tiles = document.querySelectorAll('.duotone-tile img');
+    tiles.forEach((img, i) => { img.src = allImages[i % allImages.length]; });
+}
+
+function rotateDuotoneTile() {
+    const tiles = document.querySelectorAll('.duotone-tile img');
+    if (!tiles.length) return;
+
+    const tileIndex = duotoneTileCursor % tiles.length;
+    duotoneTileCursor++;
+    if (duotoneTransitioning.has(tileIndex)) return; // tahle dlaždice právě přechází, přeskočíme
+
+    const img = tiles[tileIndex];
+    const nextSrc = allImages[duotoneNextIndex % allImages.length];
+    duotoneNextIndex++;
+
+    duotoneTransitioning.add(tileIndex);
+    img.style.opacity = '0';
+
+    const preload = new Image();
+    preload.onload = () => {
+        img.src = nextSrc;
+        requestAnimationFrame(() => {
+            img.style.opacity = '1';
+            duotoneTransitioning.delete(tileIndex);
+        });
+    };
+    preload.src = nextSrc;
+}
+
+// SPOJENÉ A OPRAVENÉ SPOUŠTĚNÍ
+window.addEventListener('DOMContentLoaded', () => {
+    initDuotoneGallery();
+
+    // Každé 4 vteřiny se jedna dlaždice v mřížce vymění za další fotku
+    setInterval(rotateDuotoneTile, 4000);
+
+    // --- Otevírání/zavírání kalendáře dostupnosti ---
+    const eventDateDisplay = document.getElementById('eventDateDisplay');
+    const calendarPopup = document.getElementById('calendarPopup');
+    const calPrev = document.getElementById('calPrev');
+    const calNext = document.getElementById('calNext');
+    if (eventDateDisplay && calendarPopup) {
+        eventDateDisplay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            calendarPopup.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!calendarPopup.contains(e.target) && e.target !== eventDateDisplay) {
+                calendarPopup.classList.remove('open');
+            }
+        });
+        if (calPrev) calPrev.addEventListener('click', () => {
+            calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+            renderCalendar();
+        });
+        if (calNext) calNext.addEventListener('click', () => {
+            calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+            renderCalendar();
+        });
+        renderCalendar();
+        loadBlockedDates().then(() => renderCalendar());
+    }
+
+    // --- Validace formátu telefonu (české číslo, s volitelnou předvolbou) ---
+    const telInput = document.querySelector('input[name="Telefon"]');
+    if (telInput) {
+        telInput.setAttribute('pattern', '^(\\+?\\d{3,4}\\s?)?\\d{3}\\s?\\d{3}\\s?\\d{3}$');
+        telInput.setAttribute('title', 'Zadejte platné telefonní číslo, např. 601 234 567 nebo +420 601 234 567');
+    }
+
+    // --- Progress stepper: zvýrazní aktuální krok podle scrollu ---
+    const stepItems = document.querySelectorAll('.step-item');
+    const stepSections = ['stepSekce1', 'stepSekce2', 'stepSekce3', 'stepSekce4']
+        .map(id => document.getElementById(id)).filter(Boolean);
+
+    stepItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const target = document.getElementById(item.dataset.target);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    if (stepSections.length && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = stepSections.indexOf(entry.target);
+                    stepItems.forEach((item, i) => {
+                        item.classList.toggle('active', i === idx);
+                        item.classList.toggle('done', i < idx);
+                    });
+                }
+            });
+        }, { threshold: 0.4, rootMargin: '-100px 0px -40% 0px' });
+        stepSections.forEach(sec => observer.observe(sec));
+
+        // Jemné zjevení karet při scrollování
+        stepSections.forEach(sec => sec.classList.add('reveal-init'));
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        stepSections.forEach(sec => revealObserver.observe(sec));
+    }
+
+    // --- Rozpad ceny: klik na cenovku otevře/zavře popup ---
+    const priceDisplay = document.getElementById('price-display');
+    const breakdownPopup = document.getElementById('priceBreakdown');
+    if (priceDisplay && breakdownPopup) {
+        priceDisplay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            breakdownPopup.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!breakdownPopup.contains(e.target) && e.target !== priceDisplay) {
+                breakdownPopup.classList.remove('open');
+            }
+        });
+    }
+
+    // --- Sdílení konfigurace přes URL ---
+    const shareBtn = document.getElementById('shareBtn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            const ids = ['cakeStyle','diameter','layers','flavor','coating','innerCream','outerCream','fruitCream','fruitTop','topStyle'];
+            const params = new URLSearchParams();
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) params.set(id, el.value);
+            });
+            ['c_flowers','c1','c2','c3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.checked) params.set(id, '1');
+            });
+            const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast(t('toast_link_copied'));
+            }).catch(() => {
+                showToast(t('toast_link_fail') + url);
+            });
+        });
+    }
+
+    // --- Screenshot 3D náhledu ---
+    const screenshotBtn = document.getElementById('screenshotBtn');
+    if (screenshotBtn) {
+        screenshotBtn.addEventListener('click', () => {
+            if (!renderer) return;
+            renderer.render(scene, camera);
+            const dataURL = renderer.domElement.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'muj-dort-navrh.png';
+            link.click();
+            showToast(t('toast_screenshot'));
+        });
+    }
+
+    // --- Lightbox pro galerii inspirace (funguje pro kteroukoliv dlaždici v mřížce) ---
+    const duotoneGallery = document.getElementById('duotoneGallery');
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+    if (duotoneGallery && lightboxModal && lightboxImg) {
+        duotoneGallery.addEventListener('click', (e) => {
+            const tile = e.target.closest('.duotone-tile');
+            if (!tile) return;
+            const img = tile.querySelector('img');
+            if (!img || !img.src) return;
+            lightboxImg.src = img.src;
+            lightboxModal.style.display = 'flex';
+        });
+        const closeLightbox = () => lightboxModal.style.display = 'none';
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightbox(); });
+    }
+
+    // --- Sticky mobilní lišta: tlačítko posune na formulář a spustí odeslání ---
+    const stickyCtaBtn = document.getElementById('stickyCtaBtn');
+    if (stickyCtaBtn) {
+        stickyCtaBtn.addEventListener('click', () => {
+            const confirmBox = document.getElementById('confirmPrice');
+            const submitBtn = document.querySelector('#cakeOrderForm .btn');
+            if (confirmBox) confirmBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            else if (submitBtn) submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
+});
+
+// ============================================================
+// KALENDÁŘ DOSTUPNOSTI TERMÍNŮ — napojeno na Supabase
+// ============================================================
+// JAK TO NASTAVIT (jednorázově):
+// 1) V Supabase projektu: Settings -> API -> zkopíruj "Project URL"
+//    a "anon public" klíč, vlož je níže místo SUPABASE_URL / SUPABASE_ANON_KEY.
+// 2) Termíny se spravují přes admin.html (samostatná stránka se
+//    stejným nastavením), NE ručně v tomto souboru.
+// ============================================================
+const SUPABASE_URL = "https://vlabocwezmpwnxrwxihs.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_H9egZ3Rrq5LYi02NxpvjCQ_xDXOQP4X";
+
+const supabaseClient = (!SUPABASE_URL.includes('SEM_VLOZ') && window.supabase)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+let blockedDates = new Set();
+let calendarViewDate = new Date();
+let selectedEventDate = null;
+
+async function loadBlockedDates() {
+    const noteEl = document.getElementById('calNote');
+    if (!supabaseClient) {
+        if (noteEl) noteEl.innerText = t('cal_not_configured');
+        return;
+    }
+    try {
+        const { data, error } = await supabaseClient.from('blocked_dates').select('date');
+        if (error) throw error;
+        blockedDates = new Set((data || []).map(row => row.date));
+        if (noteEl) noteEl.innerText = '';
+    } catch (err) {
+        console.warn('Nepodařilo se načíst obsazené termíny, kalendář zobrazí vše jako volné.', err);
+        if (noteEl) noteEl.innerText = t('cal_load_fail');
+    }
+}
+
+function isoDate(d) {
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
+const localeMap = { cs: 'cs-CZ', en: 'en-GB', de: 'de-DE' };
+
+function renderCalendar() {
+    const grid = document.getElementById('calGrid');
+    const label = document.getElementById('calMonthLabel');
+    if (!grid || !label) return;
+    grid.innerHTML = '';
+
+    const year = calendarViewDate.getFullYear();
+    const month = calendarViewDate.getMonth();
+    const monthNames = t('months');
+    label.innerText = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1);
+    const startWeekday = (firstDay.getDay() + 6) % 7; // pondělí = 0
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    t('weekdays').forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-weekday'; el.innerText = d;
+        grid.appendChild(el);
+    });
+
+    for (let i = 0; i < startWeekday; i++) grid.appendChild(document.createElement('div'));
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj = new Date(year, month, day);
+        const iso = isoDate(dateObj);
+        const cell = document.createElement('div');
+        cell.className = 'cal-day';
+        cell.innerText = day;
+
+        const isPast = dateObj < today;
+        const isBlocked = blockedDates.has(iso);
+
+        if (isPast) { cell.classList.add('disabled'); cell.title = t('cal_past'); }
+        else if (isBlocked) { cell.classList.add('blocked'); cell.title = t('cal_blocked'); }
+        else {
+            cell.classList.add('available');
+            cell.title = t('cal_free');
+            cell.addEventListener('click', () => {
+                selectedEventDate = iso;
+                const locale = localeMap[currentLang] || 'cs-CZ';
+                const niceDate = dateObj.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' });
+                if (eventDateDisplayEl()) eventDateDisplayEl().value = niceDate.charAt(0).toUpperCase() + niceDate.slice(1);
+                document.getElementById('calendarPopup')?.classList.remove('open');
+                renderCalendar();
+            });
+        }
+
+        if (selectedEventDate === iso) cell.classList.add('selected');
+        grid.appendChild(cell);
+    }
+}
+
+function eventDateDisplayEl() { return document.getElementById('eventDateDisplay'); }
+
+// --- Toast notifikace (krátká zpráva dole na obrazovce) ---
+function showToast(message) {
+    const toast = document.getElementById('toastMsg');
+    if (!toast) return;
+    toast.innerText = message;
+    toast.classList.add('show');
+    clearTimeout(window._toastTimeout);
+    window._toastTimeout = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// --- Načtení sdílené konfigurace z URL parametrů (pokud zákazník otevřel odkaz od jiného zákazníka) ---
+function applyConfigFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    if (![...params.keys()].length) return;
+
+    const ids = ['cakeStyle','diameter','layers','flavor','coating','innerCream','outerCream','fruitCream','fruitTop','topStyle'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && params.has(id)) el.value = params.get(id);
+    });
+    ['c_flowers','c1','c2','c3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.checked = params.get(id) === '1';
+    });
+    updateCake();
+    showToast(t('toast_shared_config'));
+}
+
+// Inicializace 3D modelu
+window.onload = init3D;
+
+</script>
+</body>
+</html>
