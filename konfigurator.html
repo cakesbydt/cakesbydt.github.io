@@ -182,8 +182,9 @@
             border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
             opacity: 0.16; pointer-events: none;
         }
-        .sekce.reveal-init { opacity: 0; transform: translateY(30px); }
-        .sekce.revealed { opacity: 1; transform: translateY(0); transition: opacity 0.8s cubic-bezier(0.2,0.8,0.2,1), transform 0.8s cubic-bezier(0.2,0.8,0.2,1); }
+        .sekce-hidden { display: none; }
+        .sekce-visible { display: block; animation: fadeInStep 0.45s ease; }
+        @keyframes fadeInStep { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
         h3 { 
             color: var(--primary-dark); font-family: 'Fraunces', serif; font-style: italic;
             font-size: 26px; font-weight: 600; margin-bottom: 35px; 
@@ -313,9 +314,6 @@
         }
         .step-item.active { color: var(--primary-dark); background: rgba(188,155,194,0.15); }
         .step-item.active .dot { background: var(--primary); box-shadow: 0 0 0 5px rgba(188,155,194,0.2); }
-        .step-item.done .dot { background: var(--gold); }
-        .step-item.done .dot::after { content: '✔'; }
-        .step-item.done .dot span { display: none; }
         .step-connector { width: 20px; height: 2px; background: #e6dbe9; }
         @media (max-width: 640px) { .step-item span.step-label { display: none; } .stepper-nav { gap: 4px; } }
 
@@ -580,92 +578,6 @@
                 <div class="step-connector"></div>
                 <div class="step-item" data-target="stepSekce4"><span class="dot"><span>4</span></span><span class="step-label" data-i18n="step4">Doplňky</span></div>
             </nav>
-            
-            <div class="sekce" id="stepSekce1">
-                <h3><span class="sekce-title-wrap">1. <span data-i18n="sekce1_title">Korpus</span></span></h3>
-                <div class="flex">
-                    <div style="flex-basis: 100%; margin-bottom: 10px;">
-                        <label data-i18n="label_styl_dortu">Styl dortu</label>
-                        <select id="cakeStyle" onchange="updateCake();">
-                            <option value="classic" data-i18n="opt_classic">🎂 Klasický</option>
-                            <option value="classic1" data-i18n="opt_classic1">🎂 Patrový</option>
-                            <option value="wedding" data-i18n="opt_wedding">💍 Svatební</option>
-                        </select>
-                    </div>
-                    <div><label data-i18n="label_prumer">Průměr</label><select id="diameter" onchange="updateCake();">
-                        <option value="15" data-i18n="dia_15">16 cm (8-10 porcí)</option>
-                        <option value="18" data-i18n="dia_18">18 cm (10-12 porcí)</option>
-                        <option value="20" selected data-i18n="dia_20">20 cm (12-14 porcí)</option>
-                        <option value="22" data-i18n="dia_22">22 cm (14-16 porcí)</option>
-                        <option value="24" data-i18n="dia_24">24 cm (16-18 porcí)</option>
-                        <option value="26" data-i18n="dia_26">26 cm (18-20 porcí)</option>
-                    </select></div>
-                    
-                   <div><label data-i18n="label_patra">Patra</label><select id="layers" onchange="updateCake();">
-    <option value="2" selected data-i18n="patra_2">2 patra </option>
-    <option value="3" data-i18n="patra_3">3 patra </option>
-</select></div>
-                    
-                    <div><label data-i18n="label_chut">Chuť korpusu</label><select id="flavor" onchange="updateCake();">
-                        <option value="0x6e5445" data-i18n="flavor_kakaovy">Kakaový</option>
-                        <option value="0xfff1a3" data-i18n="flavor_vanilkovy">Vanilkový</option>
-                        <option value="0xeba254" data-i18n="flavor_mrkvovy">Mrkvový</option>
-                        <option value="0x3b7a31" data-i18n="flavor_mechovy">Mechový</option>
-                        <option value="0x96915c" data-i18n="flavor_orechovy">Ořechový</option>
-                    </select></div>
-                </div>
-            </div>
-
-            <div class="sekce" id="stepSekce2">
-                <h3><span class="sekce-title-wrap">2. <span data-i18n="sekce2_title">Design & Krém</span></span></h3>
-                <div class="flex">
-                    <div><label data-i18n="label_obmaz">Styl obmazu</label><select id="coating" onchange="updateCake();"><option value="semi" selected data-i18n="obmaz_naked">Nahý dort</option><option value="full" data-i18n="obmaz_full">Plný obmaz</option></select></div>
-                    <div><label data-i18n="label_vnitrni">Vnitřní krém</label><select id="innerCream" onchange="updateCake();">
-                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
-                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
-                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
-                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>                       
-                    </select></div>
-                    <div><label data-i18n="label_vnejsi">Vnější krém</label><select id="outerCream" onchange="updateCake();">
-                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
-                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
-                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
-                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>
-                        <option value="0xFFF6C9" data-i18n="butter_vanilka">Máslový - vanilka</option>
-                        <option value="0x8C7464" data-i18n="butter_cokolada">Máslový - čokoláda</option>
-                        <option value="0xFF9852" data-i18n="butter_karamel">Máslový - karamel</option>
-                        <option value="0xED3939" data-i18n="butter_ovocny">Máslový - ovocný</option>
-                    </select></div>
-                </div>
-            </div>
-
-            <div class="sekce" id="stepSekce3">
-                <h3><span class="sekce-title-wrap">3. <span data-i18n="sekce3_title">Ovocná kompozice</span></span></h3>
-                <div class="flex">
-                    <div><label data-i18n="label_prolozeni">Proložení uvnitř</label><select id="fruitCream" onchange="updateCake();">
-                        <option value="none" selected data-i18n="fruit_none">Bez ovoce</option>
-                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
-                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
-                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
-                        <option value="mix" data-i18n="fruit_mix">Mix ovoce</option>
-                        <option value="0xF02800" data-i18n="fruit_puk">Želatinový ovocný puk</option>
-                        <option value="0x825842" data-i18n="fruit_cokopuk">Čokoládový puk</option>
-                    </select></div>
-                    
-                    <div><label data-i18n="label_zdobeni">Zdobení nahoře</label><select id="fruitTop" onchange="updateCake();">
-                        <option value="none" selected data-i18n="top_none">Bez zdobení</option>
-                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
-                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
-                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
-                        <option value="mix" data-i18n="top_mix">Bohatý Mix</option>
-                    </select></div>
-                    
-                    <div><label data-i18n="label_vrsek">Styl vršku</label><select id="topStyle" onchange="updateCake();">
-                        <option value="border" data-i18n="vrsek_border">Věneček (Okraje)</option>
-                        <option value="full" selected data-i18n="vrsek_full">Plné zaplnění</option>
-                    </select></div>
-                </div>
-            </div>
 
             <div id="canvas-container">
                 <div id="info-display" class="info-badge-float">--</div>
@@ -689,6 +601,105 @@
                 <div><label style="text-align: center;" data-i18n="label_rotace">Rotace 3D modelu</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()"></div>
                 <div><label style="text-align: center;" data-i18n="label_naklon">Náklon pohledu</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
                 <div><label style="text-align: center;" data-i18n="label_zoom">Přiblížení (Zoom)</label><input type="range" id="zoomCam" class="slider" min="8" max="28" step="0.5" value="14" oninput="manualControl()"></div>
+            </div>
+            
+            <div class="sekce" id="stepSekce1">
+                <h3><span class="sekce-title-wrap">1. <span data-i18n="sekce1_title">Korpus</span></span></h3>
+                <div class="flex">
+                    <div style="flex-basis: 100%; margin-bottom: 10px;">
+                        <label data-i18n="label_styl_dortu">Styl dortu</label>
+                        <select id="cakeStyle" onchange="updateCake();">
+                            <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                            <option value="classic" data-i18n="opt_classic">🎂 Klasický</option>
+                            <option value="classic1" data-i18n="opt_classic1">🎂 Patrový</option>
+                            <option value="wedding" data-i18n="opt_wedding">💍 Svatební</option>
+                        </select>
+                    </div>
+                    <div><label data-i18n="label_prumer">Průměr</label><select id="diameter" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="15" data-i18n="dia_15">16 cm (8-10 porcí)</option>
+                        <option value="18" data-i18n="dia_18">18 cm (10-12 porcí)</option>
+                        <option value="20" data-i18n="dia_20">20 cm (12-14 porcí)</option>
+                        <option value="22" data-i18n="dia_22">22 cm (14-16 porcí)</option>
+                        <option value="24" data-i18n="dia_24">24 cm (16-18 porcí)</option>
+                        <option value="26" data-i18n="dia_26">26 cm (18-20 porcí)</option>
+                    </select></div>
+                    
+                   <div><label data-i18n="label_patra">Patra</label><select id="layers" onchange="updateCake();">
+    <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+    <option value="2" data-i18n="patra_2">2 patra </option>
+    <option value="3" data-i18n="patra_3">3 patra </option>
+</select></div>
+                    
+                    <div><label data-i18n="label_chut">Chuť korpusu</label><select id="flavor" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="0x6e5445" data-i18n="flavor_kakaovy">Kakaový</option>
+                        <option value="0xfff1a3" data-i18n="flavor_vanilkovy">Vanilkový</option>
+                        <option value="0xeba254" data-i18n="flavor_mrkvovy">Mrkvový</option>
+                        <option value="0x3b7a31" data-i18n="flavor_mechovy">Mechový</option>
+                        <option value="0x96915c" data-i18n="flavor_orechovy">Ořechový</option>
+                    </select></div>
+                </div>
+            </div>
+
+            <div class="sekce" id="stepSekce2">
+                <h3><span class="sekce-title-wrap">2. <span data-i18n="sekce2_title">Design & Krém</span></span></h3>
+                <div class="flex">
+                    <div><label data-i18n="label_obmaz">Styl obmazu</label><select id="coating" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="semi" data-i18n="obmaz_naked">Nahý dort</option>
+                        <option value="full" data-i18n="obmaz_full">Plný obmaz</option>
+                    </select></div>
+                    <div><label data-i18n="label_vnitrni">Vnitřní krém</label><select id="innerCream" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
+                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>                       
+                    </select></div>
+                    <div><label data-i18n="label_vnejsi">Vnější krém</label><select id="outerCream" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
+                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>
+                        <option value="0xFFF6C9" data-i18n="butter_vanilka">Máslový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="butter_cokolada">Máslový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="butter_karamel">Máslový - karamel</option>
+                        <option value="0xED3939" data-i18n="butter_ovocny">Máslový - ovocný</option>
+                    </select></div>
+                </div>
+            </div>
+
+            <div class="sekce" id="stepSekce3">
+                <h3><span class="sekce-title-wrap">3. <span data-i18n="sekce3_title">Ovocná kompozice</span></span></h3>
+                <div class="flex">
+                    <div><label data-i18n="label_prolozeni">Proložení uvnitř</label><select id="fruitCream" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="none" data-i18n="fruit_none">Bez ovoce</option>
+                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
+                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
+                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
+                        <option value="mix" data-i18n="fruit_mix">Mix ovoce</option>
+                        <option value="0xF02800" data-i18n="fruit_puk">Želatinový ovocný puk</option>
+                        <option value="0x825842" data-i18n="fruit_cokopuk">Čokoládový puk</option>
+                    </select></div>
+                    
+                    <div><label data-i18n="label_zdobeni">Zdobení nahoře</label><select id="fruitTop" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="none" data-i18n="top_none">Bez zdobení</option>
+                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
+                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
+                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
+                        <option value="mix" data-i18n="top_mix">Bohatý Mix</option>
+                    </select></div>
+                    
+                    <div><label data-i18n="label_vrsek">Styl vršku</label><select id="topStyle" onchange="updateCake();">
+                        <option value="" selected disabled data-i18n="opt_placeholder">— Vyberte —</option>
+                        <option value="border" data-i18n="vrsek_border">Věneček (Okraje)</option>
+                        <option value="full" data-i18n="vrsek_full">Plné zaplnění</option>
+                    </select></div>
+                </div>
             </div>
 
             <div class="sekce" id="stepSekce4">
@@ -778,6 +789,8 @@ const translations = {
         label_jmeno: "Jméno a Příjmení", label_email: "E-mail", label_telefon: "Telefon",
         label_datum: "Datum události", datum_placeholder: "Klikněte a vyberte termín",
         cal_free: "Volno", cal_blocked: "Obsazeno", cal_past: "Tento termín už je pryč",
+        opt_placeholder: "— Vyberte —", select_first_note: "Nejdřív prosím dokončete Korpus",
+        toast_incomplete_config: "Prosím doplňte ještě zvýrazněný krok konfigurace dortu",
         sekce1_title: "Korpus", label_styl_dortu: "Styl dortu",
         opt_classic: "🎂 Klasický", opt_classic1: "🎂 Patrový", opt_wedding: "💍 Svatební",
         label_prumer: "Průměr",
@@ -849,6 +862,8 @@ const translations = {
         label_jmeno: "Full Name", label_email: "E-mail", label_telefon: "Phone",
         label_datum: "Event date", datum_placeholder: "Click to pick a date",
         cal_free: "Free", cal_blocked: "Booked", cal_past: "This date has already passed",
+        opt_placeholder: "— Please select —", select_first_note: "Please complete the Base step first",
+        toast_incomplete_config: "Please finish the highlighted cake configuration step",
         sekce1_title: "Base", label_styl_dortu: "Cake style",
         opt_classic: "🎂 Classic", opt_classic1: "🎂 Tiered", opt_wedding: "💍 Wedding",
         label_prumer: "Diameter",
@@ -919,6 +934,8 @@ const translations = {
         label_jmeno: "Vor- und Nachname", label_email: "E-Mail", label_telefon: "Telefon",
         label_datum: "Veranstaltungsdatum", datum_placeholder: "Klicken Sie, um ein Datum zu wählen",
         cal_free: "Frei", cal_blocked: "Belegt", cal_past: "Dieser Termin liegt bereits in der Vergangenheit",
+        opt_placeholder: "— Bitte wählen —", select_first_note: "Bitte zuerst den Boden auswählen",
+        toast_incomplete_config: "Bitte vervollständigen Sie den markierten Konfigurationsschritt",
         sekce1_title: "Boden", label_styl_dortu: "Tortenstil",
         opt_classic: "🎂 Klassisch", opt_classic1: "🎂 Etagen", opt_wedding: "💍 Hochzeit",
         label_prumer: "Durchmesser",
@@ -1244,13 +1261,30 @@ function updateFileName() {
     }
 
     function calculatePrice() {
-        const diameter = parseInt(document.getElementById('diameter').value);
+        const diameterRaw = document.getElementById('diameter').value;
         const style = document.getElementById('cakeStyle').value;
-        const coat = document.getElementById('coating').value;
         const flavorValue = document.getElementById('flavor').value; // barevný kód, jazykově nezávislý
+        const layersRaw = document.getElementById('layers').value;
+
+        const priceMainEl = document.getElementById('priceMainText');
+        const rowsEl = document.getElementById('breakdownRows');
+        const stickyEl = document.getElementById('stickyPriceText');
+
+        // Dokud nejsou vyplněné základní parametry (Korpus), nepočítáme žádnou cenu
+        const coreReady = diameterRaw !== '' && style !== '' && flavorValue !== '' && (style === 'classic' || layersRaw !== '');
+        if (!coreReady) {
+            document.getElementById('info-display').innerText = t('select_first_note');
+            if (priceMainEl) priceMainEl.innerText = '--';
+            if (rowsEl) rowsEl.innerHTML = '';
+            if (stickyEl) stickyEl.innerText = '--';
+            return;
+        }
+
+        const diameter = parseInt(diameterRaw);
+        const coat = document.getElementById('coating').value;
 
         // Zjištění počtu pater - klasika má vždy 1 patro, svatební podle dropdownu
-        let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
+        let numTiers = style === 'classic' ? 1 : parseInt(layersRaw);
         let total = 0;
         const breakdown = []; // { label, amount } pro itemizovaný rozpad ceny
 
@@ -1272,9 +1306,13 @@ function updateFileName() {
         if (flavorValue === '0x6e5445') { const a = 50 * numTiers; total += a; breakdown.push({ label: t('bd_kakaovy'), amount: a }); }
         
         if (coat === 'full') { const a = 150 * numTiers; total += a; breakdown.push({ label: t('bd_obmaz'), amount: a }); }
-        if (document.getElementById('fruitCream').value !== 'none') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_prolozeni'), amount: a }); }
-        if (document.getElementById('fruitTop').value !== 'none') { total += 100; breakdown.push({ label: t('bd_zdobeni_nahore'), amount: 100 }); }
-        if (document.getElementById('fruitCream').value !== 'none') { const a = 50 * numTiers; total += a; breakdown.push({ label: t('bd_puk'), amount: a }); }
+
+        // Ovoce/doplňky ze sekcí, které ještě nemusí být vyplněné — prázdná hodnota = zatím nic nepřidáváme
+        const fruitCreamVal = document.getElementById('fruitCream').value;
+        const fruitTopVal = document.getElementById('fruitTop').value;
+        if (fruitCreamVal && fruitCreamVal !== 'none') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_prolozeni'), amount: a }); }
+        if (fruitTopVal && fruitTopVal !== 'none') { total += 100; breakdown.push({ label: t('bd_zdobeni_nahore'), amount: 100 }); }
+        if (fruitCreamVal && fruitCreamVal !== 'none') { const a = 50 * numTiers; total += a; breakdown.push({ label: t('bd_puk'), amount: a }); }
         
         if (document.getElementById('c_flowers').checked) { total += 150; breakdown.push({ label: t('bd_kvetiny'), amount: 150 }); }
         if (document.getElementById('c1').checked) { total += 300; breakdown.push({ label: t('bd_papir'), amount: 300 }); }
@@ -1288,18 +1326,15 @@ function updateFileName() {
         const priceText = `${minPrice} – ${maxPrice} Kč`;
 
         document.getElementById('info-display').innerText = infoText;
-        const priceMainEl = document.getElementById('priceMainText');
         if (priceMainEl) priceMainEl.innerText = t('price_estimate') + ": " + priceText;
 
         // Aktualizace itemizovaného rozpadu ceny
-        const rowsEl = document.getElementById('breakdownRows');
         if (rowsEl) {
             rowsEl.innerHTML = breakdown.map(b => `<div class="row"><span>${b.label}</span><span>+${b.amount} Kč</span></div>`).join('')
                 + `<div class="row total"><span>${t('breakdown_total')}</span><span>${priceText}</span></div>`;
         }
 
         // Synchronizace sticky mobilní lišty
-        const stickyEl = document.getElementById('stickyPriceText');
         if (stickyEl) stickyEl.innerText = priceText;
     }
 
@@ -1308,16 +1343,30 @@ function updateFileName() {
     while(cakeGroup.children.length > 0) cakeGroup.remove(cakeGroup.children[0]);
     
     const style = document.getElementById('cakeStyle').value;
-    const diameter = parseInt(document.getElementById('diameter').value);
-    let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
+    const diameterRaw = document.getElementById('diameter').value;
+    const flavorRaw = document.getElementById('flavor').value;
+    const layersRaw = document.getElementById('layers').value;
 
-    const coat = document.getElementById('coating').value;
-    const fruitT = document.getElementById('fruitTop').value;
-    const fruitC = document.getElementById('fruitCream').value;
-    const topS = document.getElementById('topStyle').value;
-    const flavorColor = parseInt(document.getElementById('flavor').value);
-    const innerColor = parseInt(document.getElementById('innerCream').value);
-    const outerColor = parseInt(document.getElementById('outerCream').value);
+    // Dokud nejsou vyplněné základní parametry Korpusu, nekreslíme žádnou geometrii (jen placeholder cenu)
+    const coreReady = style !== '' && diameterRaw !== '' && flavorRaw !== '' && (style === 'classic' || layersRaw !== '');
+    if (!coreReady) {
+        calculatePrice();
+        return;
+    }
+
+    const diameter = parseInt(diameterRaw);
+    let numTiers = style === 'classic' ? 1 : parseInt(layersRaw);
+
+    // Volitelné parametry z dalších kroků: dokud nejsou vybrané, použijeme neutrální výchozí vzhled
+    const coat = document.getElementById('coating').value || 'semi';
+    const fruitT = document.getElementById('fruitTop').value || 'none';
+    const fruitC = document.getElementById('fruitCream').value || 'none';
+    const topS = document.getElementById('topStyle').value || 'full';
+    const flavorColor = parseInt(flavorRaw);
+    const innerColorRaw = document.getElementById('innerCream').value;
+    const outerColorRaw = document.getElementById('outerCream').value;
+    const innerColor = innerColorRaw ? parseInt(innerColorRaw) : flavorColor;
+    const outerColor = outerColorRaw ? parseInt(outerColorRaw) : flavorColor;
     
     const baseRadius = diameter / 6.5; 
     const h = 0.5; 
@@ -1490,6 +1539,26 @@ function updateFileName() {
 document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
+    // Kontrola, že jsou vyplněné všechny 4 kroky konfigurace dortu
+    const requiredSteps = [
+        { ids: ['cakeStyle', 'diameter', 'layers', 'flavor'], tab: 'stepSekce1' },
+        { ids: ['coating', 'innerCream', 'outerCream'], tab: 'stepSekce2' },
+        { ids: ['fruitCream', 'fruitTop', 'topStyle'], tab: 'stepSekce3' },
+    ];
+    for (const step of requiredSteps) {
+        const missing = step.ids.some(id => {
+            const el = document.getElementById(id);
+            // "layers" se u klasického stylu nepoužívá, takže ho v tom případě nekontrolujeme
+            if (id === 'layers' && document.getElementById('cakeStyle').value === 'classic') return false;
+            return el && el.value === '';
+        });
+        if (missing) {
+            showToast(t('toast_incomplete_config'));
+            document.querySelector(`.step-item[data-target="${step.tab}"]`)?.click();
+            return;
+        }
+    }
+
     if (!selectedEventDate) {
         showToast(t('toast_select_date'));
         document.getElementById('eventDateDisplay')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1632,44 +1701,28 @@ window.addEventListener('DOMContentLoaded', () => {
         telInput.setAttribute('title', 'Zadejte platné telefonní číslo, např. 601 234 567 nebo +420 601 234 567');
     }
 
-    // --- Progress stepper: zvýrazní aktuální krok podle scrollu ---
+    // --- Stepper: klik zobrazí jen danou sekci (Korpus/Design/Ovoce/Doplňky), ostatní se schovají ---
     const stepItems = document.querySelectorAll('.step-item');
     const stepSections = ['stepSekce1', 'stepSekce2', 'stepSekce3', 'stepSekce4']
         .map(id => document.getElementById(id)).filter(Boolean);
 
-    stepItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const target = document.getElementById(item.dataset.target);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    function showStep(targetId) {
+        stepSections.forEach(sec => {
+            const isTarget = sec.id === targetId;
+            sec.classList.toggle('sekce-hidden', !isTarget);
+            sec.classList.toggle('sekce-visible', isTarget);
         });
+        stepItems.forEach(item => {
+            item.classList.toggle('active', item.dataset.target === targetId);
+        });
+    }
+
+    stepItems.forEach(item => {
+        item.addEventListener('click', () => showStep(item.dataset.target));
     });
 
-    if (stepSections.length && 'IntersectionObserver' in window) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const idx = stepSections.indexOf(entry.target);
-                    stepItems.forEach((item, i) => {
-                        item.classList.toggle('active', i === idx);
-                        item.classList.toggle('done', i < idx);
-                    });
-                }
-            });
-        }, { threshold: 0.4, rootMargin: '-100px 0px -40% 0px' });
-        stepSections.forEach(sec => observer.observe(sec));
-
-        // Jemné zjevení karet při scrollování
-        stepSections.forEach(sec => sec.classList.add('reveal-init'));
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.15 });
-        stepSections.forEach(sec => revealObserver.observe(sec));
-    }
+    // Na startu je vidět jen první krok (Korpus)
+    if (stepSections.length) showStep('stepSekce1');
 
     // --- Rozpad ceny: klik na cenovku otevře/zavře popup ---
     const priceDisplay = document.getElementById('price-display');
