@@ -405,6 +405,8 @@
         .confirm-row { display: flex; align-items: flex-start; gap: 12px; margin: 25px 0; font-size: 13px; color: #666; }
         .confirm-row input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--gold); flex-shrink: 0; cursor: pointer; }
         .confirm-row label { text-transform: none; letter-spacing: normal; font-weight: 500; color: #666; margin: 0; cursor: pointer; }
+        .confirm-row label .inline-privacy-link { color: var(--gold-deep); font-weight: 700; text-decoration: none; border-bottom: 1px solid rgba(201,161,59,0.5); }
+        .confirm-row label .inline-privacy-link:hover { color: var(--primary-dark); }
 
         /* --- TOAST NOTIFIKACE (odkaz zkopírován apod.) --- */
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary-dark); color: white; padding: 16px 30px; border-radius: 50px; font-size: 14px; font-weight: 600; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 10002; transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1); }
@@ -727,7 +729,7 @@
 
             <div class="confirm-row">
                 <input type="checkbox" id="gdprConsent" required>
-                <label for="gdprConsent" data-i18n="gdpr_text">Souhlasím se zpracováním mých osobních údajů (jméno, e-mail, telefon) za účelem vyřízení této poptávky.</label>
+                <label for="gdprConsent" data-i18n="gdpr_text">Souhlasím se zpracováním mých osobních údajů (jméno, e-mail, telefon) za účelem vyřízení této poptávky. Více v <a href="zasady.html" target="_blank" class="inline-privacy-link">zásadách ochrany osobních údajů</a>.</label>
             </div>
 
             <div class="confirm-row">
@@ -818,7 +820,7 @@ const translations = {
         upload_text: "Klikněte pro nahrání fotky (max 500kB)",
         upload_resizing: "Zmenšuji fotku...", upload_done: "Vybráno a zmenšeno: ",
         ph_zprava: "Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie...",
-        gdpr_text: "Souhlasím se zpracováním mých osobních údajů (jméno, e-mail, telefon) za účelem vyřízení této poptávky.",
+        gdpr_text: "Souhlasím se zpracováním mých osobních údajů (jméno, e-mail, telefon) za účelem vyřízení této poptávky. Více v <a href=\"zasady.html\" target=\"_blank\" class=\"inline-privacy-link\">zásadách ochrany osobních údajů</a>.",
         confirm_text: "Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.",
         btn_submit: "Odeslat poptávku", sticky_label: "Odhad ceny",
         admin_title: "Administrace termínů",
@@ -892,7 +894,7 @@ const translations = {
         upload_text: "Click to upload a photo (max 500kB)",
         upload_resizing: "Resizing photo...", upload_done: "Selected and resized: ",
         ph_zprava: "Leave me a note here — specific color requests, allergy warnings...",
-        gdpr_text: "I agree to the processing of my personal data (name, e-mail, phone) for the purpose of handling this inquiry.",
+        gdpr_text: "I agree to the processing of my personal data (name, e-mail, phone) for the purpose of handling this inquiry. More in the <a href=\"zasady.html\" target=\"_blank\" class=\"inline-privacy-link\">Privacy Policy</a>.",
         confirm_text: "I understand the shown price is only an estimate and the final price will be confirmed after consultation.",
         btn_submit: "Send inquiry", sticky_label: "Estimated price",
         admin_title: "Availability admin",
@@ -965,7 +967,7 @@ const translations = {
         upload_text: "Klicken Sie, um ein Foto hochzuladen (max. 500kB)",
         upload_resizing: "Foto wird verkleinert...", upload_done: "Ausgewählt und verkleinert: ",
         ph_zprava: "Hier können Sie mir eine Nachricht hinterlassen — Farbwünsche, Allergiehinweise...",
-        gdpr_text: "Ich stimme der Verarbeitung meiner personenbezogenen Daten (Name, E-Mail, Telefon) zur Bearbeitung dieser Anfrage zu.",
+        gdpr_text: "Ich stimme der Verarbeitung meiner personenbezogenen Daten (Name, E-Mail, Telefon) zur Bearbeitung dieser Anfrage zu. Mehr in der <a href=\"zasady.html\" target=\"_blank\" class=\"inline-privacy-link\">Datenschutzerklärung</a>.",
         confirm_text: "Mir ist bewusst, dass der angezeigte Preis nur eine Schätzung ist und der Endpreis nach Rücksprache bestätigt wird.",
         btn_submit: "Anfrage senden", sticky_label: "Geschätzter Preis",
         admin_title: "Terminverwaltung",
