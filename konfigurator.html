@@ -1180,65 +1180,65 @@ function updateFileName() {
                 specular: 0x882222
             });
 
-            // Geometrie jahody: špičatý spodek (kužel) + baňatý vršek (koule), plynule navazující
-            const coneHeight = size * 1.3;
-            const coneRadiusTop = size * 0.55;
-            const coneCenterY = size * 0.65; // posunuto tak, aby špička jahody seděla na povrchu (y=0), ne pod ním
-            const coneTopY = coneCenterY + coneHeight / 2; // kde kužel navazuje na kouli
+            // Profil siluety jahody (poloměr, výška) - špička dole, baňaté uprostřed, zúžení nahoře ke kalichu.
+            // Jedna spojitá plocha (lathe) = žádný šev, žádné "jehličky" jako u předchozí verze s kuželem.
+            const profile = [
+                { y: 0.00, r: 0.00 },
+                { y: 0.18, r: 0.28 },
+                { y: 0.42, r: 0.50 },
+                { y: 0.72, r: 0.62 },
+                { y: 0.95, r: 0.65 },
+                { y: 1.15, r: 0.60 },
+                { y: 1.32, r: 0.45 },
+                { y: 1.42, r: 0.22 },
+                { y: 1.48, r: 0.00 },
+            ];
+            const topY = profile[profile.length - 1].y * size;
 
-            const sphereRadius = size * 0.62;
-            const sphereCenterY = coneTopY - size * 0.12; // koule mírně "zapuštěná" do kužele, aby nebyl vidět šev
-            const topY = sphereCenterY + sphereRadius; // vrchol jahody, kam sedí kalich
+            function strawberryRadiusAt(yAbs) {
+                const yN = yAbs / size;
+                for (let i = 0; i < profile.length - 1; i++) {
+                    const a = profile[i], b = profile[i + 1];
+                    if (yN >= a.y && yN <= b.y) {
+                        const t = (yN - a.y) / ((b.y - a.y) || 1);
+                        return (a.r + (b.r - a.r) * t) * size;
+                    }
+                }
+                return 0;
+            }
 
-            // 1. Špičatý spodek
-            const coneGeo = new THREE.ConeGeometry(coneRadiusTop, coneHeight, 20);
-            const cone = new THREE.Mesh(coneGeo, strawberryMat);
-            cone.rotation.x = Math.PI; // otočíme špičkou dolů
-            cone.position.y = coneCenterY;
-            group.add(cone);
+            // 1. Tělo jahody - jedna hladká otočná plocha podle profilu
+            const latheGeo = new THREE.LatheGeometry(
+                profile.map(p => new THREE.Vector2(p.r * size, p.y * size)),
+                28
+            );
+            const body = new THREE.Mesh(latheGeo, strawberryMat);
+            group.add(body);
 
-            // 2. Baňatý vršek
-            const sphereGeo = new THREE.SphereGeometry(sphereRadius, 20, 20);
-            const sphereBody = new THREE.Mesh(sphereGeo, strawberryMat);
-            sphereBody.scale.set(1, 0.92, 1);
-            sphereBody.position.y = sphereCenterY;
-            group.add(sphereBody);
-
-            // 3. Semínka rozeseté po povrchu (drobné zploštělé kuličky ve žlutém odstínu)
+            // 2. Semínka rozeseté po povrchu (drobné zploštělé kuličky ve žlutém odstínu)
             const seedMat = new THREE.MeshPhongMaterial({ color: 0xf3e2a0, shininess: 15 });
             const seedGeo = new THREE.SphereGeometry(size * 0.06, 6, 6);
             seedGeo.scale(1, 0.55, 1);
 
-            // Poloměr těla jahody v dané výšce y (analyticky, podle kužele/koule výše)
-            function strawberryRadiusAt(y) {
-                if (y <= coneTopY) {
-                    const t = Math.max(0, Math.min(1, (y - (coneCenterY - coneHeight / 2)) / coneHeight));
-                    return coneRadiusTop * t;
-                }
-                const dy = y - sphereCenterY;
-                const r2 = (sphereRadius * sphereRadius) - (dy * dy);
-                return r2 > 0 ? Math.sqrt(r2) : 0;
-            }
-
             const seedRows = 7;
             for (let row = 0; row < seedRows; row++) {
-                const v = (row + 0.6) / (seedRows + 0.5); // 0..1 od špičky k vrcholu
-                const y = THREE.MathUtils.lerp(coneCenterY - coneHeight * 0.42, topY - size * 0.1, v);
+                const v = (row + 0.7) / (seedRows + 1); // 0..1 od špičky k vrcholu, vynechá krajní úzké pásky
+                const y = v * (size * 1.35);
                 const r = strawberryRadiusAt(y);
-                if (r < size * 0.08) continue; // moc blízko špičky/vrcholu, semínko by trčelo do prázdna
+                if (r < size * 0.1) continue; // moc blízko špičky/vrcholu, semínko by trčelo do prázdna
                 const seedsInRow = Math.max(4, Math.round(9 * Math.sin(Math.PI * v) + 3));
                 const angleOffset = (row % 2 === 0) ? 0 : (Math.PI / seedsInRow);
                 for (let i = 0; i < seedsInRow; i++) {
                     const angle = (i / seedsInRow) * Math.PI * 2 + angleOffset;
                     const seed = new THREE.Mesh(seedGeo, seedMat);
-                    seed.position.set(Math.cos(angle) * (r + size * 0.02), y, Math.sin(angle) * (r + size * 0.02));
+                    seed.position.set(Math.cos(angle) * (r + size * 0.015), y, Math.sin(angle) * (r + size * 0.015));
                     seed.rotation.y = -angle;
                     seed.rotation.x = Math.PI / 2;
                     group.add(seed);
                 }
             }
 
-            // 4. Zelené lístky (kalich) nahoře
+            // 3. Zelené lístky (kalich) nahoře
             const leafMat = new THREE.MeshPhongMaterial({ color: 0x2d5a1e, side: THREE.DoubleSide });
             for (let i = 0; i < 6; i++) {
                 const leafGeo = new THREE.ConeGeometry(size * 0.25, size * 0.6, 3);
