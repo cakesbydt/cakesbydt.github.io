@@ -352,6 +352,21 @@
         }
         .ghost-btn:hover { background: var(--primary-dark); color: var(--gold-light); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(58,38,64,0.25); border-color: var(--gold); }
 
+        /* --- PŘEPÍNAČ JAZYKŮ --- */
+        .lang-switch {
+            position: fixed; top: 24px; right: 24px; z-index: 997;
+            display: flex; gap: 4px; background: rgba(255,255,255,0.55); backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.7); border-radius: 30px; padding: 5px; box-shadow: 0 10px 25px rgba(58,38,64,0.1);
+        }
+        .lang-switch button {
+            border: none; background: transparent; padding: 7px 13px; border-radius: 20px; cursor: pointer;
+            font-size: 11px; font-weight: 800; letter-spacing: 1px; color: var(--primary-dark); opacity: 0.5;
+            transition: all 0.25s ease;
+        }
+        .lang-switch button.active { background: var(--primary-dark); color: var(--gold-light); opacity: 1; }
+        .lang-switch button:hover { opacity: 1; }
+        @media (max-width: 1024px) { .lang-switch { top: 14px; right: 14px; } .lang-switch button { padding: 6px 10px; font-size: 10px; } }
+
         /* --- WHATSAPP FLOAT --- */
         .whatsapp-float {
             position: fixed; bottom: 30px; right: 30px; width: 62px; height: 62px; border-radius: 50%;
@@ -465,6 +480,12 @@
     <div class="blob two"></div>
 </div>
 
+<div class="lang-switch" id="langSwitch">
+    <button type="button" data-lang="cs">CZ</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="de">DE</button>
+</div>
+
 <form id="cakeOrderForm" style="width: 100%; display: flex; justify-content: center;">
     
     <input type="hidden" name="_captcha" value="false">
@@ -477,12 +498,12 @@
             <div class="logo-vlevo"><img src="logo.jpg" alt="Logo Cakes by DT"></div>
             
             <div class="kontaktni-form" style="width: 100%; max-width: 320px;">
-                <div class="input-group"><label>Jméno a Příjmení</label><input type="text" name="Jmeno" required></div>
-                <div class="input-group"><label>E-mail</label><input type="email" name="Email" required></div>
-                <div class="input-group"><label>Telefon</label><input type="tel" name="Telefon" required></div>
+                <div class="input-group"><label data-i18n="label_jmeno">Jméno a Příjmení</label><input type="text" name="Jmeno" required></div>
+                <div class="input-group"><label data-i18n="label_email">E-mail</label><input type="email" name="Email" required></div>
+                <div class="input-group"><label data-i18n="label_telefon">Telefon</label><input type="tel" name="Telefon" required></div>
                 <div class="input-group" style="position: relative;">
-                    <label>Datum události</label>
-                    <input type="text" id="eventDateDisplay" name="Datum_Udalosti" placeholder="Klikněte a vyberte termín" readonly autocomplete="off">
+                    <label data-i18n="label_datum">Datum události</label>
+                    <input type="text" id="eventDateDisplay" name="Datum_Udalosti" data-i18n-ph="datum_placeholder" placeholder="Klikněte a vyberte termín" readonly autocomplete="off">
                     <div class="calendar-popup" id="calendarPopup">
                         <div class="cal-header">
                             <button type="button" id="calPrev">&lsaquo;</button>
@@ -491,8 +512,8 @@
                         </div>
                         <div class="cal-grid" id="calGrid"></div>
                         <div class="cal-legend">
-                            <span><i class="dot available"></i>Volno</span>
-                            <span><i class="dot blocked"></i>Obsazeno</span>
+                            <span><i class="dot available"></i><span data-i18n="cal_free">Volno</span></span>
+                            <span><i class="dot blocked"></i><span data-i18n="cal_blocked">Obsazeno</span></span>
                         </div>
                         <div class="cal-loading-note" id="calNote"></div>
                     </div>
@@ -500,7 +521,7 @@
             </div>
 
             <div class="ig-live-gallery" style="width: 100%;">
-                <p class="gallery-label">Inspirace z mé tvorby</p>
+                <p class="gallery-label" data-i18n="gallery_label">Inspirace z mé tvorby</p>
                 <div class="single-photo-container">
                     <div class="photo-slot-main" id="slot1"></div>
                 </div>
@@ -508,21 +529,21 @@
             
             <div class="ig-link-wrapper">
                 <a href="https://www.instagram.com/_cakesbydt_/" target="_blank" class="ig-button-link">
-                    <span>Sledujte @_cakesbydt_</span>
+                    <span data-i18n="ig_follow">Sledujte @_cakesbydt_</span>
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
                 </a>
             </div>
-            <p style="margin-top:50px; font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--gold); opacity: 0.8;">Váš sladký sen</p>
+            <p style="margin-top:50px; font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--gold); opacity: 0.8;" data-i18n="footer_tagline">Váš sladký sen</p>
         </div>
 
         <div class="obsah">
             <div class="top-instagram-header">
                 <a href="https://www.instagram.com/_cakesbydt_/" target="_blank">
-                    <i class="fab fa-instagram"></i> Více inspirace na <span>@_cakesbydt_</span>
+                    <i class="fab fa-instagram"></i> <span data-i18n="ig_more">Více inspirace na</span> <span>@_cakesbydt_</span>
                 </a>
             </div>
 
-            <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
+            <h1 class="hlavni-motto" data-i18n="hero_title">Upečeme vám vzpomínku</h1>
             <div class="motto-flourish">
                 <span class="line"></span>
                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
@@ -533,178 +554,178 @@
             </div>
 
             <nav class="stepper-nav" id="stepperNav">
-                <div class="step-item" data-target="stepSekce1"><span class="dot"><span>1</span></span><span class="step-label">Korpus</span></div>
+                <div class="step-item" data-target="stepSekce1"><span class="dot"><span>1</span></span><span class="step-label" data-i18n="step1">Korpus</span></div>
                 <div class="step-connector"></div>
-                <div class="step-item" data-target="stepSekce2"><span class="dot"><span>2</span></span><span class="step-label">Design</span></div>
+                <div class="step-item" data-target="stepSekce2"><span class="dot"><span>2</span></span><span class="step-label" data-i18n="step2">Design</span></div>
                 <div class="step-connector"></div>
-                <div class="step-item" data-target="stepSekce3"><span class="dot"><span>3</span></span><span class="step-label">Ovoce</span></div>
+                <div class="step-item" data-target="stepSekce3"><span class="dot"><span>3</span></span><span class="step-label" data-i18n="step3">Ovoce</span></div>
                 <div class="step-connector"></div>
-                <div class="step-item" data-target="stepSekce4"><span class="dot"><span>4</span></span><span class="step-label">Doplňky</span></div>
+                <div class="step-item" data-target="stepSekce4"><span class="dot"><span>4</span></span><span class="step-label" data-i18n="step4">Doplňky</span></div>
             </nav>
             
             <div class="sekce" id="stepSekce1">
-                <h3>1. Korpus</h3>
+                <h3><span class="sekce-title-wrap">1. <span data-i18n="sekce1_title">Korpus</span></span></h3>
                 <div class="flex">
                     <div style="flex-basis: 100%; margin-bottom: 10px;">
-                        <label>Styl dortu</label>
+                        <label data-i18n="label_styl_dortu">Styl dortu</label>
                         <select id="cakeStyle" onchange="updateCake();">
-                            <option value="classic">🎂 Klasický</option>
-                            <option value="classic1">🎂 Patrový</option>
-                            <option value="wedding">💍 Svatební</option>
+                            <option value="classic" data-i18n="opt_classic">🎂 Klasický</option>
+                            <option value="classic1" data-i18n="opt_classic1">🎂 Patrový</option>
+                            <option value="wedding" data-i18n="opt_wedding">💍 Svatební</option>
                         </select>
                     </div>
-                    <div><label>Průměr</label><select id="diameter" onchange="updateCake();">
-                        <option value="15">16 cm (8-10 porcí)</option>
-                        <option value="18">18 cm (10-12 porcí)</option>
-                        <option value="20" selected>20 cm (12-14 porcí)</option>
-                        <option value="22">22 cm (14-16 porcí)</option>
-                        <option value="24">24 cm (16-18 porcí)</option>
-                        <option value="26">26 cm (18-20 porcí)</option>
+                    <div><label data-i18n="label_prumer">Průměr</label><select id="diameter" onchange="updateCake();">
+                        <option value="15" data-i18n="dia_15">16 cm (8-10 porcí)</option>
+                        <option value="18" data-i18n="dia_18">18 cm (10-12 porcí)</option>
+                        <option value="20" selected data-i18n="dia_20">20 cm (12-14 porcí)</option>
+                        <option value="22" data-i18n="dia_22">22 cm (14-16 porcí)</option>
+                        <option value="24" data-i18n="dia_24">24 cm (16-18 porcí)</option>
+                        <option value="26" data-i18n="dia_26">26 cm (18-20 porcí)</option>
                     </select></div>
                     
-                   <div><label>Patra</label><select id="layers" onchange="updateCake();">
-    <option value="2" selected>2 patra </option>
-    <option value="3">3 patra </option>
+                   <div><label data-i18n="label_patra">Patra</label><select id="layers" onchange="updateCake();">
+    <option value="2" selected data-i18n="patra_2">2 patra </option>
+    <option value="3" data-i18n="patra_3">3 patra </option>
 </select></div>
                     
-                    <div><label>Chuť korpusu</label><select id="flavor" onchange="updateCake();">
-                        <option value="0x6e5445">Kakaový</option>
-                        <option value="0xfff1a3">Vanilkový</option>
-                        <option value="0xeba254">Mrkvový</option>
-                        <option value="0x3b7a31">Mechový</option>
-                        <option value="0x96915c">Ořechový</option>
+                    <div><label data-i18n="label_chut">Chuť korpusu</label><select id="flavor" onchange="updateCake();">
+                        <option value="0x6e5445" data-i18n="flavor_kakaovy">Kakaový</option>
+                        <option value="0xfff1a3" data-i18n="flavor_vanilkovy">Vanilkový</option>
+                        <option value="0xeba254" data-i18n="flavor_mrkvovy">Mrkvový</option>
+                        <option value="0x3b7a31" data-i18n="flavor_mechovy">Mechový</option>
+                        <option value="0x96915c" data-i18n="flavor_orechovy">Ořechový</option>
                     </select></div>
                 </div>
             </div>
 
             <div class="sekce" id="stepSekce2">
-                <h3>2. Design & Krém</h3>
+                <h3><span class="sekce-title-wrap">2. <span data-i18n="sekce2_title">Design & Krém</span></span></h3>
                 <div class="flex">
-                    <div><label>Styl obmazu</label><select id="coating" onchange="updateCake();"><option value="semi" selected>Nahý dort</option><option value="full" >Plný obmaz</option></select></div>
-                    <div><label>Vnitřní krém</label><select id="innerCream" onchange="updateCake();">
-                        <option value="0xFFF6C9">Smetanový - vanilka</option>
-                        <option value="0x8C7464">Smetanový - čokoláda</option>
-                        <option value="0xFF9852">Smetanový - karamel</option>
-                        <option value="0xED3939">Smetanový - ovocný</option>                       
+                    <div><label data-i18n="label_obmaz">Styl obmazu</label><select id="coating" onchange="updateCake();"><option value="semi" selected data-i18n="obmaz_naked">Nahý dort</option><option value="full" data-i18n="obmaz_full">Plný obmaz</option></select></div>
+                    <div><label data-i18n="label_vnitrni">Vnitřní krém</label><select id="innerCream" onchange="updateCake();">
+                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
+                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>                       
                     </select></div>
-                    <div><label>Vnější krém</label><select id="outerCream" onchange="updateCake();">
-                        <option value="0xFFF6C9">Smetanový - vanilka</option>
-                        <option value="0x8C7464">Smetanový - čokoláda</option>
-                        <option value="0xFF9852">Smetanový - karamel</option>
-                        <option value="0xED3939">Smetanový - ovocný</option>
-                        <option value="0xFFF6C9">Máslový - vanilka</option>
-                        <option value="0x8C7464">Máslový - čokoláda</option>
-                        <option value="0xFF9852">Máslový - karamel</option>
-                        <option value="0xED3939">Máslový - ovocný</option>
+                    <div><label data-i18n="label_vnejsi">Vnější krém</label><select id="outerCream" onchange="updateCake();">
+                        <option value="0xFFF6C9" data-i18n="cream_vanilka">Smetanový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="cream_cokolada">Smetanový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="cream_karamel">Smetanový - karamel</option>
+                        <option value="0xED3939" data-i18n="cream_ovocny">Smetanový - ovocný</option>
+                        <option value="0xFFF6C9" data-i18n="butter_vanilka">Máslový - vanilka</option>
+                        <option value="0x8C7464" data-i18n="butter_cokolada">Máslový - čokoláda</option>
+                        <option value="0xFF9852" data-i18n="butter_karamel">Máslový - karamel</option>
+                        <option value="0xED3939" data-i18n="butter_ovocny">Máslový - ovocný</option>
                     </select></div>
                 </div>
             </div>
 
             <div class="sekce" id="stepSekce3">
-                <h3>3. Ovocná kompozice</h3>
+                <h3><span class="sekce-title-wrap">3. <span data-i18n="sekce3_title">Ovocná kompozice</span></span></h3>
                 <div class="flex">
-                    <div><label>Proložení uvnitř</label><select id="fruitCream" onchange="updateCake();">
-                        <option value="none" selected>Bez ovoce</option>
-                        <option value="strawberries" >Jahody</option>
-                        <option value="raspberries" >Maliny</option>
-                        <option value="blueberries" >Borůvky</option>
-                        <option value="mix">Mix ovoce</option>
-                        <option value="0xF02800">Želatinový ovocný puk</option>
-                        <option value="0x825842">Čokoládový puk</option>
+                    <div><label data-i18n="label_prolozeni">Proložení uvnitř</label><select id="fruitCream" onchange="updateCake();">
+                        <option value="none" selected data-i18n="fruit_none">Bez ovoce</option>
+                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
+                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
+                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
+                        <option value="mix" data-i18n="fruit_mix">Mix ovoce</option>
+                        <option value="0xF02800" data-i18n="fruit_puk">Želatinový ovocný puk</option>
+                        <option value="0x825842" data-i18n="fruit_cokopuk">Čokoládový puk</option>
                     </select></div>
                     
-                    <div><label>Zdobení nahoře</label><select id="fruitTop" onchange="updateCake();">
-                        <option value="none" selected>Bez zdobení</option>
-                        <option value="strawberries" >Jahody</option>
-                        <option value="raspberries" >Maliny</option>
-                        <option value="blueberries" >Borůvky</option>
-                        <option value="mix">Bohatý Mix</option>
+                    <div><label data-i18n="label_zdobeni">Zdobení nahoře</label><select id="fruitTop" onchange="updateCake();">
+                        <option value="none" selected data-i18n="top_none">Bez zdobení</option>
+                        <option value="strawberries" data-i18n="fruit_jahody">Jahody</option>
+                        <option value="raspberries" data-i18n="fruit_maliny">Maliny</option>
+                        <option value="blueberries" data-i18n="fruit_boruvky">Borůvky</option>
+                        <option value="mix" data-i18n="top_mix">Bohatý Mix</option>
                     </select></div>
                     
-                    <div><label>Styl vršku</label><select id="topStyle" onchange="updateCake();">
-                        <option value="border">Věneček (Okraje)</option>
-                        <option value="full" selected>Plné zaplnění</option>
+                    <div><label data-i18n="label_vrsek">Styl vršku</label><select id="topStyle" onchange="updateCake();">
+                        <option value="border" data-i18n="vrsek_border">Věneček (Okraje)</option>
+                        <option value="full" selected data-i18n="vrsek_full">Plné zaplnění</option>
                     </select></div>
                 </div>
             </div>
 
             <div id="canvas-container">
                 <div id="info-display" class="info-badge-float">--</div>
-                <div id="price-display"><span id="priceMainText">--</span><span class="hint">Klikni pro rozpad ceny</span></div>
+                <div id="price-display"><span id="priceMainText">--</span><span class="hint" data-i18n="price_hint">Klikni pro rozpad ceny</span></div>
                 <div class="price-breakdown-popup" id="priceBreakdown">
-                    <h4>Rozpad ceny</h4>
+                    <h4 data-i18n="breakdown_title">Rozpad ceny</h4>
                     <div id="breakdownRows"></div>
                 </div>
                 <div class="loading-overlay" id="loading3d">
                     <div class="loading-spinner"></div>
-                    <span>Připravuji 3D náhled…</span>
+                    <span data-i18n="loading_3d">Připravuji 3D náhled…</span>
                 </div>
             </div>
 
             <div class="canvas-actions">
-                <button type="button" class="ghost-btn" id="shareBtn"><i class="fas fa-link"></i> Sdílet konfiguraci</button>
-                <button type="button" class="ghost-btn" id="screenshotBtn"><i class="fas fa-camera-retro"></i> Uložit náhled</button>
+                <button type="button" class="ghost-btn" id="shareBtn"><i class="fas fa-link"></i> <span data-i18n="btn_share">Sdílet konfiguraci</span></button>
+                <button type="button" class="ghost-btn" id="screenshotBtn"><i class="fas fa-camera-retro"></i> <span data-i18n="btn_screenshot">Uložit náhled</span></button>
             </div>
             
             <div class="controls-row">
-                <div><label style="text-align: center;">Rotace 3D modelu</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()"></div>
-                <div><label style="text-align: center;">Náklon pohledu</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
-                <div><label style="text-align: center;">Přiblížení (Zoom)</label><input type="range" id="zoomCam" class="slider" min="8" max="28" step="0.5" value="14" oninput="manualControl()"></div>
+                <div><label style="text-align: center;" data-i18n="label_rotace">Rotace 3D modelu</label><input type="range" id="rotateY" class="slider" min="-3.14" max="3.14" step="0.01" value="0.5" oninput="manualControl()"></div>
+                <div><label style="text-align: center;" data-i18n="label_naklon">Náklon pohledu</label><input type="range" id="rotateX" class="slider" min="-0.6" max="0.6" step="0.01" value="0.2" oninput="manualControl()"></div>
+                <div><label style="text-align: center;" data-i18n="label_zoom">Přiblížení (Zoom)</label><input type="range" id="zoomCam" class="slider" min="8" max="28" step="0.5" value="14" oninput="manualControl()"></div>
             </div>
 
             <div class="sekce" id="stepSekce4">
-                <h3>4. Osobní doplňky</h3>
+                <h3><span class="sekce-title-wrap">4. <span data-i18n="sekce4_title">Osobní doplňky</span></span></h3>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> Květinová dekorace <span class="added-badge">✔ Přidáno</span></label>
-                    <div class="extra-input"><input type="text" name="Detail_Kvetiny" placeholder="Jaké květiny si přejete (druh, barva)?"></div>
+                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> <span data-i18n="extra_kvetiny">Květinová dekorace</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Kvetiny" data-i18n-ph="ph_kvetiny" placeholder="Jaké květiny si přejete (druh, barva)?"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> Jedlý papír <span class="added-badge">✔ Přidáno</span></label>
-                    <div class="extra-input"><input type="text" name="Detail_Papir" placeholder="Popis obrázku nebo motivu"></div>
+                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> <span data-i18n="extra_papir">Jedlý papír</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Papir" data-i18n-ph="ph_papir" placeholder="Popis obrázku nebo motivu"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c2" onchange="calculatePrice()"> Modelovaná figurka <span class="added-badge">✔ Přidáno</span></label>
-                    <div class="extra-input"><input type="text" name="Detail_Figurka" placeholder="Jaká figurka to má být?"></div>
+                    <label><input type="checkbox" id="c2" onchange="calculatePrice()"> <span data-i18n="extra_figurka">Modelovaná figurka</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Figurka" data-i18n-ph="ph_figurka" placeholder="Jaká figurka to má být?"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> Personalizovaný zápich <span class="added-badge">✔ Přidáno</span></label>
-                    <div class="extra-input"><input type="text" name="Detail_Zapich" placeholder="Zadejte text na zápich (např. Vše nejlepší)"></div>
+                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> <span data-i18n="extra_zapich">Personalizovaný zápich</span> <span class="added-badge" data-i18n="badge_pridano">✔ Přidáno</span></label>
+                    <div class="extra-input"><input type="text" name="Detail_Zapich" data-i18n-ph="ph_zapich" placeholder="Zadejte text na zápich (např. Vše nejlepší)"></div>
                 </div>
                 <div class="doplnek-item" style="border-top: 1px dashed var(--primary); margin-top: 30px; padding-top: 30px;">
     <label style="color: var(--gold); margin-bottom: 15px;">
-        <i class="fas fa-camera"></i> Máte vlastní předlohu? (Inspirace)
+        <i class="fas fa-camera"></i> <span data-i18n="label_vlastni_predloha">Máte vlastní předlohu? (Inspirace)</span>
     </label>
     <div class="upload-wrapper">
         <input type="file" id="cakePhoto" name="my_file" accept="image/*" style="display: none;" onchange="updateFileName()">
         <label for="cakePhoto" id="fileLabel" style="display: block; background: rgba(188, 155, 194, 0.1); border: 2px dashed var(--primary); padding: 20px; text-align: center; border-radius: 15px; cursor: pointer; transition: 0.3s; text-transform: none;">
             <i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: var(--primary); display: block; margin-bottom: 10px;"></i>
-            <span id="fileText">Klikněte pro nahrání fotky (max 500kB)</span>
+            <span id="fileText" data-i18n="upload_text">Klikněte pro nahrání fotky (max 500kB)</span>
         </label>
     </div>
 </div>
-                <textarea name="Zprava_Poznamka" rows="4" placeholder="Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie..." onchange="calculatePrice()"></textarea>
+                <textarea name="Zprava_Poznamka" rows="4" data-i18n-ph="ph_zprava" placeholder="Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie..." onchange="calculatePrice()"></textarea>
             </div>
 
             <div class="confirm-row">
                 <input type="checkbox" id="confirmPrice" required>
-                <label for="confirmPrice">Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.</label>
+                <label for="confirmPrice" data-i18n="confirm_text">Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.</label>
             </div>
 
-            <button type="submit" class="btn">Odeslat poptávku</button>
+            <button type="submit" class="btn" data-i18n="btn_submit">Odeslat poptávku</button>
         </div>
     </div>
 </form>
 
 <div class="sticky-mobile-bar" id="stickyMobileBar">
-    <div class="price-part"><small>Odhad ceny</small><strong id="stickyPriceText">--</strong></div>
-    <button type="button" id="stickyCtaBtn">Odeslat poptávku</button>
+    <div class="price-part"><small data-i18n="sticky_label">Odhad ceny</small><strong id="stickyPriceText">--</strong></div>
+    <button type="button" id="stickyCtaBtn" data-i18n="btn_submit">Odeslat poptávku</button>
 </div>
 
-<a href="admin.html" class="admin-float" title="Administrace termínů">
+<a href="admin.html" class="admin-float" title="Administrace termínů" data-i18n-title="admin_title">
     <i class="fas fa-gear"></i>
 </a>
 
-<a href="https://wa.me/420000000000?text=Dobr%C3%BD%20den%2C%20m%C3%A1m%20z%C3%A1jem%20o%20dort%20z%20va%C5%A1eho%20konfigur%C3%A1toru." target="_blank" class="whatsapp-float" title="Napsat na WhatsApp">
+<a href="https://wa.me/420000000000?text=Dobr%C3%BD%20den%2C%20m%C3%A1m%20z%C3%A1jem%20o%20dort%20z%20va%C5%A1eho%20konfigur%C3%A1toru." target="_blank" class="whatsapp-float" title="Napsat na WhatsApp" data-i18n-title="whatsapp_title">
     <i class="fab fa-whatsapp"></i>
 </a>
 
@@ -718,13 +739,269 @@
 <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 12, 41, 0.85); z-index:10000; backdrop-filter: blur(15px); justify-content:center; align-items:center;">
     <div style="background: white; padding: 50px; border-radius: 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 2px var(--gold);">
         <div style="font-size: 60px; margin-bottom: 20px;">🎂</div>
-        <h2 style="font-family: 'Fraunces', serif; font-style: italic; color: var(--primary-dark); font-size: 32px; margin: 0 0 20px 0;">Děkujeme !</h2>
-        <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">Vaši poptávku jsme v pořádku přijali.<br>Brzy se vám ozveme s detaily.</p>
-        <button type="button" onclick="document.getElementById('customModal').style.display='none'" style="padding: 16px 40px; background: linear-gradient(135deg, var(--primary-dark), #1e1422); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">Zavřít</button>
+        <h2 style="font-family: 'Fraunces', serif; font-style: italic; color: var(--primary-dark); font-size: 32px; margin: 0 0 20px 0;" data-i18n="modal_title">Děkujeme !</h2>
+        <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;" data-i18n="modal_text">Vaši poptávku jsme v pořádku přijali.<br>Brzy se vám ozveme s detaily.</p>
+        <button type="button" onclick="document.getElementById('customModal').style.display='none'" style="padding: 16px 40px; background: linear-gradient(135deg, var(--primary-dark), #1e1422); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;" data-i18n="modal_close">Zavřít</button>
     </div>
 </div>
 
 <script>
+// ============================================================
+// PŘEKLADY / TRANSLATIONS (CS / EN / DE)
+// ============================================================
+const translations = {
+    cs: {
+        hero_title: "Upečeme vám vzpomínku",
+        footer_tagline: "Váš sladký sen",
+        gallery_label: "Inspirace z mé tvorby",
+        ig_follow: "Sledujte @_cakesbydt_",
+        ig_more: "Více inspirace na",
+        step1: "Korpus", step2: "Design", step3: "Ovoce", step4: "Doplňky",
+        label_jmeno: "Jméno a Příjmení", label_email: "E-mail", label_telefon: "Telefon",
+        label_datum: "Datum události", datum_placeholder: "Klikněte a vyberte termín",
+        cal_free: "Volno", cal_blocked: "Obsazeno", cal_past: "Tento termín už je pryč",
+        sekce1_title: "Korpus", label_styl_dortu: "Styl dortu",
+        opt_classic: "🎂 Klasický", opt_classic1: "🎂 Patrový", opt_wedding: "💍 Svatební",
+        label_prumer: "Průměr",
+        dia_15: "16 cm (8-10 porcí)", dia_18: "18 cm (10-12 porcí)", dia_20: "20 cm (12-14 porcí)",
+        dia_22: "22 cm (14-16 porcí)", dia_24: "24 cm (16-18 porcí)", dia_26: "26 cm (18-20 porcí)",
+        label_patra: "Patra", patra_2: "2 patra", patra_3: "3 patra",
+        label_chut: "Chuť korpusu",
+        flavor_kakaovy: "Kakaový", flavor_vanilkovy: "Vanilkový", flavor_mrkvovy: "Mrkvový",
+        flavor_mechovy: "Mechový", flavor_orechovy: "Ořechový",
+        sekce2_title: "Design & Krém",
+        label_obmaz: "Styl obmazu", obmaz_naked: "Nahý dort", obmaz_full: "Plný obmaz",
+        label_vnitrni: "Vnitřní krém", label_vnejsi: "Vnější krém",
+        cream_vanilka: "Smetanový - vanilka", cream_cokolada: "Smetanový - čokoláda",
+        cream_karamel: "Smetanový - karamel", cream_ovocny: "Smetanový - ovocný",
+        butter_vanilka: "Máslový - vanilka", butter_cokolada: "Máslový - čokoláda",
+        butter_karamel: "Máslový - karamel", butter_ovocny: "Máslový - ovocný",
+        sekce3_title: "Ovocná kompozice",
+        label_prolozeni: "Proložení uvnitř", label_zdobeni: "Zdobení nahoře", label_vrsek: "Styl vršku",
+        fruit_none: "Bez ovoce", fruit_jahody: "Jahody", fruit_maliny: "Maliny", fruit_boruvky: "Borůvky",
+        fruit_mix: "Mix ovoce", fruit_puk: "Želatinový ovocný puk", fruit_cokopuk: "Čokoládový puk",
+        top_none: "Bez zdobení", top_mix: "Bohatý Mix",
+        vrsek_border: "Věneček (Okraje)", vrsek_full: "Plné zaplnění",
+        price_hint: "Klikni pro rozpad ceny", breakdown_title: "Rozpad ceny",
+        loading_3d: "Připravuji 3D náhled…",
+        btn_share: "Sdílet konfiguraci", btn_screenshot: "Uložit náhled",
+        label_rotace: "Rotace 3D modelu", label_naklon: "Náklon pohledu", label_zoom: "Přiblížení (Zoom)",
+        sekce4_title: "Osobní doplňky",
+        extra_kvetiny: "Květinová dekorace", extra_papir: "Jedlý papír",
+        extra_figurka: "Modelovaná figurka", extra_zapich: "Personalizovaný zápich",
+        badge_pridano: "✔ Přidáno",
+        ph_kvetiny: "Jaké květiny si přejete (druh, barva)?", ph_papir: "Popis obrázku nebo motivu",
+        ph_figurka: "Jaká figurka to má být?", ph_zapich: "Zadejte text na zápich (např. Vše nejlepší)",
+        label_vlastni_predloha: "Máte vlastní předlohu? (Inspirace)",
+        upload_text: "Klikněte pro nahrání fotky (max 500kB)",
+        upload_resizing: "Zmenšuji fotku...", upload_done: "Vybráno a zmenšeno: ",
+        ph_zprava: "Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie...",
+        confirm_text: "Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.",
+        btn_submit: "Odeslat poptávku", sticky_label: "Odhad ceny",
+        admin_title: "Administrace termínů", whatsapp_title: "Napsat na WhatsApp",
+        modal_title: "Děkujeme !", modal_text: "Vaši poptávku jsme v pořádku přijali.<br>Brzy se vám ozveme s detaily.",
+        modal_close: "Zavřít",
+        // dynamické JS řetězce
+        toast_link_copied: "Odkaz na tvou konfiguraci byl zkopírován 🎂",
+        toast_link_fail: "Nepodařilo se zkopírovat, zkus to prosím ručně: ",
+        toast_screenshot: "Náhled dortu byl stažen 📸",
+        toast_shared_config: "Načetl jsem sdílenou konfiguraci dortu 🎂",
+        toast_select_date: "Prosím vyberte datum události v kalendáři 📅",
+        cal_not_configured: "Kalendář obsazenosti zatím není napojený — všechny dny jsou volné.",
+        cal_load_fail: "Termíny se teď nepodařilo načíst, zkuste to prosím později.",
+        months: ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'],
+        weekdays: ['Po','Út','St','Čt','Pá','So','Ne'],
+        price_estimate: "ODHAD", breakdown_total: "Odhad celkem",
+        tier_word: (n) => n > 1 ? 'patra' : 'patro',
+        info_wedding: (n, d) => `Svatební (${n} patra) | Ø základny ${d}cm`,
+        info_classic: (d) => `Klasický (1 patro) | Ø základny ${d}cm`,
+        bd_zaklad: (d, n, tw) => `Základ (Ø${d}cm, ${n} ${tw})`,
+        bd_svatebni: "Svatební provedení", bd_patrovy: "Patrový styl",
+        bd_orechovy: "Ořechový korpus", bd_mrkvovy: "Mrkvový korpus", bd_mechovy: "Mechový korpus", bd_kakaovy: "Kakaový korpus",
+        bd_obmaz: "Plný obmaz", bd_prolozeni: "Ovocné proložení", bd_zdobeni_nahore: "Ovocné zdobení nahoře", bd_puk: "Ovocný puk",
+        bd_kvetiny: "Květinová dekorace", bd_papir: "Jedlý papír", bd_figurka: "Modelovaná figurka", bd_zapich: "Personalizovaný zápich",
+    },
+    en: {
+        hero_title: "We'll bake your memory",
+        footer_tagline: "Your sweet dream",
+        gallery_label: "Inspiration from my work",
+        ig_follow: "Follow @_cakesbydt_",
+        ig_more: "More inspiration on",
+        step1: "Base", step2: "Design", step3: "Fruit", step4: "Extras",
+        label_jmeno: "Full Name", label_email: "E-mail", label_telefon: "Phone",
+        label_datum: "Event date", datum_placeholder: "Click to pick a date",
+        cal_free: "Free", cal_blocked: "Booked", cal_past: "This date has already passed",
+        sekce1_title: "Base", label_styl_dortu: "Cake style",
+        opt_classic: "🎂 Classic", opt_classic1: "🎂 Tiered", opt_wedding: "💍 Wedding",
+        label_prumer: "Diameter",
+        dia_15: "16 cm (8–10 servings)", dia_18: "18 cm (10–12 servings)", dia_20: "20 cm (12–14 servings)",
+        dia_22: "22 cm (14–16 servings)", dia_24: "24 cm (16–18 servings)", dia_26: "26 cm (18–20 servings)",
+        label_patra: "Tiers", patra_2: "2 tiers", patra_3: "3 tiers",
+        label_chut: "Sponge flavor",
+        flavor_kakaovy: "Chocolate", flavor_vanilkovy: "Vanilla", flavor_mrkvovy: "Carrot",
+        flavor_mechovy: "Matcha (moss cake)", flavor_orechovy: "Walnut",
+        sekce2_title: "Design & Cream",
+        label_obmaz: "Coating style", obmaz_naked: "Naked cake", obmaz_full: "Full coating",
+        label_vnitrni: "Inner cream", label_vnejsi: "Outer cream",
+        cream_vanilka: "Cream - vanilla", cream_cokolada: "Cream - chocolate",
+        cream_karamel: "Cream - caramel", cream_ovocny: "Cream - fruit",
+        butter_vanilka: "Buttercream - vanilla", butter_cokolada: "Buttercream - chocolate",
+        butter_karamel: "Buttercream - caramel", butter_ovocny: "Buttercream - fruit",
+        sekce3_title: "Fruit composition",
+        label_prolozeni: "Inner filling", label_zdobeni: "Top decoration", label_vrsek: "Top style",
+        fruit_none: "No fruit", fruit_jahody: "Strawberries", fruit_maliny: "Raspberries", fruit_boruvky: "Blueberries",
+        fruit_mix: "Fruit mix", fruit_puk: "Fruit jelly disc", fruit_cokopuk: "Chocolate disc",
+        top_none: "No decoration", top_mix: "Rich mix",
+        vrsek_border: "Wreath (border)", vrsek_full: "Full coverage",
+        price_hint: "Tap for price breakdown", breakdown_title: "Price breakdown",
+        loading_3d: "Preparing 3D preview…",
+        btn_share: "Share configuration", btn_screenshot: "Save preview",
+        label_rotace: "Rotate 3D model", label_naklon: "Tilt view", label_zoom: "Zoom",
+        sekce4_title: "Personal extras",
+        extra_kvetiny: "Flower decoration", extra_papir: "Edible paper print",
+        extra_figurka: "Modeled figure/topper", extra_zapich: "Personalized cake topper",
+        badge_pridano: "✔ Added",
+        ph_kvetiny: "What flowers would you like (type, color)?", ph_papir: "Describe the picture or theme",
+        ph_figurka: "What should the figure be?", ph_zapich: "Enter the topper text (e.g. Happy Birthday)",
+        label_vlastni_predloha: "Have your own reference photo? (Inspiration)",
+        upload_text: "Click to upload a photo (max 500kB)",
+        upload_resizing: "Resizing photo...", upload_done: "Selected and resized: ",
+        ph_zprava: "Leave me a note here — specific color requests, allergy warnings...",
+        confirm_text: "I understand the shown price is only an estimate and the final price will be confirmed after consultation.",
+        btn_submit: "Send inquiry", sticky_label: "Estimated price",
+        admin_title: "Availability admin", whatsapp_title: "Message on WhatsApp",
+        modal_title: "Thank you!", modal_text: "We've received your inquiry.<br>We'll be in touch soon with details.",
+        modal_close: "Close",
+        toast_link_copied: "Your configuration link has been copied 🎂",
+        toast_link_fail: "Couldn't copy automatically, please copy manually: ",
+        toast_screenshot: "Cake preview has been downloaded 📸",
+        toast_shared_config: "Loaded a shared cake configuration 🎂",
+        toast_select_date: "Please pick an event date in the calendar 📅",
+        cal_not_configured: "Availability calendar isn't connected yet — all days show as free.",
+        cal_load_fail: "Couldn't load availability right now, please try again later.",
+        months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        weekdays: ['Mo','Tu','We','Th','Fr','Sa','Su'],
+        price_estimate: "ESTIMATE", breakdown_total: "Estimated total",
+        tier_word: (n) => n > 1 ? 'tiers' : 'tier',
+        info_wedding: (n, d) => `Wedding (${n} tiers) | Ø base ${d}cm`,
+        info_classic: (d) => `Classic (1 tier) | Ø base ${d}cm`,
+        bd_zaklad: (d, n, tw) => `Base (Ø${d}cm, ${n} ${tw})`,
+        bd_svatebni: "Wedding styling", bd_patrovy: "Tiered style",
+        bd_orechovy: "Walnut sponge", bd_mrkvovy: "Carrot sponge", bd_mechovy: "Matcha sponge", bd_kakaovy: "Chocolate sponge",
+        bd_obmaz: "Full coating", bd_prolozeni: "Fruit filling", bd_zdobeni_nahore: "Fruit decoration on top", bd_puk: "Fruit disc",
+        bd_kvetiny: "Flower decoration", bd_papir: "Edible paper print", bd_figurka: "Modeled figure/topper", bd_zapich: "Personalized topper",
+    },
+    de: {
+        hero_title: "Wir backen Ihre Erinnerung",
+        footer_tagline: "Ihr süßer Traum",
+        gallery_label: "Inspiration aus meiner Arbeit",
+        ig_follow: "Folgen Sie @_cakesbydt_",
+        ig_more: "Mehr Inspiration auf",
+        step1: "Boden", step2: "Design", step3: "Frucht", step4: "Extras",
+        label_jmeno: "Vor- und Nachname", label_email: "E-Mail", label_telefon: "Telefon",
+        label_datum: "Veranstaltungsdatum", datum_placeholder: "Klicken Sie, um ein Datum zu wählen",
+        cal_free: "Frei", cal_blocked: "Belegt", cal_past: "Dieser Termin liegt bereits in der Vergangenheit",
+        sekce1_title: "Boden", label_styl_dortu: "Tortenstil",
+        opt_classic: "🎂 Klassisch", opt_classic1: "🎂 Etagen", opt_wedding: "💍 Hochzeit",
+        label_prumer: "Durchmesser",
+        dia_15: "16 cm (8–10 Portionen)", dia_18: "18 cm (10–12 Portionen)", dia_20: "20 cm (12–14 Portionen)",
+        dia_22: "22 cm (14–16 Portionen)", dia_24: "24 cm (16–18 Portionen)", dia_26: "26 cm (18–20 Portionen)",
+        label_patra: "Etagen", patra_2: "2 Etagen", patra_3: "3 Etagen",
+        label_chut: "Bodengeschmack",
+        flavor_kakaovy: "Kakao", flavor_vanilkovy: "Vanille", flavor_mrkvovy: "Karotte",
+        flavor_mechovy: "Matcha (Moos-Torte)", flavor_orechovy: "Walnuss",
+        sekce2_title: "Design & Creme",
+        label_obmaz: "Überzugsstil", obmaz_naked: "Naked Cake", obmaz_full: "Voller Überzug",
+        label_vnitrni: "Innere Creme", label_vnejsi: "Äußere Creme",
+        cream_vanilka: "Sahne - Vanille", cream_cokolada: "Sahne - Schokolade",
+        cream_karamel: "Sahne - Karamell", cream_ovocny: "Sahne - Frucht",
+        butter_vanilka: "Buttercreme - Vanille", butter_cokolada: "Buttercreme - Schokolade",
+        butter_karamel: "Buttercreme - Karamell", butter_ovocny: "Buttercreme - Frucht",
+        sekce3_title: "Fruchtkomposition",
+        label_prolozeni: "Innere Füllung", label_zdobeni: "Verzierung oben", label_vrsek: "Stil der Oberseite",
+        fruit_none: "Ohne Frucht", fruit_jahody: "Erdbeeren", fruit_maliny: "Himbeeren", fruit_boruvky: "Heidelbeeren",
+        fruit_mix: "Fruchtmix", fruit_puk: "Fruchtgelee-Scheibe", fruit_cokopuk: "Schokoladenscheibe",
+        top_none: "Ohne Verzierung", top_mix: "Reicher Mix",
+        vrsek_border: "Kranz (Rand)", vrsek_full: "Volle Bedeckung",
+        price_hint: "Für Preisaufschlüsselung tippen", breakdown_title: "Preisaufschlüsselung",
+        loading_3d: "3D-Vorschau wird vorbereitet…",
+        btn_share: "Konfiguration teilen", btn_screenshot: "Vorschau speichern",
+        label_rotace: "3D-Modell drehen", label_naklon: "Ansicht neigen", label_zoom: "Zoom",
+        sekce4_title: "Persönliche Extras",
+        extra_kvetiny: "Blumendekoration", extra_papir: "Essbarer Fotodruck",
+        extra_figurka: "Modellierte Figur/Topper", extra_zapich: "Personalisierter Tortenstecker",
+        badge_pridano: "✔ Hinzugefügt",
+        ph_kvetiny: "Welche Blumen wünschen Sie (Art, Farbe)?", ph_papir: "Beschreiben Sie das Motiv",
+        ph_figurka: "Was soll die Figur darstellen?", ph_zapich: "Text für den Stecker eingeben (z. B. Alles Gute)",
+        label_vlastni_predloha: "Haben Sie eine eigene Vorlage? (Inspiration)",
+        upload_text: "Klicken Sie, um ein Foto hochzuladen (max. 500kB)",
+        upload_resizing: "Foto wird verkleinert...", upload_done: "Ausgewählt und verkleinert: ",
+        ph_zprava: "Hier können Sie mir eine Nachricht hinterlassen — Farbwünsche, Allergiehinweise...",
+        confirm_text: "Mir ist bewusst, dass der angezeigte Preis nur eine Schätzung ist und der Endpreis nach Rücksprache bestätigt wird.",
+        btn_submit: "Anfrage senden", sticky_label: "Geschätzter Preis",
+        admin_title: "Terminverwaltung", whatsapp_title: "Auf WhatsApp schreiben",
+        modal_title: "Vielen Dank!", modal_text: "Wir haben Ihre Anfrage erhalten.<br>Wir melden uns bald mit Details.",
+        modal_close: "Schließen",
+        toast_link_copied: "Der Link zu deiner Konfiguration wurde kopiert 🎂",
+        toast_link_fail: "Automatisches Kopieren fehlgeschlagen, bitte manuell kopieren: ",
+        toast_screenshot: "Die Tortenvorschau wurde heruntergeladen 📸",
+        toast_shared_config: "Geteilte Tortenkonfiguration geladen 🎂",
+        toast_select_date: "Bitte wählen Sie ein Veranstaltungsdatum im Kalender 📅",
+        cal_not_configured: "Der Verfügbarkeitskalender ist noch nicht verbunden — alle Tage gelten als frei.",
+        cal_load_fail: "Termine konnten gerade nicht geladen werden, bitte später erneut versuchen.",
+        months: ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+        weekdays: ['Mo','Di','Mi','Do','Fr','Sa','So'],
+        price_estimate: "SCHÄTZUNG", breakdown_total: "Geschätzte Summe",
+        tier_word: (n) => n > 1 ? 'Etagen' : 'Etage',
+        info_wedding: (n, d) => `Hochzeit (${n} Etagen) | Ø Basis ${d}cm`,
+        info_classic: (d) => `Klassisch (1 Etage) | Ø Basis ${d}cm`,
+        bd_zaklad: (d, n, tw) => `Basis (Ø${d}cm, ${n} ${tw})`,
+        bd_svatebni: "Hochzeitsausführung", bd_patrovy: "Etagenstil",
+        bd_orechovy: "Walnussboden", bd_mrkvovy: "Karottenboden", bd_mechovy: "Matchaboden", bd_kakaovy: "Kakaoboden",
+        bd_obmaz: "Voller Überzug", bd_prolozeni: "Fruchtfüllung", bd_zdobeni_nahore: "Fruchtverzierung oben", bd_puk: "Fruchtscheibe",
+        bd_kvetiny: "Blumendekoration", bd_papir: "Essbarer Fotodruck", bd_figurka: "Modellierte Figur/Topper", bd_zapich: "Personalisierter Stecker",
+    }
+};
+
+let currentLang = localStorage.getItem('siteLang') || 'cs';
+
+function t(key) {
+    return (translations[currentLang] && translations[currentLang][key]) ?? translations.cs[key] ?? key;
+}
+
+function applyTranslations() {
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const val = t(el.getAttribute('data-i18n'));
+        if (typeof val === 'string') el.innerHTML = val;
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        el.placeholder = t(el.getAttribute('data-i18n-ph'));
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        el.title = t(el.getAttribute('data-i18n-title'));
+    });
+    document.querySelectorAll('#langSwitch button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+    // Přepočítat odvozené texty (cena, kalendář), pokud už jsou funkce dostupné
+    if (typeof calculatePrice === 'function' && typeof cakeGroup !== 'undefined' && cakeGroup) calculatePrice();
+    if (typeof renderCalendar === 'function') renderCalendar();
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('siteLang', lang);
+    applyTranslations();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#langSwitch button').forEach(btn => {
+        btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+    });
+    applyTranslations();
+});
+
     let scene, camera, renderer, cakeGroup;
     let isDragging = false; 
     let previousPosition = { x: 0, y: 0 };
@@ -737,7 +1014,7 @@ function updateFileName() {
     const file = fileInput.files[0];
 
     if (file) {
-        fileText.innerText = "Zmenšuji fotku...";
+        fileText.innerText = t('upload_resizing');
         
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -772,7 +1049,7 @@ function updateFileName() {
                 // KOMPRESE na 0.6 (60% kvalita JPEG - pro náhled stačí)
                 compressedImageData = canvas.toDataURL('image/jpeg', 0.6);
                 
-                fileText.innerText = "Vybráno a zmenšeno: " + file.name;
+                fileText.innerText = t('upload_done') + file.name;
                 fileText.style.color = "#d4af37";
                 console.log("Fotka zmenšena pro EmailJS");
             };
@@ -952,8 +1229,8 @@ function updateFileName() {
         const diameter = parseInt(document.getElementById('diameter').value);
         const style = document.getElementById('cakeStyle').value;
         const coat = document.getElementById('coating').value;
-        const flavorText = document.getElementById('flavor').options[document.getElementById('flavor').selectedIndex].text;
-        
+        const flavorValue = document.getElementById('flavor').value; // barevný kód, jazykově nezávislý
+
         // Zjištění počtu pater - klasika má vždy 1 patro, svatební podle dropdownu
         let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
         let total = 0;
@@ -961,47 +1238,46 @@ function updateFileName() {
 
         // Cena se počítá za každé patro zvlášť (každé další je užší, spotřebuje méně surovin)
         let baseCost = 0;
-        for (let t = 0; t < numTiers; t++) {
-            let tierDiameter = diameter * Math.pow(0.75, t); 
+        for (let i = 0; i < numTiers; i++) {
+            let tierDiameter = diameter * Math.pow(0.75, i); 
             baseCost += (tierDiameter * 15) * 3; // 3 = (6 vrstev / 2) pro zachování tvé původní ceny
         }
         baseCost = Math.round(baseCost);
         total += baseCost;
-        breakdown.push({ label: `Základ (Ø${diameter}cm, ${numTiers}${numTiers > 1 ? ' patra' : ' patro'})`, amount: baseCost });
+        breakdown.push({ label: t('bd_zaklad')(diameter, numTiers, t('tier_word')(numTiers)), amount: baseCost });
 
-        if (style === 'wedding') { total += 1500; breakdown.push({ label: 'Svatební provedení', amount: 1500 }); }
-        if (style === 'classic1') { total += 100; breakdown.push({ label: 'Patrový styl', amount: 100 }); }
-        if (flavorText.includes("Ořechový")) { const a = 80 * numTiers; total += a; breakdown.push({ label: 'Ořechový korpus', amount: a }); }
-        if (flavorText.includes("Mrkvový")) { const a = 100 * numTiers; total += a; breakdown.push({ label: 'Mrkvový korpus', amount: a }); }
-        if (flavorText.includes("Mechový")) { const a = 100 * numTiers; total += a; breakdown.push({ label: 'Mechový korpus', amount: a }); }
-        if (flavorText.includes("Kakaový")) { const a = 50 * numTiers; total += a; breakdown.push({ label: 'Kakaový korpus', amount: a }); }
+        if (style === 'wedding') { total += 1500; breakdown.push({ label: t('bd_svatebni'), amount: 1500 }); }
+        if (style === 'classic1') { total += 100; breakdown.push({ label: t('bd_patrovy'), amount: 100 }); }
+        if (flavorValue === '0x96915c') { const a = 80 * numTiers; total += a; breakdown.push({ label: t('bd_orechovy'), amount: a }); }
+        if (flavorValue === '0xeba254') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_mrkvovy'), amount: a }); }
+        if (flavorValue === '0x3b7a31') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_mechovy'), amount: a }); }
+        if (flavorValue === '0x6e5445') { const a = 50 * numTiers; total += a; breakdown.push({ label: t('bd_kakaovy'), amount: a }); }
         
-        if (coat === 'full') { const a = 150 * numTiers; total += a; breakdown.push({ label: 'Plný obmaz', amount: a }); }
-        if (document.getElementById('fruitCream').value !== 'none') { const a = 100 * numTiers; total += a; breakdown.push({ label: 'Ovocné proložení', amount: a }); }
-        if (document.getElementById('fruitTop').value !== 'none') { total += 100; breakdown.push({ label: 'Ovocné zdobení nahoře', amount: 100 }); }
-        if (document.getElementById('fruitCream').value !== 'none') { const a = 50 * numTiers; total += a; breakdown.push({ label: 'Ovocný puk', amount: a }); }
+        if (coat === 'full') { const a = 150 * numTiers; total += a; breakdown.push({ label: t('bd_obmaz'), amount: a }); }
+        if (document.getElementById('fruitCream').value !== 'none') { const a = 100 * numTiers; total += a; breakdown.push({ label: t('bd_prolozeni'), amount: a }); }
+        if (document.getElementById('fruitTop').value !== 'none') { total += 100; breakdown.push({ label: t('bd_zdobeni_nahore'), amount: 100 }); }
+        if (document.getElementById('fruitCream').value !== 'none') { const a = 50 * numTiers; total += a; breakdown.push({ label: t('bd_puk'), amount: a }); }
         
-        if (document.getElementById('c_flowers').checked) { total += 150; breakdown.push({ label: 'Květinová dekorace', amount: 150 }); }
-        if (document.getElementById('c1').checked) { total += 300; breakdown.push({ label: 'Jedlý papír', amount: 300 }); }
-        if (document.getElementById('c2').checked) { total += 200; breakdown.push({ label: 'Modelovaná figurka', amount: 200 }); }
-        if (document.getElementById('c3').checked) { total += 50; breakdown.push({ label: 'Personalizovaný zápich', amount: 50 }); }
+        if (document.getElementById('c_flowers').checked) { total += 150; breakdown.push({ label: t('bd_kvetiny'), amount: 150 }); }
+        if (document.getElementById('c1').checked) { total += 300; breakdown.push({ label: t('bd_papir'), amount: 300 }); }
+        if (document.getElementById('c2').checked) { total += 200; breakdown.push({ label: t('bd_figurka'), amount: 200 }); }
+        if (document.getElementById('c3').checked) { total += 50; breakdown.push({ label: t('bd_zapich'), amount: 50 }); }
 
         const minPrice = Math.round(total * 0.95);
         const maxPrice = Math.round(total * 1.05);
 
-        const infoText = `${style === 'wedding' ? 'Svatební ('+numTiers+' patra)' : 'Klasický (1 patro)'} | Ø základny ${diameter}cm`;
-    //  const infoText = `${style === 'classic1' ? 'Patrový ('+numTiers+' patra)' : 'Klasický (1 patro)'} | Ø základny ${diameter}cm`;
+        const infoText = style === 'wedding' ? t('info_wedding')(numTiers, diameter) : t('info_classic')(diameter);
         const priceText = `${minPrice} – ${maxPrice} Kč`;
 
         document.getElementById('info-display').innerText = infoText;
         const priceMainEl = document.getElementById('priceMainText');
-        if (priceMainEl) priceMainEl.innerText = "ODHAD: " + priceText;
+        if (priceMainEl) priceMainEl.innerText = t('price_estimate') + ": " + priceText;
 
         // Aktualizace itemizovaného rozpadu ceny
         const rowsEl = document.getElementById('breakdownRows');
         if (rowsEl) {
             rowsEl.innerHTML = breakdown.map(b => `<div class="row"><span>${b.label}</span><span>+${b.amount} Kč</span></div>`).join('')
-                + `<div class="row total"><span>Odhad celkem</span><span>${priceText}</span></div>`;
+                + `<div class="row total"><span>${t('breakdown_total')}</span><span>${priceText}</span></div>`;
         }
 
         // Synchronizace sticky mobilní lišty
@@ -1197,7 +1473,7 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
     e.preventDefault();
 
     if (!selectedEventDate) {
-        showToast('Prosím vyberte datum události v kalendáři 📅');
+        showToast(t('toast_select_date'));
         document.getElementById('eventDateDisplay')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         document.getElementById('calendarPopup')?.classList.add('open');
         return;
@@ -1410,9 +1686,9 @@ window.addEventListener('DOMContentLoaded', () => {
             });
             const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
             navigator.clipboard.writeText(url).then(() => {
-                showToast('Odkaz na tvou konfiguraci byl zkopírován 🎂');
+                showToast(t('toast_link_copied'));
             }).catch(() => {
-                showToast('Nepodařilo se zkopírovat, zkus to prosím ručně: ' + url);
+                showToast(t('toast_link_fail') + url);
             });
         });
     }
@@ -1428,7 +1704,7 @@ window.addEventListener('DOMContentLoaded', () => {
             link.href = dataURL;
             link.download = 'muj-dort-navrh.png';
             link.click();
-            showToast('Náhled dortu byl stažen 📸');
+            showToast(t('toast_screenshot'));
         });
     }
 
@@ -1483,7 +1759,7 @@ let selectedEventDate = null;
 async function loadBlockedDates() {
     const noteEl = document.getElementById('calNote');
     if (!supabaseClient) {
-        if (noteEl) noteEl.innerText = 'Kalendář obsazenosti zatím není napojený — všechny dny jsou volné.';
+        if (noteEl) noteEl.innerText = t('cal_not_configured');
         return;
     }
     try {
@@ -1493,7 +1769,7 @@ async function loadBlockedDates() {
         if (noteEl) noteEl.innerText = '';
     } catch (err) {
         console.warn('Nepodařilo se načíst obsazené termíny, kalendář zobrazí vše jako volné.', err);
-        if (noteEl) noteEl.innerText = 'Termíny se teď nepodařilo načíst, zkuste to prosím později.';
+        if (noteEl) noteEl.innerText = t('cal_load_fail');
     }
 }
 
@@ -1501,6 +1777,8 @@ function isoDate(d) {
     const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
 }
+
+const localeMap = { cs: 'cs-CZ', en: 'en-GB', de: 'de-DE' };
 
 function renderCalendar() {
     const grid = document.getElementById('calGrid');
@@ -1510,7 +1788,7 @@ function renderCalendar() {
 
     const year = calendarViewDate.getFullYear();
     const month = calendarViewDate.getMonth();
-    const monthNames = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+    const monthNames = t('months');
     label.innerText = `${monthNames[month]} ${year}`;
 
     const firstDay = new Date(year, month, 1);
@@ -1518,7 +1796,7 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date(); today.setHours(0,0,0,0);
 
-    ['Po','Út','St','Čt','Pá','So','Ne'].forEach(d => {
+    t('weekdays').forEach(d => {
         const el = document.createElement('div');
         el.className = 'cal-weekday'; el.innerText = d;
         grid.appendChild(el);
@@ -1536,14 +1814,15 @@ function renderCalendar() {
         const isPast = dateObj < today;
         const isBlocked = blockedDates.has(iso);
 
-        if (isPast) { cell.classList.add('disabled'); cell.title = 'Tento termín už je pryč'; }
-        else if (isBlocked) { cell.classList.add('blocked'); cell.title = 'Obsazeno'; }
+        if (isPast) { cell.classList.add('disabled'); cell.title = t('cal_past'); }
+        else if (isBlocked) { cell.classList.add('blocked'); cell.title = t('cal_blocked'); }
         else {
             cell.classList.add('available');
-            cell.title = 'Volno';
+            cell.title = t('cal_free');
             cell.addEventListener('click', () => {
                 selectedEventDate = iso;
-                const niceDate = dateObj.toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' });
+                const locale = localeMap[currentLang] || 'cs-CZ';
+                const niceDate = dateObj.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' });
                 if (eventDateDisplayEl()) eventDateDisplayEl().value = niceDate.charAt(0).toUpperCase() + niceDate.slice(1);
                 document.getElementById('calendarPopup')?.classList.remove('open');
                 renderCalendar();
@@ -1582,7 +1861,7 @@ function applyConfigFromURL() {
         if (el) el.checked = params.get(id) === '1';
     });
     updateCake();
-    showToast('Načetl jsem sdílenou konfiguraci dortu 🎂');
+    showToast(t('toast_shared_config'));
 }
 
 // Inicializace 3D modelu
