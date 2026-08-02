@@ -116,13 +116,27 @@
             font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; 
             color: var(--gold); text-align: center; margin: 40px 0 20px 0; width: 100%;
         }
-        .single-photo-container { width: 100%; height: 350px; position: relative; display: flex; justify-content: center; }
-        .photo-slot-main { 
-            width: 100%; height: 100%; background-size: cover; background-position: center; 
-            border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5); transition: opacity 1.5s ease-in-out, transform 0.5s; 
+        /* --- DUOTONE GALERIE --- */
+        .duotone-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+        .duotone-tile {
+            position: relative; aspect-ratio: 1; border-radius: 16px; overflow: hidden; cursor: zoom-in;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08);
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
         }
-        .photo-slot-main:hover { transform: scale(1.02); }
+        .duotone-tile:hover { box-shadow: 0 18px 40px rgba(0,0,0,0.5), 0 0 0 2px var(--gold); transform: translateY(-3px); }
+        .duotone-tile img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            filter: grayscale(1) contrast(1.15) brightness(1.05);
+            transition: filter 0.6s ease, transform 0.6s ease, opacity 0.5s ease;
+        }
+        .duotone-tile::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(150deg, var(--primary-dark) 10%, var(--gold) 100%);
+            mix-blend-mode: color; opacity: 0.85; transition: opacity 0.6s ease; pointer-events: none;
+        }
+        .duotone-tile:hover img { filter: grayscale(0) contrast(1) brightness(1); transform: scale(1.08); }
+        .duotone-tile:hover::after { opacity: 0; }
+        @media (max-width: 480px) { .duotone-gallery { gap: 7px; } }
 
         .ig-link-wrapper { width: 100%; display: flex; justify-content: center; margin-top: 30px; }
         .ig-button-link { 
@@ -391,7 +405,6 @@
         .sticky-mobile-bar { display: none; }
 
         /* --- LIGHTBOX GALERIE --- */
-        .photo-slot-main { cursor: zoom-in; }
         .lightbox-modal {
             display: none; position: fixed; inset: 0; background: rgba(15,12,41,0.9); z-index: 10001;
             backdrop-filter: blur(15px); align-items: center; justify-content: center; padding: 20px;
@@ -522,8 +535,13 @@
 
             <div class="ig-live-gallery" style="width: 100%;">
                 <p class="gallery-label" data-i18n="gallery_label">Inspirace z mé tvorby</p>
-                <div class="single-photo-container">
-                    <div class="photo-slot-main" id="slot1"></div>
+                <div class="duotone-gallery" id="duotoneGallery">
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 1"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 2"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 3"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 4"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 5"></div>
+                    <div class="duotone-tile"><img src="" alt="Ukázka dortu 6"></div>
                 </div>
             </div>
             
@@ -1538,49 +1556,47 @@ const allImages = [
     'foto11.jpg', 'foto12.jpg', 'foto13.jpg', 'foto14.jpg', 'foto15.jpg', 'foto16.jpg', 'foto17.jpg', 'foto18.jpg', 'foto1.jpg'
 ];
 
-let currentImageIndex = 0; // Začínáme od první fotky
-let isTransitioning = false; 
+let duotoneNextIndex = 6; // dalších 6 fotek už je v mřížce, odsud pokračujeme v rotaci
+let duotoneTileCursor = 0; // která dlaždice se má aktualizovat příště
+let duotoneTransitioning = new Set(); // dlaždice zrovna probíhající přechodem
 
-// --- Tato část patří na konec tvého <script> ---
+function initDuotoneGallery() {
+    const tiles = document.querySelectorAll('.duotone-tile img');
+    tiles.forEach((img, i) => { img.src = allImages[i % allImages.length]; });
+}
 
-function updateGallery() {
-    if (isTransitioning) return; 
-    
-    const mainSlot = document.getElementById('slot1');
-    if (!mainSlot || allImages.length === 0) return;
+function rotateDuotoneTile() {
+    const tiles = document.querySelectorAll('.duotone-tile img');
+    if (!tiles.length) return;
 
-    isTransitioning = true;
-    mainSlot.style.opacity = '0'; 
+    const tileIndex = duotoneTileCursor % tiles.length;
+    duotoneTileCursor++;
+    if (duotoneTransitioning.has(tileIndex)) return; // tahle dlaždice právě přechází, přeskočíme
 
-    // Posuneme index na další fotku
-    currentImageIndex = (currentImageIndex + 1) % allImages.length;
-    const nextPhoto = allImages[currentImageIndex];
-    
-    const tempImage = new Image();
-    
-    setTimeout(() => {
-        tempImage.onload = () => {
-            mainSlot.style.backgroundImage = `url('${nextPhoto}')`;
-            setTimeout(() => {
-                mainSlot.style.opacity = '1'; 
-                isTransitioning = false; 
-            }, 50);
-        };
-        tempImage.src = nextPhoto;
-    }, 1200); 
+    const img = tiles[tileIndex];
+    const nextSrc = allImages[duotoneNextIndex % allImages.length];
+    duotoneNextIndex++;
+
+    duotoneTransitioning.add(tileIndex);
+    img.style.opacity = '0';
+
+    const preload = new Image();
+    preload.onload = () => {
+        img.src = nextSrc;
+        requestAnimationFrame(() => {
+            img.style.opacity = '1';
+            duotoneTransitioning.delete(tileIndex);
+        });
+    };
+    preload.src = nextSrc;
 }
 
 // SPOJENÉ A OPRAVENÉ SPOUŠTĚNÍ
 window.addEventListener('DOMContentLoaded', () => {
-    const mainSlot = document.getElementById('slot1');
-    if(mainSlot && allImages.length > 0) {
-        // Nastavíme první fotku hned při startu
-        mainSlot.style.backgroundImage = `url('${allImages[0]}')`;
-    }
-    
-    // Tady si vyber čas: 10000 = 10 vteřin, 3000 = 3 vteřiny
-    // Necháme 6000 (6 vteřin), ať si to lidi stihnou prohlédnout
-    setInterval(updateGallery, 6000);
+    initDuotoneGallery();
+
+    // Každé 4 vteřiny se jedna dlaždice v mřížce vymění za další fotku
+    setInterval(rotateDuotoneTile, 4000);
 
     // --- Otevírání/zavírání kalendáře dostupnosti ---
     const eventDateDisplay = document.getElementById('eventDateDisplay');
@@ -1708,15 +1724,18 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Lightbox pro galerii inspirace ---
-    const slot1 = document.getElementById('slot1');
+    // --- Lightbox pro galerii inspirace (funguje pro kteroukoliv dlaždici v mřížce) ---
+    const duotoneGallery = document.getElementById('duotoneGallery');
     const lightboxModal = document.getElementById('lightboxModal');
     const lightboxImg = document.getElementById('lightboxImg');
     const lightboxClose = document.getElementById('lightboxClose');
-    if (slot1 && lightboxModal && lightboxImg) {
-        slot1.addEventListener('click', () => {
-            const bg = slot1.style.backgroundImage.slice(5, -2); // odstraní url("...")
-            lightboxImg.src = bg;
+    if (duotoneGallery && lightboxModal && lightboxImg) {
+        duotoneGallery.addEventListener('click', (e) => {
+            const tile = e.target.closest('.duotone-tile');
+            if (!tile) return;
+            const img = tile.querySelector('img');
+            if (!img || !img.src) return;
+            lightboxImg.src = img.src;
             lightboxModal.style.display = 'flex';
         });
         const closeLightbox = () => lightboxModal.style.display = 'none';
