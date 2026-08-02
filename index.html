@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     
     <style>
         /* --- PREMIUM BAREVNÁ PALETA --- */
@@ -362,6 +363,31 @@
         .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary-dark); color: white; padding: 16px 30px; border-radius: 50px; font-size: 14px; font-weight: 600; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 10002; transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1); }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
+        /* --- KALENDÁŘ DOSTUPNOSTI --- */
+        .calendar-popup {
+            position: absolute; top: calc(100% + 8px); left: 0; width: 290px; max-width: 90vw;
+            background: #241a29; border: 1px solid rgba(212,175,55,0.3); border-radius: 18px;
+            padding: 18px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); z-index: 100;
+            display: none;
+        }
+        .calendar-popup.open { display: block; animation: pop-in 0.25s ease; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: white; font-weight: 700; font-size: 13px; letter-spacing: 0.5px; }
+        .cal-header button { background: rgba(255,255,255,0.06); border: none; color: var(--gold); font-size: 16px; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .cal-header button:hover { background: var(--gold); color: var(--primary-dark); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .cal-weekday { font-size: 9px; color: rgba(255,255,255,0.4); text-align: center; padding-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .cal-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 12px; border-radius: 8px; color: rgba(255,255,255,0.85); }
+        .cal-day.disabled { color: rgba(255,255,255,0.12); }
+        .cal-day.blocked { color: rgba(255,90,90,0.65); text-decoration: line-through; }
+        .cal-day.available { cursor: pointer; background: rgba(255,255,255,0.04); }
+        .cal-day.available:hover { background: var(--gold); color: var(--primary-dark); font-weight: 700; }
+        .cal-day.selected { background: var(--gold); color: var(--primary-dark); font-weight: 800; }
+        .cal-legend { display: flex; gap: 16px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 10px; color: rgba(255,255,255,0.5); }
+        .cal-legend .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+        .cal-legend .dot.available { background: rgba(255,255,255,0.35); }
+        .cal-legend .dot.blocked { background: #ff5a5a; }
+        .cal-loading-note { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 10px; text-align: center; }
+
         /* --- MOBILNÍ RESPONZIVITA --- */
         @media (max-width: 1024px) {
             .hlavni-wrapper { flex-direction: column; border-radius: 0; margin: 0; width: 100%; }
@@ -423,7 +449,23 @@
                 <div class="input-group"><label>Jméno a Příjmení</label><input type="text" name="Jmeno" required></div>
                 <div class="input-group"><label>E-mail</label><input type="email" name="Email" required></div>
                 <div class="input-group"><label>Telefon</label><input type="tel" name="Telefon" required></div>
-                <div class="input-group"><label>Datum události</label><input type="date" name="Datum_Udalosti" required></div>
+                <div class="input-group" style="position: relative;">
+                    <label>Datum události</label>
+                    <input type="text" id="eventDateDisplay" name="Datum_Udalosti" placeholder="Klikněte a vyberte termín" readonly autocomplete="off">
+                    <div class="calendar-popup" id="calendarPopup">
+                        <div class="cal-header">
+                            <button type="button" id="calPrev">&lsaquo;</button>
+                            <span id="calMonthLabel"></span>
+                            <button type="button" id="calNext">&rsaquo;</button>
+                        </div>
+                        <div class="cal-grid" id="calGrid"></div>
+                        <div class="cal-legend">
+                            <span><i class="dot available"></i>Volno</span>
+                            <span><i class="dot blocked"></i>Obsazeno</span>
+                        </div>
+                        <div class="cal-loading-note" id="calNote"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="ig-live-gallery" style="width: 100%;">
@@ -1111,6 +1153,13 @@ function updateFileName() {
 document.getElementById('cakeOrderForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
+    if (!selectedEventDate) {
+        showToast('Prosím vyberte datum události v kalendáři 📅');
+        document.getElementById('eventDateDisplay')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('calendarPopup')?.classList.add('open');
+        return;
+    }
+
     const btn = this.querySelector('.btn');
     const originalBtnText = btn.innerText;
     btn.innerText = "ODESÍLÁM...";
@@ -1214,12 +1263,31 @@ window.addEventListener('DOMContentLoaded', () => {
     // Necháme 6000 (6 vteřin), ať si to lidi stihnou prohlédnout
     setInterval(updateGallery, 6000);
 
-    // --- Validace: nejdřívější možné datum události je zítra ---
-    const datumInput = document.querySelector('input[name="Datum_Udalosti"]');
-    if (datumInput) {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        datumInput.min = tomorrow.toISOString().split('T')[0];
+    // --- Otevírání/zavírání kalendáře dostupnosti ---
+    const eventDateDisplay = document.getElementById('eventDateDisplay');
+    const calendarPopup = document.getElementById('calendarPopup');
+    const calPrev = document.getElementById('calPrev');
+    const calNext = document.getElementById('calNext');
+    if (eventDateDisplay && calendarPopup) {
+        eventDateDisplay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            calendarPopup.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!calendarPopup.contains(e.target) && e.target !== eventDateDisplay) {
+                calendarPopup.classList.remove('open');
+            }
+        });
+        if (calPrev) calPrev.addEventListener('click', () => {
+            calendarViewDate.setMonth(calendarViewDate.getMonth() - 1);
+            renderCalendar();
+        });
+        if (calNext) calNext.addEventListener('click', () => {
+            calendarViewDate.setMonth(calendarViewDate.getMonth() + 1);
+            renderCalendar();
+        });
+        renderCalendar();
+        loadBlockedDates().then(() => renderCalendar());
     }
 
     // --- Validace formátu telefonu (české číslo, s volitelnou předvolbou) ---
@@ -1336,6 +1404,103 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ============================================================
+// KALENDÁŘ DOSTUPNOSTI TERMÍNŮ — napojeno na Supabase
+// ============================================================
+// JAK TO NASTAVIT (jednorázově):
+// 1) V Supabase projektu: Settings -> API -> zkopíruj "Project URL"
+//    a "anon public" klíč, vlož je níže místo SUPABASE_URL / SUPABASE_ANON_KEY.
+// 2) Termíny se spravují přes admin.html (samostatná stránka se
+//    stejným nastavením), NE ručně v tomto souboru.
+// ============================================================
+const SUPABASE_URL = "https://vlabocwezmpwnxrwxihs.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_H9egZ3Rrq5LYi02NxpvjCQ_xDXOQP4X";
+
+const supabaseClient = (!SUPABASE_URL.includes('SEM_VLOZ') && window.supabase)
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+
+let blockedDates = new Set();
+let calendarViewDate = new Date();
+let selectedEventDate = null;
+
+async function loadBlockedDates() {
+    const noteEl = document.getElementById('calNote');
+    if (!supabaseClient) {
+        if (noteEl) noteEl.innerText = 'Kalendář obsazenosti zatím není napojený — všechny dny jsou volné.';
+        return;
+    }
+    try {
+        const { data, error } = await supabaseClient.from('blocked_dates').select('date');
+        if (error) throw error;
+        blockedDates = new Set((data || []).map(row => row.date));
+        if (noteEl) noteEl.innerText = '';
+    } catch (err) {
+        console.warn('Nepodařilo se načíst obsazené termíny, kalendář zobrazí vše jako volné.', err);
+        if (noteEl) noteEl.innerText = 'Termíny se teď nepodařilo načíst, zkuste to prosím později.';
+    }
+}
+
+function isoDate(d) {
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
+function renderCalendar() {
+    const grid = document.getElementById('calGrid');
+    const label = document.getElementById('calMonthLabel');
+    if (!grid || !label) return;
+    grid.innerHTML = '';
+
+    const year = calendarViewDate.getFullYear();
+    const month = calendarViewDate.getMonth();
+    const monthNames = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+    label.innerText = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1);
+    const startWeekday = (firstDay.getDay() + 6) % 7; // pondělí = 0
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    ['Po','Út','St','Čt','Pá','So','Ne'].forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-weekday'; el.innerText = d;
+        grid.appendChild(el);
+    });
+
+    for (let i = 0; i < startWeekday; i++) grid.appendChild(document.createElement('div'));
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj = new Date(year, month, day);
+        const iso = isoDate(dateObj);
+        const cell = document.createElement('div');
+        cell.className = 'cal-day';
+        cell.innerText = day;
+
+        const isPast = dateObj < today;
+        const isBlocked = blockedDates.has(iso);
+
+        if (isPast) { cell.classList.add('disabled'); cell.title = 'Tento termín už je pryč'; }
+        else if (isBlocked) { cell.classList.add('blocked'); cell.title = 'Obsazeno'; }
+        else {
+            cell.classList.add('available');
+            cell.title = 'Volno';
+            cell.addEventListener('click', () => {
+                selectedEventDate = iso;
+                const niceDate = dateObj.toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'numeric', year: 'numeric' });
+                if (eventDateDisplayEl()) eventDateDisplayEl().value = niceDate.charAt(0).toUpperCase() + niceDate.slice(1);
+                document.getElementById('calendarPopup')?.classList.remove('open');
+                renderCalendar();
+            });
+        }
+
+        if (selectedEventDate === iso) cell.classList.add('selected');
+        grid.appendChild(cell);
+    }
+}
+
+function eventDateDisplayEl() { return document.getElementById('eventDateDisplay'); }
 
 // --- Toast notifikace (krátká zpráva dole na obrazovce) ---
 function showToast(message) {
