@@ -726,6 +726,11 @@
             </div>
 
             <div class="confirm-row">
+                <input type="checkbox" id="gdprConsent" required>
+                <label for="gdprConsent" data-i18n="gdpr_text">Souhlasím se zpracováním mých osobních údajů (jméno, e-mail, telefon) za účelem vyřízení této poptávky.</label>
+            </div>
+
+            <div class="confirm-row">
                 <input type="checkbox" id="confirmPrice" required>
                 <label for="confirmPrice" data-i18n="confirm_text">Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.</label>
             </div>
@@ -813,6 +818,7 @@ const translations = {
         upload_text: "Klikněte pro nahrání fotky (max 500kB)",
         upload_resizing: "Zmenšuji fotku...", upload_done: "Vybráno a zmenšeno: ",
         ph_zprava: "Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie...",
+        gdpr_text: "Souhlasím se zpracováním mých osobních údajů (jméno, e-mail, telefon) za účelem vyřízení této poptávky.",
         confirm_text: "Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.",
         btn_submit: "Odeslat poptávku", sticky_label: "Odhad ceny",
         admin_title: "Administrace termínů",
@@ -886,6 +892,7 @@ const translations = {
         upload_text: "Click to upload a photo (max 500kB)",
         upload_resizing: "Resizing photo...", upload_done: "Selected and resized: ",
         ph_zprava: "Leave me a note here — specific color requests, allergy warnings...",
+        gdpr_text: "I agree to the processing of my personal data (name, e-mail, phone) for the purpose of handling this inquiry.",
         confirm_text: "I understand the shown price is only an estimate and the final price will be confirmed after consultation.",
         btn_submit: "Send inquiry", sticky_label: "Estimated price",
         admin_title: "Availability admin",
@@ -958,6 +965,7 @@ const translations = {
         upload_text: "Klicken Sie, um ein Foto hochzuladen (max. 500kB)",
         upload_resizing: "Foto wird verkleinert...", upload_done: "Ausgewählt und verkleinert: ",
         ph_zprava: "Hier können Sie mir eine Nachricht hinterlassen — Farbwünsche, Allergiehinweise...",
+        gdpr_text: "Ich stimme der Verarbeitung meiner personenbezogenen Daten (Name, E-Mail, Telefon) zur Bearbeitung dieser Anfrage zu.",
         confirm_text: "Mir ist bewusst, dass der angezeigte Preis nur eine Schätzung ist und der Endpreis nach Rücksprache bestätigt wird.",
         btn_submit: "Anfrage senden", sticky_label: "Geschätzter Preis",
         admin_title: "Terminverwaltung",
@@ -1630,6 +1638,9 @@ document.getElementById('cakeOrderForm').addEventListener('submit', function(e) 
         doplnky: doplnkyArr.length > 0 ? doplnkyArr.join(", ") : "Žádné",
         poznamka: document.getElementsByName('Zprava_Poznamka')[0].value,
         cena_odhad: document.getElementById('price-display').innerText,
+        gdpr_souhlas: document.getElementById('gdprConsent')?.checked
+            ? `Ano, uděleno ${new Date().toLocaleString('cs-CZ')}`
+            : "Neuděleno",
         // TADY JE TA MAGIE - posíláme zmenšenou fotku jako text
         my_file: compressedImageData 
     };
