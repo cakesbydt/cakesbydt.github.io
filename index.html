@@ -342,6 +342,17 @@
         }
         .whatsapp-float:hover { transform: scale(1.1); }
 
+        /* --- ADMIN ODKAZ (malý, ale viditelný) --- */
+        .admin-float {
+            position: fixed; bottom: 30px; left: 30px; width: 42px; height: 42px; border-radius: 50%;
+            background: var(--primary-dark);
+            display: flex; align-items: center; justify-content: center; color: var(--gold);
+            font-size: 16px; text-decoration: none; transition: all 0.3s ease;
+            border: 1px solid rgba(212,175,55,0.4); z-index: 999;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+        .admin-float:hover { background: var(--gold); color: var(--primary-dark); transform: scale(1.12); }
+
         /* --- STICKY MOBILNÍ LIŠTA --- */
         .sticky-mobile-bar { display: none; }
 
@@ -402,6 +413,7 @@
             .price-breakdown-popup { top: auto; bottom: 130px; right: 50%; transform: translate(50%, 10px); }
             .price-breakdown-popup.open { transform: translate(50%, 0); }
             .whatsapp-float { bottom: 90px; right: 20px; width: 54px; height: 54px; font-size: 24px; }
+            .admin-float { bottom: 90px; left: 20px; width: 34px; height: 34px; font-size: 12px; }
 
             .sticky-mobile-bar {
                 display: flex; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 998;
@@ -660,6 +672,10 @@
     <div class="price-part"><small>Odhad ceny</small><strong id="stickyPriceText">--</strong></div>
     <button type="button" id="stickyCtaBtn">Odeslat poptávku</button>
 </div>
+
+<a href="admin.html" class="admin-float" title="Administrace termínů">
+    <i class="fas fa-gear"></i>
+</a>
 
 <a href="https://wa.me/420000000000?text=Dobr%C3%BD%20den%2C%20m%C3%A1m%20z%C3%A1jem%20o%20dort%20z%20va%C5%A1eho%20konfigur%C3%A1toru." target="_blank" class="whatsapp-float" title="Napsat na WhatsApp">
     <i class="fab fa-whatsapp"></i>
