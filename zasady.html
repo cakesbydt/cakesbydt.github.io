@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cakes by DT | Zásady ochrany osobních údajů</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    :root {
+        --primary: #b087bf; --primary-dark: #2c1c37; --gold: #c9a13b;
+        --gold-light: #f1e2ad; --cream: #faf5ec; --bg-dark: #130c19;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;
+        background: var(--bg-dark); color: #3a2a40;
+        display: flex; justify-content: center; min-height: 100vh;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+    .lang-switch {
+        position: fixed; top: 24px; right: 24px; z-index: 50;
+        display: flex; gap: 4px; background: rgba(255,255,255,0.12); backdrop-filter: blur(14px);
+        border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 5px;
+    }
+    .lang-switch button {
+        border: none; background: transparent; padding: 7px 13px; border-radius: 20px; cursor: pointer;
+        font-size: 11px; font-weight: 800; letter-spacing: 1px; color: white; opacity: 0.5; transition: all 0.25s ease;
+    }
+    .lang-switch button.active { background: var(--gold); color: var(--primary-dark); opacity: 1; }
+    .lang-switch button:hover { opacity: 1; }
+
+    .page-wrap {
+        width: 95%; max-width: 820px; margin: 40px 0 60px 0;
+        background: linear-gradient(180deg, var(--cream) 0%, #f5eee2 100%);
+        border-radius: 30px; padding: 70px 60px; box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    }
+    .back-link {
+        display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+        color: var(--primary-dark); font-size: 12px; font-weight: 700; letter-spacing: 1px;
+        text-transform: uppercase; margin-bottom: 40px; opacity: 0.7; transition: 0.3s;
+    }
+    .back-link:hover { opacity: 1; color: var(--gold); }
+
+    h1 {
+        font-family: 'Fraunces', serif; font-style: italic; font-weight: 700;
+        color: var(--primary-dark); font-size: clamp(30px, 5vw, 44px); margin: 0 0 10px 0;
+    }
+    .updated-note { font-size: 12px; color: #8a7a90; margin-bottom: 45px; letter-spacing: 0.5px; }
+
+    h2 {
+        font-family: 'Fraunces', serif; font-style: italic; font-weight: 600;
+        color: var(--primary-dark); font-size: 22px; margin: 45px 0 16px 0;
+        display: flex; align-items: center; gap: 12px;
+    }
+    h2::before { content: ''; display: block; width: 30px; height: 2px; background: var(--gold); flex-shrink: 0; }
+
+    p, li { font-size: 15px; line-height: 1.75; color: #4a3a50; }
+    ul { padding-left: 20px; margin: 10px 0; }
+    li { margin-bottom: 6px; }
+    strong { color: var(--primary-dark); }
+    a.inline-link { color: var(--gold); font-weight: 700; text-decoration: none; border-bottom: 1px solid rgba(201,161,59,0.4); }
+    a.inline-link:hover { color: var(--primary-dark); }
+
+    .contact-box {
+        margin-top: 20px; padding: 24px 28px; background: rgba(201,161,59,0.08);
+        border: 1px solid rgba(201,161,59,0.25); border-radius: 18px; font-size: 14px;
+    }
+    .placeholder-note {
+        margin-top: 50px; padding: 18px 22px; background: rgba(255,90,90,0.08);
+        border: 1px solid rgba(255,90,90,0.25); border-radius: 14px; font-size: 12px; color: #8a4a4a;
+    }
+
+    @media (max-width: 640px) {
+        .page-wrap { padding: 50px 26px; border-radius: 20px; }
+        .lang-switch { top: 14px; right: 14px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="lang-switch" id="langSwitch">
+    <button type="button" data-lang="cs">CZ</button>
+    <button type="button" data-lang="en">EN</button>
+    <button type="button" data-lang="de">DE</button>
+</div>
+
+<div class="page-wrap">
+    <a href="konfigurator.html" class="back-link"><i class="fas fa-arrow-left"></i> <span data-i18n="back_link">Zpět na konfigurátor</span></a>
+
+    <h1 data-i18n="title">Zásady ochrany osobních údajů</h1>
+    <p class="updated-note" data-i18n="updated">Poslední aktualizace: srpen 2026</p>
+
+    <p data-i18n="intro">Vážím si vaší důvěry, a proto s vašimi osobními údaji nakládám transparentně a jen v rozsahu, který je nutný k vyřízení vaší poptávky. Tento dokument vysvětluje, jaké údaje sbírám, proč, a jaká máte práva.</p>
+
+    <h2 data-i18n="h_controller">Kdo je správcem údajů</h2>
+    <p data-i18n="controller_text">Správcem vašich osobních údajů je [Jméno a příjmení / Název živnosti], IČO: [doplnit], se sídlem [adresa]. Kontaktovat mě můžete na e-mailu uvedeném níže.</p>
+
+    <h2 data-i18n="h_data">Jaké údaje sbírám</h2>
+    <p data-i18n="data_intro">Při odeslání poptávkového formuláře od vás získávám:</p>
+    <ul>
+        <li data-i18n="data_1">Jméno a příjmení</li>
+        <li data-i18n="data_2">E-mailovou adresu</li>
+        <li data-i18n="data_3">Telefonní číslo</li>
+        <li data-i18n="data_4">Datum požadované události</li>
+        <li data-i18n="data_5">Vámi zvolené parametry dortu a případnou poznámku nebo nahranou inspirativní fotku</li>
+    </ul>
+
+    <h2 data-i18n="h_purpose">Proč údaje zpracovávám</h2>
+    <p data-i18n="purpose_text">Vaše údaje používám výhradně za účelem vyřízení vaší poptávky — abych vás mohla kontaktovat, upřesnit detaily objednávky a domluvit se na realizaci. Právním základem zpracování je váš souhlas udělený při odeslání formuláře a případně plnění smlouvy, pokud z poptávky vznikne objednávka.</p>
+
+    <h2 data-i18n="h_third">Komu údaje předávám</h2>
+    <p data-i18n="third_text">Vaše údaje nikomu neprodávám ani nepoužívám pro marketing bez vašeho výslovného souhlasu. Ke zpracování využívám tyto služby (zpracovatele):</p>
+    <ul>
+        <li data-i18n="third_1"><strong>EmailJS</strong> — pro doručení vaší poptávky na můj e-mail</li>
+        <li data-i18n="third_2"><strong>Supabase</strong> — pouze pro správu dostupných termínů (neobsahuje vaše osobní údaje, jen informaci o obsazenosti konkrétního data)</li>
+        <li data-i18n="third_3">Poskytovatel webhostingu, na kterém tento web běží</li>
+    </ul>
+
+    <h2 data-i18n="h_retention">Jak dlouho údaje uchovávám</h2>
+    <p data-i18n="retention_text">Údaje z vaší poptávky uchovávám ve své e-mailové schránce po dobu nezbytnou k vyřízení objednávky a případné komunikaci s vámi, nejdéle však [2 roky / doplnit dle vlastní praxe], pokud mi zákon neukládá lhůtu delší (např. z důvodu účetnictví u realizovaných objednávek).</p>
+
+    <h2 data-i18n="h_rights">Vaše práva</h2>
+    <p data-i18n="rights_intro">Ve vztahu ke svým osobním údajům máte právo:</p>
+    <ul>
+        <li data-i18n="right_1">na přístup ke svým osobním údajům</li>
+        <li data-i18n="right_2">na opravu nepřesných údajů</li>
+        <li data-i18n="right_3">na výmaz údajů ("právo být zapomenut")</li>
+        <li data-i18n="right_4">kdykoliv odvolat udělený souhlas</li>
+        <li data-i18n="right_5">podat stížnost u Úřadu pro ochranu osobních údajů (uoou.cz)</li>
+    </ul>
+
+    <h2 data-i18n="h_cookies">Cookies a lokální úložiště</h2>
+    <p data-i18n="cookies_text">Tento web nepoužívá sledovací cookies ani analytické nástroje. Ve vašem prohlížeči si pouze ukládám vaši volbu jazyka (CZ/EN/DE) pomocí technologie localStorage, aby se vám příště web zobrazil ve stejném jazyce. Tento údaj neobsahuje žádné osobní informace a nikam se neodesílá.</p>
+
+    <h2 data-i18n="h_contact">Kontakt</h2>
+    <div class="contact-box">
+        <p data-i18n="contact_text" style="margin:0;">S jakýmikoliv dotazy ohledně zpracování vašich osobních údajů mě prosím kontaktujte na: <strong>[doplnit e-mail]</strong></p>
+    </div>
+
+    <div class="placeholder-note" data-i18n="placeholder_note">
+        Poznámka pro majitele webu: části textu označené v hranatých závorkách [ ] je potřeba doplnit vlastními údaji (IČO, adresa, kontaktní e-mail, doba uchovávání) před zveřejněním stránky.
+    </div>
+</div>
+
+<script>
+const translations = {
+    cs: {
+        back_link: "Zpět na konfigurátor",
+        title: "Zásady ochrany osobních údajů",
+        updated: "Poslední aktualizace: srpen 2026",
+        intro: "Vážím si vaší důvěry, a proto s vašimi osobními údaji nakládám transparentně a jen v rozsahu, který je nutný k vyřízení vaší poptávky. Tento dokument vysvětluje, jaké údaje sbírám, proč, a jaká máte práva.",
+        h_controller: "Kdo je správcem údajů",
+        controller_text: "Správcem vašich osobních údajů je [Jméno a příjmení / Název živnosti], IČO: [doplnit], se sídlem [adresa]. Kontaktovat mě můžete na e-mailu uvedeném níže.",
+        h_data: "Jaké údaje sbírám",
+        data_intro: "Při odeslání poptávkového formuláře od vás získávám:",
+        data_1: "Jméno a příjmení", data_2: "E-mailovou adresu", data_3: "Telefonní číslo",
+        data_4: "Datum požadované události",
+        data_5: "Vámi zvolené parametry dortu a případnou poznámku nebo nahranou inspirativní fotku",
+        h_purpose: "Proč údaje zpracovávám",
+        purpose_text: "Vaše údaje používám výhradně za účelem vyřízení vaší poptávky — abych vás mohla kontaktovat, upřesnit detaily objednávky a domluvit se na realizaci. Právním základem zpracování je váš souhlas udělený při odeslání formuláře a případně plnění smlouvy, pokud z poptávky vznikne objednávka.",
+        h_third: "Komu údaje předávám",
+        third_text: "Vaše údaje nikomu neprodávám ani nepoužívám pro marketing bez vašeho výslovného souhlasu. Ke zpracování využívám tyto služby (zpracovatele):",
+        third_1: "<strong>EmailJS</strong> — pro doručení vaší poptávky na můj e-mail",
+        third_2: "<strong>Supabase</strong> — pouze pro správu dostupných termínů (neobsahuje vaše osobní údaje, jen informaci o obsazenosti konkrétního data)",
+        third_3: "Poskytovatel webhostingu, na kterém tento web běží",
+        h_retention: "Jak dlouho údaje uchovávám",
+        retention_text: "Údaje z vaší poptávky uchovávám ve své e-mailové schránce po dobu nezbytnou k vyřízení objednávky a případné komunikaci s vámi, nejdéle však [2 roky / doplnit dle vlastní praxe], pokud mi zákon neukládá lhůtu delší (např. z důvodu účetnictví u realizovaných objednávek).",
+        h_rights: "Vaše práva",
+        rights_intro: "Ve vztahu ke svým osobním údajům máte právo:",
+        right_1: "na přístup ke svým osobním údajům", right_2: "na opravu nepřesných údajů",
+        right_3: "na výmaz údajů (\"právo být zapomenut\")", right_4: "kdykoliv odvolat udělený souhlas",
+        right_5: "podat stížnost u Úřadu pro ochranu osobních údajů (uoou.cz)",
+        h_cookies: "Cookies a lokální úložiště",
+        cookies_text: "Tento web nepoužívá sledovací cookies ani analytické nástroje. Ve vašem prohlížeči si pouze ukládám vaši volbu jazyka (CZ/EN/DE) pomocí technologie localStorage, aby se vám příště web zobrazil ve stejném jazyce. Tento údaj neobsahuje žádné osobní informace a nikam se neodesílá.",
+        h_contact: "Kontakt",
+        contact_text: "S jakýmikoliv dotazy ohledně zpracování vašich osobních údajů mě prosím kontaktujte na: <strong>[doplnit e-mail]</strong>",
+        placeholder_note: "Poznámka pro majitele webu: části textu označené v hranatých závorkách [ ] je potřeba doplnit vlastními údaji (IČO, adresa, kontaktní e-mail, doba uchovávání) před zveřejněním stránky.",
+    },
+    en: {
+        back_link: "Back to configurator",
+        title: "Privacy Policy",
+        updated: "Last updated: August 2026",
+        intro: "I value your trust, which is why I handle your personal data transparently and only to the extent necessary to process your inquiry. This document explains what data I collect, why, and what rights you have.",
+        h_controller: "Who is the data controller",
+        controller_text: "The controller of your personal data is [Full name / Business name], Company ID: [fill in], registered at [address]. You can contact me at the e-mail address below.",
+        h_data: "What data I collect",
+        data_intro: "When you submit the inquiry form, I receive:",
+        data_1: "Full name", data_2: "E-mail address", data_3: "Phone number",
+        data_4: "Requested event date",
+        data_5: "The cake parameters you selected and any note or uploaded reference photo",
+        h_purpose: "Why I process this data",
+        purpose_text: "I use your data solely to process your inquiry — to contact you, clarify order details, and arrange the cake. The legal basis is your consent given when submitting the form, and, where applicable, performance of a contract if the inquiry turns into an order.",
+        h_third: "Who I share data with",
+        third_text: "I never sell your data or use it for marketing without your explicit consent. I use the following services (processors):",
+        third_1: "<strong>EmailJS</strong> — to deliver your inquiry to my e-mail",
+        third_2: "<strong>Supabase</strong> — only for managing available dates (does not contain your personal data, just whether a given date is booked)",
+        third_3: "My web hosting provider",
+        h_retention: "How long I keep the data",
+        retention_text: "I keep your inquiry data in my e-mail inbox for as long as necessary to process the order and any related communication, but no longer than [2 years / adjust as needed], unless a longer period is required by law (e.g. accounting for completed orders).",
+        h_rights: "Your rights",
+        rights_intro: "Regarding your personal data, you have the right to:",
+        right_1: "access your personal data", right_2: "have inaccurate data corrected",
+        right_3: "request erasure (\"right to be forgotten\")", right_4: "withdraw your consent at any time",
+        right_5: "lodge a complaint with the Czech Data Protection Authority (uoou.cz)",
+        h_cookies: "Cookies and local storage",
+        cookies_text: "This website does not use tracking cookies or analytics tools. I only store your language choice (CZ/EN/DE) in your browser via localStorage, so the site shows the same language next time. This data contains no personal information and is never sent anywhere.",
+        h_contact: "Contact",
+        contact_text: "For any questions about the processing of your personal data, please contact me at: <strong>[fill in e-mail]</strong>",
+        placeholder_note: "Note for the site owner: text sections in square brackets [ ] need to be filled in with your own details (company ID, address, contact e-mail, retention period) before publishing this page.",
+    },
+    de: {
+        back_link: "Zurück zum Konfigurator",
+        title: "Datenschutzerklärung",
+        updated: "Letzte Aktualisierung: August 2026",
+        intro: "Ich schätze Ihr Vertrauen und gehe deshalb transparent und nur im notwendigen Umfang mit Ihren personenbezogenen Daten um. Dieses Dokument erklärt, welche Daten ich erhebe, warum, und welche Rechte Sie haben.",
+        h_controller: "Wer ist der Verantwortliche",
+        controller_text: "Verantwortlicher für Ihre personenbezogenen Daten ist [Name / Firmenname], Steuernummer: [ausfüllen], mit Sitz in [Adresse]. Sie erreichen mich über die unten angegebene E-Mail-Adresse.",
+        h_data: "Welche Daten ich erhebe",
+        data_intro: "Beim Absenden des Anfrageformulars erhalte ich von Ihnen:",
+        data_1: "Vor- und Nachname", data_2: "E-Mail-Adresse", data_3: "Telefonnummer",
+        data_4: "Gewünschtes Veranstaltungsdatum",
+        data_5: "Die von Ihnen gewählten Tortenparameter sowie eine eventuelle Notiz oder ein hochgeladenes Referenzfoto",
+        h_purpose: "Warum ich die Daten verarbeite",
+        purpose_text: "Ich verwende Ihre Daten ausschließlich zur Bearbeitung Ihrer Anfrage — um Sie zu kontaktieren, Bestelldetails zu klären und die Torte zu organisieren. Rechtsgrundlage ist Ihre beim Absenden des Formulars erteilte Einwilligung sowie gegebenenfalls die Vertragserfüllung, falls aus der Anfrage eine Bestellung wird.",
+        h_third: "Wem ich Daten weitergebe",
+        third_text: "Ich verkaufe Ihre Daten niemals und nutze sie ohne Ihre ausdrückliche Zustimmung nicht für Marketing. Ich nutze folgende Dienste (Auftragsverarbeiter):",
+        third_1: "<strong>EmailJS</strong> — zur Zustellung Ihrer Anfrage an meine E-Mail",
+        third_2: "<strong>Supabase</strong> — nur zur Verwaltung verfügbarer Termine (enthält keine personenbezogenen Daten, nur ob ein Datum belegt ist)",
+        third_3: "Mein Webhosting-Anbieter",
+        h_retention: "Wie lange ich die Daten aufbewahre",
+        retention_text: "Ich bewahre Ihre Anfragedaten in meinem E-Mail-Postfach so lange auf, wie es zur Bearbeitung der Bestellung und der damit verbundenen Kommunikation erforderlich ist, jedoch höchstens [2 Jahre / nach eigenem Bedarf anpassen], sofern das Gesetz keine längere Frist vorschreibt (z. B. Buchhaltung bei abgeschlossenen Bestellungen).",
+        h_rights: "Ihre Rechte",
+        rights_intro: "Bezüglich Ihrer personenbezogenen Daten haben Sie das Recht:",
+        right_1: "auf Auskunft über Ihre Daten", right_2: "auf Berichtigung unrichtiger Daten",
+        right_3: "auf Löschung (\"Recht auf Vergessenwerden\")", right_4: "Ihre Einwilligung jederzeit zu widerrufen",
+        right_5: "sich bei der Datenschutzbehörde zu beschweren (uoou.cz)",
+        h_cookies: "Cookies und lokaler Speicher",
+        cookies_text: "Diese Website verwendet keine Tracking-Cookies oder Analysetools. Ich speichere in Ihrem Browser lediglich Ihre Sprachwahl (CZ/EN/DE) über localStorage, damit die Seite beim nächsten Besuch in derselben Sprache angezeigt wird. Diese Angabe enthält keine persönlichen Informationen und wird nirgendwohin gesendet.",
+        h_contact: "Kontakt",
+        contact_text: "Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten kontaktieren Sie mich bitte unter: <strong>[E-Mail ausfüllen]</strong>",
+        placeholder_note: "Hinweis für den Website-Betreiber: Textstellen in eckigen Klammern [ ] müssen vor Veröffentlichung mit Ihren eigenen Angaben (Steuernummer, Adresse, Kontakt-E-Mail, Aufbewahrungsfrist) ausgefüllt werden.",
+    }
+};
+
+let currentLang = localStorage.getItem('siteLang') || 'cs';
+
+function t(key) {
+    return (translations[currentLang] && translations[currentLang][key]) ?? translations.cs[key] ?? key;
+}
+
+function applyTranslations() {
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
+    document.querySelectorAll('#langSwitch button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+}
+
+function setLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('siteLang', lang);
+    applyTranslations();
+}
+
+document.querySelectorAll('#langSwitch button').forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+});
+applyTranslations();
+</script>
+</body>
+</html>
