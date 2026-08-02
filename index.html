@@ -4,7 +4,7 @@
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Cakes by DT | Konfigurátor</title> 
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Plus+Jakarta+Sans:wght@300;400;500;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -13,13 +13,16 @@
     <style>
         /* --- PREMIUM BAREVNÁ PALETA --- */
         :root { 
-            --primary: #bc9bc2;      /* Hlavní jemná fialová */
-            --primary-dark: #3a2640; /* Temná luxusní švestková pro levý panel */
-            --gold: #d4af37;         /* Zlatá pro akcenty */
-            --gold-light: #f3e5ab;
+            --primary: #b087bf;      /* Hlavní orchidejová fialová */
+            --primary-dark: #2c1c37; /* Temná luxusní švestková pro levý panel */
+            --gold: #c9a13b;         /* Patinovaná zlatá pro akcenty */
+            --gold-light: #f1e2ad;
+            --gold-deep: #8a6a1f;
+            --cream: #faf5ec;        /* Teplá slonovinová pro pravý panel */
+            --blush: #e7c3ca;        /* Jemný pudrový akcent */
             --glass-light: rgba(255, 255, 255, 0.75); 
             --glass-border: rgba(255, 255, 255, 0.4);
-            --bg-dark: #0f0c29;
+            --bg-dark: #130c19;
         }
         
         /* --- RESET A ZÁKLAD --- */
@@ -41,10 +44,14 @@
         ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
         /* --- ANIMOVANÉ POZADÍ (SOFT MESH GRADIENT) --- */
-        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #1a1525; overflow: hidden;}
-        .blob { position: absolute; width: 600px; height: 600px; filter: blur(120px); border-radius: 50%; animation: drift 25s infinite alternate ease-in-out; opacity: 0.6; }
-        .blob.one { background: linear-gradient(135deg, #bc9bc2 0%, #764ba2 100%); top: -10%; left: -10%; }
-        .blob.two { background: linear-gradient(135deg, #d4af37 0%, #ff9a9e 100%); bottom: -20%; right: -10%; animation-delay: -12s; }
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: var(--bg-dark); overflow: hidden;}
+        .bg-layer::after {
+            content: ''; position: absolute; inset: 0; opacity: 0.35; mix-blend-mode: overlay; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+        }
+        .blob { position: absolute; width: 600px; height: 600px; filter: blur(120px); border-radius: 50%; animation: drift 25s infinite alternate ease-in-out; opacity: 0.55; }
+        .blob.one { background: linear-gradient(135deg, var(--primary) 0%, #6a3f7a 100%); top: -10%; left: -10%; }
+        .blob.two { background: linear-gradient(135deg, var(--gold) 0%, #c17a86 100%); bottom: -20%; right: -10%; animation-delay: -12s; }
 
         /* --- HLAVNÍ SKLENĚNÝ WRAPPER --- */
         .hlavni-wrapper { 
@@ -80,7 +87,7 @@
             background: white; border-radius: 50%; 
             margin-bottom: 50px; 
             border: 4px solid var(--gold); 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 30px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 30px rgba(201, 161, 59, 0.2);
             overflow: hidden; transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); 
         }
         .logo-vlevo:hover { transform: scale(1.05) rotate(-5deg); }
@@ -101,12 +108,12 @@
         }
         .input-group input:focus { 
             border-color: var(--gold); background: rgba(255,255,255,0.1); 
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15); 
+            box-shadow: 0 0 20px rgba(201, 161, 59, 0.15); 
         }
 
         /* --- INSTAGRAM V LEVÉM PANELU --- */
         .gallery-label { 
-            font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px; 
+            font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; 
             color: var(--gold); text-align: center; margin: 40px 0 20px 0; width: 100%;
         }
         .single-photo-container { width: 100%; height: 350px; position: relative; display: flex; justify-content: center; }
@@ -127,10 +134,10 @@
         }
         .ig-button-link span { color: #fff; font-size: 14px; font-weight: 600; letter-spacing: 1px; }
         .ig-button-link img { width: 20px; height: 20px; filter: brightness(0) invert(1); }
-        .ig-button-link:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3); }
+        .ig-button-link:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(201, 161, 59, 0.3); }
 
         /* --- PRAVÝ PANEL (KONFIGURÁTOR) --- */
-        .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; position: relative; }
+        .obsah { flex: 1; padding: 60px 80px; overflow-y: auto; position: relative; background: linear-gradient(180deg, var(--cream) 0%, #f5eee2 100%); }
         
         .top-instagram-header { text-align: right; margin-bottom: 20px; }
         .top-instagram-header a { text-decoration: none; color: var(--primary-dark); font-size: 13px; font-weight: 600; letter-spacing: 1px; transition: color 0.3s; }
@@ -139,10 +146,14 @@
         .top-instagram-header a:hover span { color: var(--gold); border-color: var(--gold); }
 
         .hlavni-motto { 
-            font-family: 'Playfair Display', serif; font-style: italic; font-weight: 800;
+            font-family: 'Fraunces', serif; font-style: italic; font-weight: 700;
             color: var(--primary-dark); text-align: center; font-size: 68px; 
-            margin: 10px 0 60px 0; line-height: 1.1; text-shadow: 2px 5px 15px rgba(0,0,0,0.05);
+            margin: 10px 0 20px 0; line-height: 1.1; text-shadow: 2px 5px 15px rgba(0,0,0,0.05);
         }
+        .motto-flourish { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 0 0 60px 0; }
+        .motto-flourish svg { flex-shrink: 0; }
+        .motto-flourish .line { width: 90px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); }
+        .motto-flourish .line.right { background: linear-gradient(90deg, var(--gold), transparent); }
 
         /* --- SEKCE A KARTY --- */
         .sekce { 
@@ -150,9 +161,17 @@
             padding: 40px 50px; border-radius: 30px; margin-bottom: 40px; 
             border: 1px solid rgba(255,255,255,0.8); 
             box-shadow: 0 15px 35px rgba(58, 38, 64, 0.05); 
+            position: relative; overflow: hidden;
         }
+        .sekce::before {
+            content: ''; position: absolute; top: -30px; right: -30px; width: 90px; height: 90px;
+            border-radius: 50%; background: radial-gradient(circle at 35% 35%, var(--gold-light), var(--gold) 60%, var(--gold-deep) 100%);
+            opacity: 0.16; pointer-events: none;
+        }
+        .sekce.reveal-init { opacity: 0; transform: translateY(30px); }
+        .sekce.revealed { opacity: 1; transform: translateY(0); transition: opacity 0.8s cubic-bezier(0.2,0.8,0.2,1), transform 0.8s cubic-bezier(0.2,0.8,0.2,1); }
         h3 { 
-            color: var(--primary-dark); font-family: 'Playfair Display', serif; font-style: italic;
+            color: var(--primary-dark); font-family: 'Fraunces', serif; font-style: italic;
             font-size: 26px; font-weight: 600; margin-bottom: 35px; 
             display: flex; align-items: center; gap: 15px;
         }
@@ -168,7 +187,7 @@
             border: 1px solid rgba(188, 155, 194, 0.3); background: rgba(255,255,255,0.9); 
             color: var(--primary-dark); font-family: 'Plus Jakarta Sans', sans-serif; 
             font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
-            appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23bc9bc2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23b087bf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat; background-position: right 20px center; background-size: 16px;
         }
         select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(188, 155, 194, 0.1); }
@@ -194,9 +213,9 @@
         }
         #price-display { 
             position: absolute; top: 30px; right: 30px; 
-            background: linear-gradient(135deg, var(--gold), #b89325); 
+            background: linear-gradient(135deg, var(--gold), var(--gold-deep)); 
             color: white; padding: 15px 30px; border-radius: 20px; 
-            font-weight: 800; font-size: 18px; box-shadow: 0 15px 30px rgba(212, 175, 55, 0.3); 
+            font-weight: 800; font-size: 18px; box-shadow: 0 15px 30px rgba(201, 161, 59, 0.3); 
             z-index: 10; border: 1px solid rgba(255,255,255,0.3);
         }
 
@@ -233,7 +252,7 @@
             top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
 
-        .doplnek-item:has(input:checked) { border-color: var(--gold); background: #fff; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1); transform: translateX(5px); }
+        .doplnek-item:has(input:checked) { border-color: var(--gold); background: #fff; box-shadow: 0 10px 30px rgba(201, 161, 59, 0.1); transform: translateX(5px); }
         .extra-input { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; }
         .doplnek-item:has(input:checked) .extra-input { max-height: 100px; opacity: 1; margin-top: 20px; }
         .extra-input input { width: 100%; padding: 16px 20px; border-radius: 12px; border: 1px solid rgba(188, 155, 194, 0.3); font-family: inherit; outline: none; }
@@ -302,12 +321,12 @@
         .price-breakdown-popup {
             position: absolute; top: 85px; right: 30px; width: 280px;
             background: white; border-radius: 20px; padding: 20px 24px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2); border: 1px solid rgba(212,175,55,0.3);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2); border: 1px solid rgba(201,161,59,0.3);
             z-index: 20; opacity: 0; pointer-events: none; transform: translateY(-10px);
             transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
         }
         .price-breakdown-popup.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-        .price-breakdown-popup h4 { margin: 0 0 12px 0; font-family: 'Playfair Display', serif; font-style: italic; color: var(--primary-dark); font-size: 16px; }
+        .price-breakdown-popup h4 { margin: 0 0 12px 0; font-family: 'Fraunces', serif; font-style: italic; color: var(--primary-dark); font-size: 16px; }
         .price-breakdown-popup .row { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding: 6px 0; border-bottom: 1px dashed #eee; }
         .price-breakdown-popup .row span:last-child { font-weight: 700; color: var(--primary-dark); }
         .price-breakdown-popup .row.total { border-bottom: none; margin-top: 8px; padding-top: 10px; border-top: 2px solid var(--gold); font-weight: 800; }
@@ -331,7 +350,7 @@
             font-size: 12px; letter-spacing: 0.5px; padding: 12px 22px; border-radius: 30px; cursor: pointer;
             transition: all 0.3s ease; text-transform: uppercase;
         }
-        .ghost-btn:hover { background: var(--primary-dark); color: white; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(58,38,64,0.2); }
+        .ghost-btn:hover { background: var(--primary-dark); color: var(--gold-light); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(58,38,64,0.25); border-color: var(--gold); }
 
         /* --- WHATSAPP FLOAT --- */
         .whatsapp-float {
@@ -348,7 +367,7 @@
             background: var(--primary-dark);
             display: flex; align-items: center; justify-content: center; color: var(--gold);
             font-size: 16px; text-decoration: none; transition: all 0.3s ease;
-            border: 1px solid rgba(212,175,55,0.4); z-index: 999;
+            border: 1px solid rgba(201,161,59,0.4); z-index: 999;
             box-shadow: 0 10px 25px rgba(0,0,0,0.35);
         }
         .admin-float:hover { background: var(--gold); color: var(--primary-dark); transform: scale(1.12); }
@@ -377,7 +396,7 @@
         /* --- KALENDÁŘ DOSTUPNOSTI --- */
         .calendar-popup {
             position: absolute; top: calc(100% + 8px); left: 0; width: 290px; max-width: 90vw;
-            background: #241a29; border: 1px solid rgba(212,175,55,0.3); border-radius: 18px;
+            background: #241a29; border: 1px solid rgba(201,161,59,0.3); border-radius: 18px;
             padding: 18px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); z-index: 100;
             display: none;
         }
@@ -493,7 +512,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Instagram">
                 </a>
             </div>
-            <p style="margin-top:50px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 22px; color: var(--gold); opacity: 0.8;">Váš sladký sen</p>
+            <p style="margin-top:50px; font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; color: var(--gold); opacity: 0.8;">Váš sladký sen</p>
         </div>
 
         <div class="obsah">
@@ -504,6 +523,14 @@
             </div>
 
             <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
+            <div class="motto-flourish">
+                <span class="line"></span>
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                    <circle cx="11" cy="11" r="3" style="fill:var(--gold)"/>
+                    <circle cx="11" cy="11" r="9" style="stroke:var(--gold)" stroke-width="1" opacity="0.5"/>
+                </svg>
+                <span class="line right"></span>
+            </div>
 
             <nav class="stepper-nav" id="stepperNav">
                 <div class="step-item" data-target="stepSekce1"><span class="dot"><span>1</span></span><span class="step-label">Korpus</span></div>
@@ -691,7 +718,7 @@
 <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 12, 41, 0.85); z-index:10000; backdrop-filter: blur(15px); justify-content:center; align-items:center;">
     <div style="background: white; padding: 50px; border-radius: 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 2px var(--gold);">
         <div style="font-size: 60px; margin-bottom: 20px;">🎂</div>
-        <h2 style="font-family: 'Playfair Display', serif; font-style: italic; color: var(--primary-dark); font-size: 32px; margin: 0 0 20px 0;">Děkujeme !</h2>
+        <h2 style="font-family: 'Fraunces', serif; font-style: italic; color: var(--primary-dark); font-size: 32px; margin: 0 0 20px 0;">Děkujeme !</h2>
         <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">Vaši poptávku jsme v pořádku přijali.<br>Brzy se vám ozveme s detaily.</p>
         <button type="button" onclick="document.getElementById('customModal').style.display='none'" style="padding: 16px 40px; background: linear-gradient(135deg, var(--primary-dark), #1e1422); color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;">Zavřít</button>
     </div>
@@ -1338,6 +1365,18 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }, { threshold: 0.4, rootMargin: '-100px 0px -40% 0px' });
         stepSections.forEach(sec => observer.observe(sec));
+
+        // Jemné zjevení karet při scrollování
+        stepSections.forEach(sec => sec.classList.add('reveal-init'));
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        stepSections.forEach(sec => revealObserver.observe(sec));
     }
 
     // --- Rozpad ceny: klik na cenovku otevře/zavře popup ---
