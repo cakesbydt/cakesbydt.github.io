@@ -259,17 +259,138 @@
         .btn:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(58, 38, 64, 0.4); }
         .btn:hover::after { left: 100%; }
 
+        /* --- PROGRESS STEPPER --- */
+        .stepper-nav {
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+            margin: 10px 0 30px 0; position: sticky; top: 0; z-index: 50;
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(20px);
+            padding: 16px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 10px 25px rgba(58,38,64,0.06);
+        }
+        .step-item {
+            display: flex; align-items: center; gap: 10px; cursor: pointer;
+            padding: 8px 14px; border-radius: 30px; transition: all 0.35s ease;
+            color: #a89aad; font-size: 12px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .step-item .dot {
+            width: 26px; height: 26px; border-radius: 50%; background: #e6dbe9;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 800; color: white; transition: all 0.35s ease; flex-shrink: 0;
+        }
+        .step-item.active { color: var(--primary-dark); background: rgba(188,155,194,0.15); }
+        .step-item.active .dot { background: var(--primary); box-shadow: 0 0 0 5px rgba(188,155,194,0.2); }
+        .step-item.done .dot { background: var(--gold); }
+        .step-item.done .dot::after { content: '✔'; }
+        .step-item.done .dot span { display: none; }
+        .step-connector { width: 20px; height: 2px; background: #e6dbe9; }
+        @media (max-width: 640px) { .step-item span.step-label { display: none; } .stepper-nav { gap: 4px; } }
+
+        /* --- COMPLETNESS BADGE PRO DOPLŇKY --- */
+        .added-badge {
+            display: none; margin-left: auto; background: var(--gold); color: white;
+            font-size: 10px; font-weight: 800; letter-spacing: 1px; padding: 5px 12px;
+            border-radius: 20px; text-transform: uppercase; animation: pop-in 0.3s ease;
+        }
+        .doplnek-item:has(input:checked) .added-badge { display: inline-block; }
+        @keyframes pop-in { from { transform: scale(0.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .doplnek-item label { justify-content: flex-start; }
+
+        /* --- CENOVÝ ROZPAD (BREAKDOWN) --- */
+        #price-display { cursor: pointer; }
+        #price-display .hint { display: block; font-size: 9px; font-weight: 600; opacity: 0.85; text-transform: none; letter-spacing: 0.5px; margin-top: 2px; }
+        .price-breakdown-popup {
+            position: absolute; top: 85px; right: 30px; width: 280px;
+            background: white; border-radius: 20px; padding: 20px 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2); border: 1px solid rgba(212,175,55,0.3);
+            z-index: 20; opacity: 0; pointer-events: none; transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.2,0.8,0.2,1);
+        }
+        .price-breakdown-popup.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        .price-breakdown-popup h4 { margin: 0 0 12px 0; font-family: 'Playfair Display', serif; font-style: italic; color: var(--primary-dark); font-size: 16px; }
+        .price-breakdown-popup .row { display: flex; justify-content: space-between; font-size: 13px; color: #555; padding: 6px 0; border-bottom: 1px dashed #eee; }
+        .price-breakdown-popup .row span:last-child { font-weight: 700; color: var(--primary-dark); }
+        .price-breakdown-popup .row.total { border-bottom: none; margin-top: 8px; padding-top: 10px; border-top: 2px solid var(--gold); font-weight: 800; }
+
+        /* --- LOADING OVERLAY 3D --- */
+        .loading-overlay {
+            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle at 50% 40%, #ffffff 0%, #e8daeb 100%); border-radius: 30px; z-index: 15;
+            transition: opacity 0.6s ease, visibility 0.6s ease; gap: 15px;
+        }
+        .loading-overlay.hidden { opacity: 0; visibility: hidden; }
+        .loading-spinner { width: 46px; height: 46px; border: 4px solid rgba(188,155,194,0.2); border-top-color: var(--primary-dark); border-radius: 50%; animation: spin 0.9s linear infinite; }
+        .loading-overlay span { font-size: 13px; color: var(--primary-dark); font-weight: 600; letter-spacing: 1px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- AKČNÍ TLAČÍTKA POD 3D (SDÍLET / SCREENSHOT) --- */
+        .canvas-actions { display: flex; gap: 15px; justify-content: center; margin: -10px 0 40px 0; flex-wrap: wrap; }
+        .ghost-btn {
+            display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(188,155,194,0.3); color: var(--primary-dark); font-weight: 700;
+            font-size: 12px; letter-spacing: 0.5px; padding: 12px 22px; border-radius: 30px; cursor: pointer;
+            transition: all 0.3s ease; text-transform: uppercase;
+        }
+        .ghost-btn:hover { background: var(--primary-dark); color: white; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(58,38,64,0.2); }
+
+        /* --- WHATSAPP FLOAT --- */
+        .whatsapp-float {
+            position: fixed; bottom: 30px; right: 30px; width: 62px; height: 62px; border-radius: 50%;
+            background: #25D366; display: flex; align-items: center; justify-content: center; color: white;
+            font-size: 28px; box-shadow: 0 15px 30px rgba(37,211,102,0.4); z-index: 999; text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); }
+
+        /* --- STICKY MOBILNÍ LIŠTA --- */
+        .sticky-mobile-bar { display: none; }
+
+        /* --- LIGHTBOX GALERIE --- */
+        .photo-slot-main { cursor: zoom-in; }
+        .lightbox-modal {
+            display: none; position: fixed; inset: 0; background: rgba(15,12,41,0.9); z-index: 10001;
+            backdrop-filter: blur(15px); align-items: center; justify-content: center; padding: 20px;
+        }
+        .lightbox-modal img { max-width: 90%; max-height: 85vh; border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+        .lightbox-close { position: absolute; top: 30px; right: 40px; color: white; font-size: 36px; cursor: pointer; }
+
+        /* --- POTVRZOVACÍ CHECKBOX PŘED ODESLÁNÍM --- */
+        .confirm-row { display: flex; align-items: flex-start; gap: 12px; margin: 25px 0; font-size: 13px; color: #666; }
+        .confirm-row input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--gold); flex-shrink: 0; cursor: pointer; }
+        .confirm-row label { text-transform: none; letter-spacing: normal; font-weight: 500; color: #666; margin: 0; cursor: pointer; }
+
+        /* --- TOAST NOTIFIKACE (odkaz zkopírován apod.) --- */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary-dark); color: white; padding: 16px 30px; border-radius: 50px; font-size: 14px; font-weight: 600; box-shadow: 0 20px 40px rgba(0,0,0,0.3); z-index: 10002; transition: transform 0.4s cubic-bezier(0.2,0.8,0.2,1); }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
         /* --- MOBILNÍ RESPONZIVITA --- */
         @media (max-width: 1024px) {
             .hlavni-wrapper { flex-direction: column; border-radius: 0; margin: 0; width: 100%; }
             .levy-panel { width: 100%; flex: none; padding: 50px 20px; }
-            .obsah { padding: 40px 20px; }
+            .obsah { padding: 40px 20px 100px 20px; }
             .hlavni-motto { font-size: 42px; margin-bottom: 40px; }
             .sekce { padding: 30px 20px; border-radius: 20px; }
             #canvas-container { height: 450px; }
             .flex > div { min-width: 100%; }
             .controls-row { flex-direction: column; align-items: center; gap: 20px; }
             #price-display { top: auto; bottom: 80px; left: 50%; transform: translateX(-50%); right: auto; font-size: 16px; padding: 10px 20px;}
+            .price-breakdown-popup { top: auto; bottom: 130px; right: 50%; transform: translate(50%, 10px); }
+            .price-breakdown-popup.open { transform: translate(50%, 0); }
+            .whatsapp-float { bottom: 90px; right: 20px; width: 54px; height: 54px; font-size: 24px; }
+
+            .sticky-mobile-bar {
+                display: flex; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 998;
+                background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(188,155,194,0.3); padding: 14px 20px;
+                align-items: center; justify-content: space-between; box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            }
+            .sticky-mobile-bar .price-part { display: flex; flex-direction: column; }
+            .sticky-mobile-bar .price-part small { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+            .sticky-mobile-bar .price-part strong { font-size: 16px; color: var(--primary-dark); }
+            .sticky-mobile-bar button {
+                background: linear-gradient(135deg, var(--primary-dark), #1e1422); color: white; border: none;
+                padding: 12px 26px; border-radius: 30px; font-weight: 800; font-size: 12px; letter-spacing: 1px;
+                text-transform: uppercase; cursor: pointer;
+            }
         }
         
     </style>
@@ -329,8 +450,18 @@
             </div>
 
             <h1 class="hlavni-motto">Upečeme vám vzpomínku</h1>
+
+            <nav class="stepper-nav" id="stepperNav">
+                <div class="step-item" data-target="stepSekce1"><span class="dot"><span>1</span></span><span class="step-label">Korpus</span></div>
+                <div class="step-connector"></div>
+                <div class="step-item" data-target="stepSekce2"><span class="dot"><span>2</span></span><span class="step-label">Design</span></div>
+                <div class="step-connector"></div>
+                <div class="step-item" data-target="stepSekce3"><span class="dot"><span>3</span></span><span class="step-label">Ovoce</span></div>
+                <div class="step-connector"></div>
+                <div class="step-item" data-target="stepSekce4"><span class="dot"><span>4</span></span><span class="step-label">Doplňky</span></div>
+            </nav>
             
-            <div class="sekce">
+            <div class="sekce" id="stepSekce1">
                 <h3>1. Korpus</h3>
                 <div class="flex">
                     <div style="flex-basis: 100%; margin-bottom: 10px;">
@@ -365,7 +496,7 @@
                 </div>
             </div>
 
-            <div class="sekce">
+            <div class="sekce" id="stepSekce2">
                 <h3>2. Design & Krém</h3>
                 <div class="flex">
                     <div><label>Styl obmazu</label><select id="coating" onchange="updateCake();"><option value="semi" selected>Nahý dort</option><option value="full" >Plný obmaz</option></select></div>
@@ -388,7 +519,7 @@
                 </div>
             </div>
 
-            <div class="sekce">
+            <div class="sekce" id="stepSekce3">
                 <h3>3. Ovocná kompozice</h3>
                 <div class="flex">
                     <div><label>Proložení uvnitř</label><select id="fruitCream" onchange="updateCake();">
@@ -418,7 +549,20 @@
 
             <div id="canvas-container">
                 <div id="info-display" class="info-badge-float">--</div>
-                <div id="price-display">--</div>
+                <div id="price-display"><span id="priceMainText">--</span><span class="hint">Klikni pro rozpad ceny</span></div>
+                <div class="price-breakdown-popup" id="priceBreakdown">
+                    <h4>Rozpad ceny</h4>
+                    <div id="breakdownRows"></div>
+                </div>
+                <div class="loading-overlay" id="loading3d">
+                    <div class="loading-spinner"></div>
+                    <span>Připravuji 3D náhled…</span>
+                </div>
+            </div>
+
+            <div class="canvas-actions">
+                <button type="button" class="ghost-btn" id="shareBtn"><i class="fas fa-link"></i> Sdílet konfiguraci</button>
+                <button type="button" class="ghost-btn" id="screenshotBtn"><i class="fas fa-camera-retro"></i> Uložit náhled</button>
             </div>
             
             <div class="controls-row">
@@ -427,22 +571,22 @@
                 <div><label style="text-align: center;">Přiblížení (Zoom)</label><input type="range" id="zoomCam" class="slider" min="8" max="28" step="0.5" value="14" oninput="manualControl()"></div>
             </div>
 
-            <div class="sekce">
+            <div class="sekce" id="stepSekce4">
                 <h3>4. Osobní doplňky</h3>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> Květinová dekorace</label>
+                    <label><input type="checkbox" id="c_flowers" onchange="calculatePrice()"> Květinová dekorace <span class="added-badge">✔ Přidáno</span></label>
                     <div class="extra-input"><input type="text" name="Detail_Kvetiny" placeholder="Jaké květiny si přejete (druh, barva)?"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> Jedlý papír</label>
+                    <label><input type="checkbox" id="c1" onchange="calculatePrice()"> Jedlý papír <span class="added-badge">✔ Přidáno</span></label>
                     <div class="extra-input"><input type="text" name="Detail_Papir" placeholder="Popis obrázku nebo motivu"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c2" onchange="calculatePrice()"> Modelovaná figurka</label>
+                    <label><input type="checkbox" id="c2" onchange="calculatePrice()"> Modelovaná figurka <span class="added-badge">✔ Přidáno</span></label>
                     <div class="extra-input"><input type="text" name="Detail_Figurka" placeholder="Jaká figurka to má být?"></div>
                 </div>
                 <div class="doplnek-item">
-                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> Personalizovaný zápich</label>
+                    <label><input type="checkbox" id="c3" onchange="calculatePrice()"> Personalizovaný zápich <span class="added-badge">✔ Přidáno</span></label>
                     <div class="extra-input"><input type="text" name="Detail_Zapich" placeholder="Zadejte text na zápich (např. Vše nejlepší)"></div>
                 </div>
                 <div class="doplnek-item" style="border-top: 1px dashed var(--primary); margin-top: 30px; padding-top: 30px;">
@@ -460,10 +604,31 @@
                 <textarea name="Zprava_Poznamka" rows="4" placeholder="Zde mi můžete nechat vzkaz, specifické požadavky na barvy, upozornění na alergie..." onchange="calculatePrice()"></textarea>
             </div>
 
+            <div class="confirm-row">
+                <input type="checkbox" id="confirmPrice" required>
+                <label for="confirmPrice">Rozumím, že uvedená cena je pouze orientační odhad a finální cena bude upřesněna po konzultaci.</label>
+            </div>
+
             <button type="submit" class="btn">Odeslat poptávku</button>
         </div>
     </div>
 </form>
+
+<div class="sticky-mobile-bar" id="stickyMobileBar">
+    <div class="price-part"><small>Odhad ceny</small><strong id="stickyPriceText">--</strong></div>
+    <button type="button" id="stickyCtaBtn">Odeslat poptávku</button>
+</div>
+
+<a href="https://wa.me/420000000000?text=Dobr%C3%BD%20den%2C%20m%C3%A1m%20z%C3%A1jem%20o%20dort%20z%20va%C5%A1eho%20konfigur%C3%A1toru." target="_blank" class="whatsapp-float" title="Napsat na WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<div class="lightbox-modal" id="lightboxModal">
+    <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <img id="lightboxImg" src="" alt="Ukázka dortu ve velkém rozlišení">
+</div>
+
+<div class="toast" id="toastMsg"></div>
     
 <div id="customModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 12, 41, 0.85); z-index:10000; backdrop-filter: blur(15px); justify-content:center; align-items:center;">
     <div style="background: white; padding: 50px; border-radius: 40px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 0 0 2px var(--gold);">
@@ -540,7 +705,7 @@ function updateFileName() {
         camera.position.set(0, 6, 14); 
         camera.lookAt(0, 2, 0);
 
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); 
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true }); 
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         container.appendChild(renderer.domElement);
@@ -556,6 +721,11 @@ function updateFileName() {
         
         updateCake(); 
         animate();    
+
+        // Načtení konfigurace z URL (pokud přišel sdílený odkaz) a skrytí loading overlaye
+        applyConfigFromURL();
+        const loadingEl = document.getElementById('loading3d');
+        if (loadingEl) setTimeout(() => loadingEl.classList.add('hidden'), 400);
 
         const getPoint = (e) => {
             if (e.touches && e.touches.length > 0) {
@@ -702,29 +872,34 @@ function updateFileName() {
         // Zjištění počtu pater - klasika má vždy 1 patro, svatební podle dropdownu
         let numTiers = style === 'classic' ? 1 : parseInt(document.getElementById('layers').value);
         let total = 0;
-        
+        const breakdown = []; // { label, amount } pro itemizovaný rozpad ceny
+
         // Cena se počítá za každé patro zvlášť (každé další je užší, spotřebuje méně surovin)
+        let baseCost = 0;
         for (let t = 0; t < numTiers; t++) {
             let tierDiameter = diameter * Math.pow(0.75, t); 
-            total += (tierDiameter * 15) * 3; // 3 = (6 vrstev / 2) pro zachování tvé původní ceny
+            baseCost += (tierDiameter * 15) * 3; // 3 = (6 vrstev / 2) pro zachování tvé původní ceny
         }
+        baseCost = Math.round(baseCost);
+        total += baseCost;
+        breakdown.push({ label: `Základ (Ø${diameter}cm, ${numTiers}${numTiers > 1 ? ' patra' : ' patro'})`, amount: baseCost });
 
-        if (style === 'wedding') total += 1500; 
-        if (style === 'classic1') total += 100; 
-        if (flavorText.includes("Ořechový")) total += 80 * numTiers;
-        if (flavorText.includes("Mrkvový")) total += 100 * numTiers;
-        if (flavorText.includes("Mechový")) total += 100 * numTiers;
-        if (flavorText.includes("Kakaový")) total += 50 * numTiers;
+        if (style === 'wedding') { total += 1500; breakdown.push({ label: 'Svatební provedení', amount: 1500 }); }
+        if (style === 'classic1') { total += 100; breakdown.push({ label: 'Patrový styl', amount: 100 }); }
+        if (flavorText.includes("Ořechový")) { const a = 80 * numTiers; total += a; breakdown.push({ label: 'Ořechový korpus', amount: a }); }
+        if (flavorText.includes("Mrkvový")) { const a = 100 * numTiers; total += a; breakdown.push({ label: 'Mrkvový korpus', amount: a }); }
+        if (flavorText.includes("Mechový")) { const a = 100 * numTiers; total += a; breakdown.push({ label: 'Mechový korpus', amount: a }); }
+        if (flavorText.includes("Kakaový")) { const a = 50 * numTiers; total += a; breakdown.push({ label: 'Kakaový korpus', amount: a }); }
         
-        if (coat === 'full') total += 150 * numTiers;
-        if (document.getElementById('fruitCream').value !== 'none') total += 100 * numTiers;
-        if (document.getElementById('fruitTop').value !== 'none') total += 100; // Horní zdobení počítáme paušálně
-        if (document.getElementById('fruitCream').value !== 'none') total += 50 * numTiers;
+        if (coat === 'full') { const a = 150 * numTiers; total += a; breakdown.push({ label: 'Plný obmaz', amount: a }); }
+        if (document.getElementById('fruitCream').value !== 'none') { const a = 100 * numTiers; total += a; breakdown.push({ label: 'Ovocné proložení', amount: a }); }
+        if (document.getElementById('fruitTop').value !== 'none') { total += 100; breakdown.push({ label: 'Ovocné zdobení nahoře', amount: 100 }); }
+        if (document.getElementById('fruitCream').value !== 'none') { const a = 50 * numTiers; total += a; breakdown.push({ label: 'Ovocný puk', amount: a }); }
         
-        if (document.getElementById('c_flowers').checked) total += 150;
-        if (document.getElementById('c1').checked) total += 300;
-        if (document.getElementById('c2').checked) total += 200;
-        if (document.getElementById('c3').checked) total += 50;
+        if (document.getElementById('c_flowers').checked) { total += 150; breakdown.push({ label: 'Květinová dekorace', amount: 150 }); }
+        if (document.getElementById('c1').checked) { total += 300; breakdown.push({ label: 'Jedlý papír', amount: 300 }); }
+        if (document.getElementById('c2').checked) { total += 200; breakdown.push({ label: 'Modelovaná figurka', amount: 200 }); }
+        if (document.getElementById('c3').checked) { total += 50; breakdown.push({ label: 'Personalizovaný zápich', amount: 50 }); }
 
         const minPrice = Math.round(total * 0.95);
         const maxPrice = Math.round(total * 1.05);
@@ -734,7 +909,19 @@ function updateFileName() {
         const priceText = `${minPrice} – ${maxPrice} Kč`;
 
         document.getElementById('info-display').innerText = infoText;
-        document.getElementById('price-display').innerText = "ODHAD: " + priceText;
+        const priceMainEl = document.getElementById('priceMainText');
+        if (priceMainEl) priceMainEl.innerText = "ODHAD: " + priceText;
+
+        // Aktualizace itemizovaného rozpadu ceny
+        const rowsEl = document.getElementById('breakdownRows');
+        if (rowsEl) {
+            rowsEl.innerHTML = breakdown.map(b => `<div class="row"><span>${b.label}</span><span>+${b.amount} Kč</span></div>`).join('')
+                + `<div class="row total"><span>Odhad celkem</span><span>${priceText}</span></div>`;
+        }
+
+        // Synchronizace sticky mobilní lišty
+        const stickyEl = document.getElementById('stickyPriceText');
+        if (stickyEl) stickyEl.innerText = priceText;
     }
 
  function updateCake() {
@@ -1026,7 +1213,157 @@ window.addEventListener('DOMContentLoaded', () => {
     // Tady si vyber čas: 10000 = 10 vteřin, 3000 = 3 vteřiny
     // Necháme 6000 (6 vteřin), ať si to lidi stihnou prohlédnout
     setInterval(updateGallery, 6000);
+
+    // --- Validace: nejdřívější možné datum události je zítra ---
+    const datumInput = document.querySelector('input[name="Datum_Udalosti"]');
+    if (datumInput) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        datumInput.min = tomorrow.toISOString().split('T')[0];
+    }
+
+    // --- Validace formátu telefonu (české číslo, s volitelnou předvolbou) ---
+    const telInput = document.querySelector('input[name="Telefon"]');
+    if (telInput) {
+        telInput.setAttribute('pattern', '^(\\+?\\d{3,4}\\s?)?\\d{3}\\s?\\d{3}\\s?\\d{3}$');
+        telInput.setAttribute('title', 'Zadejte platné telefonní číslo, např. 601 234 567 nebo +420 601 234 567');
+    }
+
+    // --- Progress stepper: zvýrazní aktuální krok podle scrollu ---
+    const stepItems = document.querySelectorAll('.step-item');
+    const stepSections = ['stepSekce1', 'stepSekce2', 'stepSekce3', 'stepSekce4']
+        .map(id => document.getElementById(id)).filter(Boolean);
+
+    stepItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const target = document.getElementById(item.dataset.target);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    if (stepSections.length && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = stepSections.indexOf(entry.target);
+                    stepItems.forEach((item, i) => {
+                        item.classList.toggle('active', i === idx);
+                        item.classList.toggle('done', i < idx);
+                    });
+                }
+            });
+        }, { threshold: 0.4, rootMargin: '-100px 0px -40% 0px' });
+        stepSections.forEach(sec => observer.observe(sec));
+    }
+
+    // --- Rozpad ceny: klik na cenovku otevře/zavře popup ---
+    const priceDisplay = document.getElementById('price-display');
+    const breakdownPopup = document.getElementById('priceBreakdown');
+    if (priceDisplay && breakdownPopup) {
+        priceDisplay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            breakdownPopup.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (!breakdownPopup.contains(e.target) && e.target !== priceDisplay) {
+                breakdownPopup.classList.remove('open');
+            }
+        });
+    }
+
+    // --- Sdílení konfigurace přes URL ---
+    const shareBtn = document.getElementById('shareBtn');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            const ids = ['cakeStyle','diameter','layers','flavor','coating','innerCream','outerCream','fruitCream','fruitTop','topStyle'];
+            const params = new URLSearchParams();
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) params.set(id, el.value);
+            });
+            ['c_flowers','c1','c2','c3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.checked) params.set(id, '1');
+            });
+            const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Odkaz na tvou konfiguraci byl zkopírován 🎂');
+            }).catch(() => {
+                showToast('Nepodařilo se zkopírovat, zkus to prosím ručně: ' + url);
+            });
+        });
+    }
+
+    // --- Screenshot 3D náhledu ---
+    const screenshotBtn = document.getElementById('screenshotBtn');
+    if (screenshotBtn) {
+        screenshotBtn.addEventListener('click', () => {
+            if (!renderer) return;
+            renderer.render(scene, camera);
+            const dataURL = renderer.domElement.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'muj-dort-navrh.png';
+            link.click();
+            showToast('Náhled dortu byl stažen 📸');
+        });
+    }
+
+    // --- Lightbox pro galerii inspirace ---
+    const slot1 = document.getElementById('slot1');
+    const lightboxModal = document.getElementById('lightboxModal');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+    if (slot1 && lightboxModal && lightboxImg) {
+        slot1.addEventListener('click', () => {
+            const bg = slot1.style.backgroundImage.slice(5, -2); // odstraní url("...")
+            lightboxImg.src = bg;
+            lightboxModal.style.display = 'flex';
+        });
+        const closeLightbox = () => lightboxModal.style.display = 'none';
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        lightboxModal.addEventListener('click', (e) => { if (e.target === lightboxModal) closeLightbox(); });
+    }
+
+    // --- Sticky mobilní lišta: tlačítko posune na formulář a spustí odeslání ---
+    const stickyCtaBtn = document.getElementById('stickyCtaBtn');
+    if (stickyCtaBtn) {
+        stickyCtaBtn.addEventListener('click', () => {
+            const confirmBox = document.getElementById('confirmPrice');
+            const submitBtn = document.querySelector('#cakeOrderForm .btn');
+            if (confirmBox) confirmBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            else if (submitBtn) submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    }
 });
+
+// --- Toast notifikace (krátká zpráva dole na obrazovce) ---
+function showToast(message) {
+    const toast = document.getElementById('toastMsg');
+    if (!toast) return;
+    toast.innerText = message;
+    toast.classList.add('show');
+    clearTimeout(window._toastTimeout);
+    window._toastTimeout = setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// --- Načtení sdílené konfigurace z URL parametrů (pokud zákazník otevřel odkaz od jiného zákazníka) ---
+function applyConfigFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    if (![...params.keys()].length) return;
+
+    const ids = ['cakeStyle','diameter','layers','flavor','coating','innerCream','outerCream','fruitCream','fruitTop','topStyle'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && params.has(id)) el.value = params.get(id);
+    });
+    ['c_flowers','c1','c2','c3'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.checked = params.get(id) === '1';
+    });
+    updateCake();
+    showToast('Načetl jsem sdílenou konfiguraci dortu 🎂');
+}
 
 // Inicializace 3D modelu
 window.onload = init3D;
